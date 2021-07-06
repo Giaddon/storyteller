@@ -1,0 +1,20 @@
+{
+  "name": "storyteller",
+  "version": "1.0.0",
+  "description": "An Electron-based app for creating and playing quality-based stories.",
+  "main": "main.js",
+  "scripts": {
+    "test": "run-tests",
+    "start": "electron ."
+  },
+  "keywords": [
+    "interactive-fiction",
+    "games",
+    "fiction"
+  ],
+  "author": "Graham Trail",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^13.1.6"
+  }
+}
