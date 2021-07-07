@@ -16,5 +16,8 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^13.1.6"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.6.0"
   }
 }
