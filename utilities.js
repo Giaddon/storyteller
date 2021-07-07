@@ -3,4 +3,10 @@ function replaceText(selector, text) {
   if (element) element.innerText = text
 }
 
-module.exports = { replaceText };
+function removeChildren(element) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
+
+module.exports = { replaceText, removeChildren };
