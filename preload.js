@@ -15,28 +15,39 @@ function renderDomain() {
   const conclusionContainer = document.getElementById('conclusion-container');
   const actionsContainer = document.getElementById('actions-container');
   
-  for (let selector of ['title', 'text']) {
-    u.replaceText(`${selector}`, activeDomain[selector]);
+  u.replaceText('domain-title', activeDomain.title);
+  u.replaceText('domain-text', activeDomain.text);
+  u.removeChildren(actionsContainer);
+  if (!activeDomain.locked && state.game.lastDomain) {
+    const backButton = document.getElementById('back-button');
+    backButton.disabled = false;
+    backButton.removeEventListener('click', clickBackButton);
+    backButton.addEventListener('click', clickBackButton)
   }
 
-  u.removeChildren(actionsContainer);
-
-  if (activeDomain.actions.length > 0) {
+  if (activeDomain.actions && activeDomain.actions.length > 0) {
     for (let actionId of activeDomain.actions) {
       const action = story.actions[actionId];
       let reqArray = [];
-      if (action.reqs && action.reqs.length > 0) {
-        for (let req of action.reqs) {
-          switch (req.type) {
-            case 'min':
-              reqArray.push(state.qualities[req.quality] >= req.value)
-              break;
-            default:
-              console.error('No valid requirement type found.')
-          }
+      if (action.reqs && action.reqs.qualities.length > 0) {
+        for (let req of action.reqs.qualities) {
+          let min = req.min || -Infinity;
+          let max = req.max || Infinity;
+          reqArray.push((state.qualities[req.quality] >= min && 
+            state.qualities[req.quality] <= max))
         }
       }
-      if (reqArray.length > 0 && !reqArray.every(passed => passed)) continue;
+      let disabled = false;
+      if (action.reqs && action.reqs.type === 'all') {
+        if (reqArray.length > 0 && !reqArray.every(passed => passed)) {
+          disabled = true;
+        }
+      } else if (action.reqs && action.reqs.type === 'any') {
+        if (reqArray.length > 0 && !reqArray.some(passed => passed)) {
+          disabled = true;
+        }
+      }
+      
 
       const newAction = document.createElement("div");
       newAction.classList.add('action');
@@ -49,71 +60,118 @@ function renderDomain() {
       newActionText.innerText = action.text;
       newAction.appendChild(newActionText);
 
-      newAction.addEventListener('click', (event) => {
-        u.removeChildren(conclusionContainer);
-        
-        for (let change of action.results.changes) {
-          switch (change.type) {
-            case 'set':
-              state.actions.set(change.quality, change.value);
-              break;
-            case 'adjust':
-              state.actions.adjust(change.quality, change.value);
-              break;
-            default:
-              console.error('No valid change type found.');
+      if (disabled) { 
+        newAction.classList.add('action-disabled');
+      } else {
+        newAction.setAttribute('tabindex', '0');
+        newAction.addEventListener('click', (event) => {
+          u.removeChildren(conclusionContainer);
+          
+          for (let change of action.results.changes) {
+            switch (change.type) {
+              case 'set':
+                state.actions.set(change.quality, change.value);
+                break;
+              case 'adjust':
+                state.actions.adjust(change.quality, change.value);
+                break;
+              default:
+                console.error('No valid change type found.');
+            }
+            renderQuality(change.quality, state.qualities[change.quality]);
+
+            if (action.results.conclusion) {
+              u.removeChildren(conclusionContainer);
+              const conclusion = action.results.conclusion;
+              const newConclusion = document.createElement("div");
+              const newConclusionTitle = document.createElement("h1");
+              const newConclusionText = document.createElement("p");
+
+              newConclusionTitle.innerText = conclusion.title;
+              newConclusionText.innerText = conclusion.text;
+
+              newConclusion.appendChild(newConclusionTitle);
+              newConclusion.appendChild(newConclusionText);
+
+              conclusionContainer.appendChild(newConclusion);
+
+            }
           }
-          renderQuality(change.quality, state.qualities[change.quality]);
-
-          if (action.results.conclusion) {
-            u.removeChildren(conclusionContainer);
-            const conclusion = action.results.conclusion;
-            const newConclusion = document.createElement("div");
-            const newConclusionTitle = document.createElement("h1");
-            const newConclusionText = document.createElement("p");
-
-            newConclusionTitle.innerText = conclusion.title;
-            newConclusionText.innerText = conclusion.text;
-
-            newConclusion.appendChild(newConclusionTitle);
-            newConclusion.appendChild(newConclusionText);
-
-            conclusionContainer.appendChild(newConclusion);
-
-          }
-        }
-        renderDomain();
-        
-      }) // end click event
-
+          renderDomain();
+          
+        }) // end click event
+      } // end if disabled
       actionsContainer.append(newAction);
     }
   }
 }
 
-function renderQuality(quality, value) {  
-  const qualitiesContainer = document.getElementById('qualities-container');
-  const targetQuality = document.getElementById(quality);
+function renderQuality(qualityId, value) {  
+  const quality = story.qualities[qualityId];
+  if (quality.hidden) return;
+  
+  let displayValue = value.toString();
+  let displayDescription = '';
+
+  if (quality.altValue) {
+    const keys = Object.keys(quality.altValue).sort((a, b) => a - b);
+    displayValue = quality.altValue[Math.min(value, keys[keys.length - 1])];
+  }
+  if (quality.description) {
+    const keys = Object.keys(quality.description).sort((a, b) => a - b);
+    displayDescription = quality.description[Math.min(value, keys[keys.length - 1])];
+  }
+
+  const qualitiesContainer = document.getElementById('qualities-categories-container');
+  const targetQuality = document.getElementById(`qual-${qualityId}`);
   if (targetQuality) {
-    if (!value) targetQuality.remove();
-    else targetQuality.lastElementChild.innerText = `${value.toString()}`;
+    const parent = targetQuality.parentElement;
+    if (!value) {
+      targetQuality.remove();
+      if (parent.classList.contains('quality-category') && parent.children.length < 2) {
+        parent.remove();
+      }
+    } else targetQuality.firstElementChild.innerText = `${quality.label} • ${displayValue}`;
   }
   else {
     if (!value) return;
-    const newQuality = document.createElement('div');
-    const newQualityTitle = document.createElement('h1');
-    const newQualityValue = document.createElement('p');
 
-    newQualityTitle.innerText = `${quality}:`
-    newQualityValue.innerText = `${value.toString()}`
+    let parent;
+    const category = quality.category || 'Uncategorized';
+    let targetCategory = document.getElementById(`cat-${category}`);
+    if (targetCategory) {
+      parent = targetCategory;
+    }
+    if (!parent) {
+      const newCategory = document.createElement('div');
+      const newCategoryTitle = document.createElement('h1');
+      newCategory.id = `cat-${category}`;
+      newCategory.classList.add('qualities-category');
+      newCategoryTitle.classList.add('qualities-category-title');
+      newCategoryTitle.innerText = category;
+      newCategory.appendChild(newCategoryTitle);
+      qualitiesContainer.appendChild(newCategory);
+      parent = newCategory;
+    }
+    
+    const newQuality = document.createElement('div');
+    const newQualityTitle = document.createElement('p');
+    newQualityTitle.classList.add('quality-title');
+    newQualityTitle.innerText = `${quality.label} • ${displayValue}`
 
     newQuality.appendChild(newQualityTitle);
-    newQuality.appendChild(newQualityValue);
+
+    if (displayDescription) {
+      const newQualityDescription = document.createElement('p');
+      newQualityDescription.innerHTML = displayDescription;
+      newQualityDescription.classList.add('quality-description');
+      newQuality.appendChild(newQualityDescription);
+    }
 
     newQuality.classList.add('quality');
-    newQuality.id = quality;
+    newQuality.id = `qual-${qualityId}`;
 
-    qualitiesContainer.appendChild(newQuality);
+    parent.appendChild(newQuality);
   }
 }
 
@@ -123,4 +181,13 @@ function setupToolbar() {
     event.preventDefault();
     qualitiesContainer.classList.toggle('offstage');
   }) // end quality button click handler
+}
+
+function clickBackButton(event) {
+  event.preventDefault();
+  const previousDomain = state.game.lastDomain;
+  state.actions.set('domain', previousDomain);
+  renderQuality('domain', previousDomain);
+  u.removeChildren(document.getElementById('conclusion-container'));
+  renderDomain();
 }

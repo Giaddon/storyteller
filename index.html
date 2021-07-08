@@ -5,20 +5,30 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="style.css">
     <title>Storyteller</title>
   </head>
   <body>
-    <div id="qualities-container" class="onstage"></div>
-    <div class="canvas">
-      <div id="conclusion-container"></div>
-      <div id="domains-container">
-        <h1 id="title"></h1>
-        <p id="text"></p>
-        <div id="actions-container"></div>
+    <div id="qualities-container" class="qualities-container onstage">
+      <h1 class="qualities-title">Qualities</h1>
+      <div id='qualities-categories-container'></div>
+      <div id='cat-Uncategorized'>
+        <h1 class="qualities-category-title">Uncategorized</h1>
       </div>
     </div>
-    <div id="toolbar">
+    <div class="canvas">
+      <div id="conclusion-container" class="conclusion-container"></div>
+      <div id="domains-container" class="domains-container">
+        <div class="domain">
+        <h1 id="domain-title"></h1>
+        <p id="domain-text"></p>
+      </div>
+        <div id="actions-container" class="actions-container"></div>
+      </div>
+      <button id="back-button" disabled>Go Back</button>
+    </div>
+    <div id="toolbar" class="toolbar">
       <button id="qualities-button">Qualities</button>
     </div>
     

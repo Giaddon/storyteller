@@ -1,0 +1,56 @@
+@font-face {
+  font-family: 'Title';
+  src: local('Alata'), url(./assets/fonts/Alata.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Standard';
+  src: local('IBMPlexSerif'), url(./assets/fonts/IBMPlexSerif-Regular.ttf) format('truetype');
+}
+
+.domain h1, 
+.conclusion-container h1,
+.qualities-title,
+.qualities-category-title  {
+  font-family: 'Title';
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.qualities-title,
+.qualities-category-title {
+  text-align: center;
+}
+
+.qualities-category > .qualities-category {
+  border-bottom: 1px solid black;
+}
+
+.domain p, .conclusion-container p {
+  font-family: 'Standard';
+  font-size: 15px;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.action h1 {
+  font-family: "Standard", serif;
+  font-size: 18px;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.action p {
+  font-family: 'Standard', serif;
+  font-size: 15px;
+}
+
+.quality-title {
+  font-family: 'Standard', serif;
+  font-size: 16px;
+}
+
+.quality-description {
+  font-family: 'Standard', serif;
+  font-size: 12px;
+}

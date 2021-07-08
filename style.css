@@ -4,62 +4,87 @@
   padding: 0;
 }
 body{
-  background-color: white;
+  background-color: black;
 }
 
 .canvas {
-  max-width: 700px;
+  max-width: 720px;
+  height: 100vh;
   margin: auto;
-  padding: 10px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
+  padding: 15px;
+  font-family: 'Standard';
+  background-color: blanchedalmond;
 }
 
-#domains-container, 
-#actions-container, 
-#conclusion-container {
+.actions-container {
   margin-top: 15px;
 }
 
-.action {
-  border: 1px solid black;
-  padding: 12px;
-  margin-bottom: 12px;
-  cursor: pointer;
+.domain, .conclusion-container div {
+  padding: 15px 20px;
+  background-color: white;
 }
 
-.action:hover {
+.conclusion-container div {
+  margin-bottom: 30px;
+
+}
+
+.actions-container {
+  max-width: 550px;
+  margin: 20px auto;
+}
+
+.action {
+  background-color: white;
+  padding: 15px 15px 15px 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  min-height: 100px;
+}
+
+.action:hover,
+.action:focus {
   outline: 3px solid gold;
 }
 
-.action h1 {
-  font-size: 22px;
+.action-disabled {
+  background-color: tomato;
+  cursor: default;
+}
+.action-disabled:hover {
+  outline: none;
 }
 
-#qualities-container {
+.qualities-container {
   position: fixed;
   display: flexbox;
-  max-width: 200px;
+  width: 250px;
   padding: 10px;
   left: 0;
-  border: 1px solid black;
   background-color: white;
-  transition: left ease 0.4s;
+  transition: left linear 0.4s;
+  height: 100vh;
+}
+
+.quality {
+  outline: 1px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .offstage {
-  left: -50% !important;
+  left: -250px !important;
 }
 
-.quality h1 {
-  font-size: 22px;
-}
-
-#toolbar {
+.toolbar {
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   border-top: 1px solid black;
   padding: 10px;
+  background-color: white;
+  width: 100%;
+  max-width: 720px;
 }
