@@ -4,16 +4,17 @@
   padding: 0;
 }
 body{
-  background-color: black;
+  background-color: white;
 }
 
 .canvas {
-  max-width: 720px;
+  max-width: 650px;
   height: 100vh;
   margin: auto;
   padding: 15px;
   font-family: 'Standard';
-  background-color: blanchedalmond;
+  background-color: inherit;
+  color: black;
 }
 
 .actions-container {
@@ -21,39 +22,45 @@ body{
 }
 
 .domain, .conclusion-container div {
-  padding: 15px 20px;
-  background-color: white;
+  /* padding: 15px 20px; */
+  background-color: inherit;
 }
 
-.conclusion-container div {
-  margin-bottom: 30px;
+.conclusion-container div,
+.domains-container {
+  margin-bottom: 15px;
 
 }
 
 .actions-container {
-  max-width: 550px;
-  margin: 20px auto;
-}
+  /* max-width: 550px;
+  margin: 20px auto;*/
+} 
 
 .action {
-  background-color: white;
-  padding: 15px 15px 15px 20px;
-  margin-bottom: 10px;
+  background-color: inherit;
+  /* padding: 15px 15px 15px 30px; */
+  margin-bottom: 20px;
   cursor: pointer;
-  min-height: 100px;
+  /* min-height: 100px; */
+  /* border-bottom: 1px solid black; */
+  color: gray;
+  transition: color ease 0.3s;
 }
 
 .action:hover,
 .action:focus {
-  outline: 3px solid gold;
+  color: black;
 }
 
 .action-disabled {
-  background-color: tomato;
+  background-color: inherit;
   cursor: default;
+  color: tomato;
 }
 .action-disabled:hover {
   outline: none;
+  color: tomato;
 }
 
 .qualities-container {
@@ -65,6 +72,7 @@ body{
   background-color: white;
   transition: left linear 0.4s;
   height: 100vh;
+  border-right: 1px solid black;
 }
 
 .quality {

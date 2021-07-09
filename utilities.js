@@ -9,4 +9,15 @@ function removeChildren(element) {
   }
 }
 
-module.exports = { replaceText, removeChildren };
+function on(selector, eventType, childSelector, eventHandler) {
+  const elements = document.querySelectorAll(selector)
+  for (element of elements) {
+    element.addEventListener(eventType, eventOnElement => {
+      if (eventOnElement.target.matches(childSelector)) {
+        eventHandler(eventOnElement)
+      }
+    })
+  }
+}
+
+module.exports = { replaceText, removeChildren, on };

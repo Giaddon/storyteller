@@ -1,0 +1,9 @@
+body {
+  background-color: white;
+}
+
+.games-container {
+  margin-top: 15px;
+  outline: 1px solid black;
+  padding: 5px;
+}

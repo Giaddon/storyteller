@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Storyteller</title>
+  </head>
+  <body>
+    <div id="qualities-container" class="qualities-container onstage">
+      <h1 class="qualities-title">Qualities</h1>
+      <div id='qualities-categories-container'></div>
+      <div id='cat-Uncategorized'>
+        <h1 class="qualities-category-title">Uncategorized</h1>
+      </div>
+    </div>
+    <div class="canvas">
+      <div id="conclusion-container" class="conclusion-container"></div>
+      <div id="domains-container" class="domains-container">
+        <div class="domain">
+        <h1 id="domain-title"></h1>
+        <p id="domain-text"></p>
+      </div>
+        <div id="actions-container" class="actions-container"></div>
+      </div>
+      <button id="back-button" disabled>Go Back</button>
+    </div>
+    <div id="toolbar" class="toolbar">
+      <button id="qualities-button">Qualities</button>
+      <button id="travel-button">Travel</button>
+    </div>
+    
+    
+  </body>
+</html>
+
+<!-- For any interactions with your web contents, you want to add scripts to your renderer process. Because the renderer runs in a normal web environment, you can add a <script> tag right before your index.html file's closing </body> tag to include any arbitrary scripts you want:
+  <script src="./renderer.js"></script>
+  <p>Count: <span id="count"></span></p>
+    <button id="increase">+</button>
+    <button id="decrease">-</button>
+
+The code contained in renderer.js can then use the same JavaScript APIs and tooling you use for typical front-end development, such as using webpack to bundle and minify your code or React to manage your user interfaces. -->
