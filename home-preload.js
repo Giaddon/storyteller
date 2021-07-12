@@ -30,8 +30,10 @@ window.addEventListener('DOMContentLoaded', () => {
       const gamesContainer = document.querySelector('#games-container');
       u.removeChildren(gamesContainer);
       for (let game of games) {
+        const gameTitle = game.split('.')[0];
         const newGame = document.createElement("button")
-        newGame.innerText = game;
+        newGame.dataset.filename = game;
+        newGame.innerText = gameTitle;
         gamesContainer.appendChild(newGame);
       }
     } catch (error) {
@@ -42,7 +44,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadGame(event) {
-  const gameLocation = path.join(gamesFolder, event.target.innerText);
+  const gameLocation = path.join(gamesFolder, event.target.dataset.filename);
   const saveFileLocation = path.join(activeProfileFolder, `${event.target.innerText}-save.json`)
   let saveFile;
   try {
@@ -50,10 +52,12 @@ async function loadGame(event) {
   } catch(error) {
     console.error(error.message);
   }
+  let confirmation;
   if (saveFile) {
     console.log(JSON.parse(saveFile));
   } else {
-    await fs.writeFile(saveFileLocation, '{"data":{}}');
+    confirmation = window.confirm('No save file found. Start a new game?')
+    if (confirmation) await fs.writeFile(saveFileLocation, '{"data":{}}');
   }
   let gameContent = await fs.readFile(gameLocation, {encoding: 'utf-8'});
   //console.log(gameContent);

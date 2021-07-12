@@ -1,19 +1,14 @@
 let qualities = {
-  domain: 1,
 };
 
-let game = {
-  lastDomain: null,
-}
-
 let actions = {
+  get: (quality) => qualities[quality],
+  getAll: () => qualities,
   set: (quality, value) => {
-    if (quality === 'domain') game.lastDomain = qualities.domain;
     qualities[quality] = value; 
   },
 
   adjust: (quality, value) => {
-    if (quality === 'domain') game.lastDomain = qualities.domain;
     if (!qualities[quality]) qualities[quality] = 0;
     qualities[quality] += value;
     if (qualities[quality] < 1) delete qualities[quality];
@@ -21,4 +16,4 @@ let actions = {
 
 }
 
-module.exports = { qualities, actions, game };
+module.exports = { qualities, actions };

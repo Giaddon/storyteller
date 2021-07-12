@@ -45,6 +45,11 @@
   font-size: 15px;
 }
 
+.action-req h1 {
+  font-family: 'Title', sans-serif;
+  font-size: 12px;
+}
+
 .quality-title {
   font-family: 'Standard', serif;
   font-size: 16px;

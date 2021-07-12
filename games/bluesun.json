@@ -2,7 +2,16 @@
   "qualities": {
     "domain": {
       "label": "Domain",
-      "hidden": true
+      "hidden": true,
+      "startvalue": 1
+    },
+    "spices": {
+      "label": "Spices",
+      "category": "Goods",
+      "description": {
+        "1": "Spices have been weirdly valuable for thousands of years."
+      },
+      "startvalue": 5
     },
     "archetype": {
       "label": "Archetype",
@@ -58,17 +67,14 @@
     "3": {
       "title": "Blue Sun Station",
       "text": "A nexus of illegal trade, gambling, criminality, and other profitable activities. Orbits an ancient, artificial sun left behind by one of the countless species lost to the galaxy.",
-      "actions": [
-        "casino",
-        "bazaar",
-        "shuttle"
+      "actions": ["bazaar"
       ]
     },
     "4": {
-      "title": "The potion-seller's stall.",
-      "text": "The stall has been sey set up on the side of the road. Numerous bottles populate the shelves.",
+      "title": "Xylax Bazaar.",
+      "text": "A thousand languages reverberate through the packed halls of the bazaar, but the dialect of barter is universal.",
       "actions": [
-        "buyPotion"
+        "sellSpices"
       ]
     }
   },
@@ -142,6 +148,7 @@
       "text": "All this over a thousand credits?",
       "reqs": {
         "type": "all",
+        "hidden": true,
         "qualities": [
           {
             "quality": "archetype",
@@ -165,6 +172,7 @@
       "text": "A thousand credits!?",
       "reqs": {
         "type": "all",
+        "hidden": true,
         "qualities": [
           {
             "quality": "archetype",
@@ -197,57 +205,51 @@
         ]
       }
     },
-    "buyPotion": {
-      "title": "Buy a potion.",
-      "text": "What kind of potion? So many questions!",
-      "reqs": {
-        "type": "any",
-        "qualities": [
-          {
-            "quality": "coins",
-            "type": "min",
-            "value": 3
-          }
-        ]
-      },
+    "bazaar": {
+      "title": "Browse Xylx Bazaar.",
+      "text": "If you want to make some money, trading at the bazaar is a great place to do it.",
       "results": {
         "changes": [
           {
-            "type": "adjust",
-            "quality": "coins",
-            "value": -3
-          },
-          {
-            "type": "adjust",
-            "quality": "potions",
-            "value": 1
+            "type": "set",
+            "quality": "domain",
+            "value": 4
           }
         ]
       }
     },
-    "drinkPotion": {
-      "title": "Drink a potion.",
-      "text": "The liquid glows in the umber bottle.",
+    "sellSpices": {
+      "title": "Sell some spice.",
+      "text": "A serpentine creature with three tounges is offering 100 credits per block of spice.",
       "reqs": {
-        "type": "any",
+        "type": "all",
         "qualities": [
           {
-            "quality": "potions",
-            "type": "min",
-            "value": 1
+            "quality": "spices",
+            "min": 1
+          },
+          {
+            "quality": "archetype",
+            "min": 2,
+            "max": 2
           }
         ]
       },
       "results": {
         "conclusion": {
-          "title": "You quaff the potion.",
-          "text": "It's surprisingly sweet."
+          "title": "A successful transaction.",
+          "text": "With a hiss, the creature stows the spice in a biological pouch."
         },
         "changes": [
           {
             "type": "adjust",
-            "quality": "potions",
+            "quality": "spices",
             "value": -1
+          },
+          {
+            "type": "adjust",
+            "quality": "credits",
+            "value": 100
           }
         ]
       }

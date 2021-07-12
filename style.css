@@ -7,14 +7,35 @@ body{
   background-color: white;
 }
 
-.canvas {
-  max-width: 650px;
-  height: 100vh;
-  margin: auto;
-  padding: 15px;
-  font-family: 'Standard';
+.play-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  min-height: 100vh;
   background-color: inherit;
   color: black;
+  font-family: 'Standard';
+}
+
+.centerpiece {
+  flex: 0 1 auto;
+  max-width: 650px;
+  margin: 10px auto;
+  padding: 15px;
+  
+}
+
+.qualities-container {
+  flex: 0 1 auto;
+  width: 250px;
+  min-width: 200px;
+  padding: 10px;
+  background-color: white;
+  transition: left linear 0.4s;
+  height: 100vh;
+  border-right: 1px solid black;
+  
 }
 
 .actions-container {
@@ -24,6 +45,9 @@ body{
 .domain, .conclusion-container div {
   /* padding: 15px 20px; */
   background-color: inherit;
+}
+.domain {
+  margin-bottom: 30px;
 }
 
 .conclusion-container div,
@@ -39,11 +63,13 @@ body{
 
 .action {
   background-color: inherit;
-  /* padding: 15px 15px 15px 30px; */
-  margin-bottom: 20px;
+  padding: 15px 15px 15px 30px;
+  margin: 0px auto 20px auto;
+  width: 550px;
   cursor: pointer;
+  
   /* min-height: 100px; */
-  /* border-bottom: 1px solid black; */
+  outline: 1px solid black;
   color: gray;
   transition: color ease 0.3s;
 }
@@ -56,24 +82,34 @@ body{
 .action-disabled {
   background-color: inherit;
   cursor: default;
-  color: tomato;
+  color: grey;
+  outline: 1px solid tomato;
 }
 .action-disabled:hover {
-  outline: none;
-  color: tomato;
+  color: grey;
+  outline: 1px solid tomato;
 }
 
-.qualities-container {
-  position: fixed;
-  display: flexbox;
-  width: 250px;
-  padding: 10px;
-  left: 0;
-  background-color: white;
-  transition: left linear 0.4s;
-  height: 100vh;
-  border-right: 1px solid black;
+.action-reqs-container {
+  margin-top: 5px;
+  display: flex;
+  flex-flow: row wrap;
 }
+
+.action-req {
+  flex: 0 1 auto;
+  padding: 5px;
+  color: white;
+  background-color: yellowgreen;
+  width: fit-content;
+  height: 30px;
+  margin-right: 5px;
+}
+
+.req-disabled {
+  background-color: tomato;
+}
+
 
 .quality {
   outline: 1px solid black;

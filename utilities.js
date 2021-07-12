@@ -9,6 +9,8 @@ function removeChildren(element) {
   }
 }
 
+//vanilla event delegation function taken from: 
+//https://flaviocopes.com/javascript-event-delegation/
 function on(selector, eventType, childSelector, eventHandler) {
   const elements = document.querySelectorAll(selector)
   for (element of elements) {
