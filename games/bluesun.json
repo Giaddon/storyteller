@@ -221,38 +221,52 @@
     "sellSpices": {
       "title": "Sell some spice.",
       "text": "A serpentine creature with three tounges is offering 100 credits per block of spice.",
+      "challenge": {
+        "quality": "cunning",
+        "value": 7 
+      },
       "reqs": {
         "type": "all",
         "qualities": [
           {
             "quality": "spices",
             "min": 1
-          },
-          {
-            "quality": "archetype",
-            "min": 2,
-            "max": 2
           }
         ]
       },
       "results": {
-        "conclusion": {
-          "title": "A successful transaction.",
-          "text": "With a hiss, the creature stows the spice in a biological pouch."
-        },
-        "changes": [
-          {
-            "type": "adjust",
-            "quality": "spices",
-            "value": -1
+        "success": {
+          "conclusion": {
+            "title": "A successful transaction.",
+            "text": "With a hiss, the creature stows the spice in a biological pouch."
           },
-          {
-            "type": "adjust",
-            "quality": "credits",
-            "value": 100
-          }
-        ]
-      }
+          "changes": [
+            {
+              "type": "adjust",
+              "quality": "spices",
+              "value": -1
+            },
+            {
+              "type": "adjust",
+              "quality": "credits",
+              "value": 100
+            }
+          ]
+        },  
+        "failure": {
+          "conclusion": {
+            "title": "Theft!",
+            "text": "You were so busy negotiating with the serpent that you didn't notice the others slithering up behind you until it was too late. They take your spice and leave."
+          },
+          "changes": [
+            {
+              "type": "set",
+              "quality": "spices",
+              "value": 0
+            }
+          ]
+        }
+      } 
     }
   }
 }

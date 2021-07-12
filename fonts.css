@@ -22,15 +22,23 @@
   text-align: center;
 }
 
-.qualities-category > .qualities-category {
-  border-bottom: 1px solid black;
-}
-
-.domain p, .conclusion-container p {
+.domain p {
   font-family: 'Standard';
   font-size: 15px;
   line-height: 1.4;
   margin-bottom: 15px;
+}
+
+.conclusion p {
+  font-family: 'Standard';
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.conclusion-outcomes p {
+  color: white;
+  font-family: 'Title', sans-serif;
+  font-size: 12px;
 }
 
 .action h1 {

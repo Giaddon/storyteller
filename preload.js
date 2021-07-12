@@ -60,11 +60,13 @@ function renderDomain() {
   const playerDomainValue = state.actions.get('domain');
   const activeDomain = loadDomain(playerDomainValue);
   const actionsContainer = document.getElementById('actions-container');
-  
-  u.replaceText('domain-title', activeDomain.title);
-  u.replaceText('domain-text', activeDomain.text);
+  let domainContainer = document.querySelector("#domain-container");
+  let oldDomain = document.querySelector("#domain")
+  if (oldDomain) oldDomain.remove();
   u.removeChildren(actionsContainer);
-  
+  let newDomain = components.createDomain(activeDomain);
+  domainContainer.prepend(newDomain);
+
   if (activeDomain.actions && activeDomain.actions.length > 0) {
     for (let action of activeDomain.actions) {
       const newAction = renderAction(action);
@@ -76,6 +78,20 @@ function renderDomain() {
 function renderAction(action) {
   const conclusionContainer = document.getElementById('conclusion-container');
   const newAction = components.createAction(action);
+  
+  if (action.challenge) {
+    let playerValue = state.actions.get(action.challenge.quality);
+    if (!playerValue) playerValue = 0;
+    let qualityLabel = story.actions.get(action.challenge.quality).label;
+    let chance = action.challenge.value - playerValue;
+    if (chance > 6) chance = 0;
+    else if (chance < 2) chance = 100;  
+    else chance = Math.round((1/6 * (6 - (chance - 1))) * 100)
+    let challengePhrase = `This is a ${qualityLabel} challenge.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+    let newChallengeText = document.createElement("p");
+    newChallengeText.innerText = challengePhrase;
+    newAction.querySelector(".action-challenge-container").appendChild(newChallengeText);
+  } // end if challenge
 
   let reqArray = [];
   if (action.reqs && action.reqs.qualities.length > 0) {
@@ -113,6 +129,7 @@ function renderAction(action) {
       disabled = true;
     }
   }
+
   if (disabled) { 
     if (action.reqs.hidden) {
       newAction.remove();
@@ -124,8 +141,15 @@ function renderAction(action) {
     
     newAction.addEventListener('click', (event) => {
       u.removeChildren(conclusionContainer);
-      
-      for (let change of action.results.changes) {
+      let results = action.results
+      if (action.challenge) {
+        let result = Math.ceil(Math.random() * 6) + state.actions.get(action.challenge.quality);
+        passed = result >= action.challenge.value ? true : false;
+        console.log(`${result} vs. ${action.challenge.value}. ${passed}.`);
+        results = passed ? action.results.success : action.results.failure
+      }
+
+      for (let change of results.changes) {
         switch (change.type) {
           case 'set':
             state.actions.set(change.quality, change.value);
@@ -137,23 +161,16 @@ function renderAction(action) {
             console.error('No valid change type found.');
         }
         renderQuality(change.quality, state.actions.get(change.quality));
-
-        if (action.results.conclusion) {
-          u.removeChildren(conclusionContainer);
-          const conclusion = action.results.conclusion;
-          const newConclusion = document.createElement("div");
-          const newConclusionTitle = document.createElement("h1");
-          const newConclusionText = document.createElement("p");
-
-          newConclusionTitle.innerText = conclusion.title;
-          newConclusionText.innerText = conclusion.text;
-
-          newConclusion.appendChild(newConclusionTitle);
-          newConclusion.appendChild(newConclusionText);
-
-          conclusionContainer.appendChild(newConclusion);
-
+      }
+      if (results.conclusion) {
+        let changedQualities = {};
+        for (let change of results.changes) {
+          changedQualities[change.quality] = story.actions.get(change.quality);
         }
+        let conclusion = results.conclusion;
+        let changes = results.changes;
+        let newConclusion = components.createConclusion(conclusion, changes, changedQualities);
+        conclusionContainer.appendChild(newConclusion);
       }
       renderDomain();
       

@@ -9,11 +9,13 @@ body{
 
 .play-container {
   display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
   flex-flow: row nowrap;
   align-items: flex-start;
   align-content: flex-start;
+  justify-content: flex-start;
   min-height: 100vh;
-  background-color: inherit;
   color: black;
   font-family: 'Standard';
 }
@@ -21,9 +23,8 @@ body{
 .centerpiece {
   flex: 0 1 auto;
   max-width: 650px;
-  margin: 10px auto;
+  margin-left: 25px;
   padding: 15px;
-  
 }
 
 .qualities-container {
@@ -31,29 +32,31 @@ body{
   width: 250px;
   min-width: 200px;
   padding: 10px;
-  background-color: white;
-  transition: left linear 0.4s;
   height: 100vh;
-  border-right: 1px solid black;
-  
+  /* border-right: 1px solid black; */
+  outline: 1px solid black;
 }
 
 .actions-container {
   margin-top: 15px;
 }
 
-.domain, .conclusion-container div {
+.domain {
   /* padding: 15px 20px; */
   background-color: inherit;
-}
-.domain {
   margin-bottom: 30px;
 }
 
-.conclusion-container div,
-.domains-container {
-  margin-bottom: 15px;
 
+.conclusion-container {
+  margin-bottom: 20px;
+}
+
+.conclusion-outcomes {
+  background-color: teal;
+  padding: 10px;
+  margin: 15px auto 0px auto;
+  max-width: 550px;
 }
 
 .actions-container {
@@ -70,13 +73,12 @@ body{
   
   /* min-height: 100px; */
   outline: 1px solid black;
-  color: gray;
-  transition: color ease 0.3s;
+  /* transition: outline ease 0.3s; */
 }
 
 .action:hover,
 .action:focus {
-  color: black;
+  outline: 3px solid gold;
 }
 
 .action-disabled {
@@ -90,8 +92,12 @@ body{
   outline: 1px solid tomato;
 }
 
+.action-challenge-container {
+  margin-top: 10px;
+}
+
 .action-reqs-container {
-  margin-top: 5px;
+  margin-top: 10px;
   display: flex;
   flex-flow: row wrap;
 }
