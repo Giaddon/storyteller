@@ -129,6 +129,50 @@ function createConclusion(conclusion, changes = [], qualities = {}) {
   return newConclusion
 }
 
+function createEvent(event, changes = [], qualities = {}) {
+  let newEvent = document.createElement("div");
+  let newEventTitle = document.createElement("h1");
+  let newEventText = document.createElement("p");
+  
+  newEvent.classList.add("event");
+  newEventTitle.innerText = event.title;
+  newEventText.innerText = event.text;
+
+  newEvent.appendChild(newEventTitle);
+  newEvent.appendChild(newEventText);
+
+  if (changes.length > 0) {
+    let newEventOutcomes = document.createElement("div");
+
+    newEventOutcomes.classList.add("event-outcomes");
+    for (let change of changes) {
+      let quality = change.quality;
+      if (qualities[quality].hidden) continue;
+      let outcome = document.createElement("p");
+      let changePhrase = "";
+      if (change.type === "set") {
+        changePhrase = "is now"
+      } else if (change.type === "adjust") {
+        if (change.value > 0) {
+          changePhrase = "increased by"
+        } else {
+          changePhrase = "decreased by"
+        }
+      }
+      let outcomeText = `${qualities[quality].label} ${changePhrase} ${Math.abs(change.value)}.`
+      outcome.innerText = outcomeText;
+      newEventOutcomes.appendChild(outcome);
+    }
+    newEvent.appendChild(newEventOutcomes);
+
+    let seperator = document.createElement("div");
+    seperator.classList.add("event-seperator");
+
+    newEvent.appendChild(seperator);
+  }
+  return newEvent
+}
+
 function createBackButton() {
   let backButton = document.createElement("button");
   backButton.innerText = "Go back."
@@ -143,4 +187,5 @@ module.exports = {
   createQualityCategory, 
   createQuality,
   createConclusion,
+  createEvent,
   createBackButton };

@@ -1,4 +1,3 @@
-const { contextBridge } = require('electron')
 const fs = require('fs');
 const path = require('path');
 const state = require('./state');
@@ -11,9 +10,8 @@ const profilesFolder = path.join(__dirname, 'profiles');
 const gamesFolder = path.join(__dirname, 'games');
 
 window.addEventListener('DOMContentLoaded', () => {
-  setupToolbar();
   startGame("bluesun.json");
-  renderDomain();
+  mainCycle();
 })
 
 function getActiveProfile() {
@@ -56,42 +54,124 @@ function startGame(gameName) {
   }
 }
 
-function renderDomain() {
-  console.log('Domain rendering');
-  const playerDomainValue = state.actions.get('domain');
-  const activeDomain = loadDomain(playerDomainValue);
+/*** CORE GAME LOOP ***/
+function mainCycle(results=null) {
+  let gameState = {};
+  let playerDomainValue = state.actions.get('domain');
+  let activeDomain = loadDomain(playerDomainValue);
+  
+  if (results) {
+    for (let change of results.changes) {
+      handleChange(change, activeDomain.locked);
+    }
+
+    if (results.conclusion) {
+      let changedQualities = {};
+      let changes = results.changes;
+      for (let change of changes) {
+        changedQualities[change.quality] = story.actions.get(change.quality);
+      }
+      gameState.conclusion = {
+        data: results.conclusion,
+        changes,
+        changedQualities,
+      }
+    }
+  }
+
+  playerDomainValue = state.actions.get('domain');
+  activeDomain = loadDomain(playerDomainValue);
+
+  let changeDomain = false;
+  if (activeDomain.events && activeDomain.events.length > 0) {
+    let activeEvent;
+    for (const event of activeDomain.events) {
+      const {active} = evaluateReqs(event.reqs);
+      if (active) {
+        activeEvent = event;
+        break;
+      }
+    } // end event loop
+    if (activeEvent) {
+      let results = activeEvent.results
+      let changes = results.changes;
+      let changedQualities = {};
+      for (let change of changes) {
+        changedQualities[change.quality] = story.actions.get(change.quality);
+        handleChange(change, activeDomain.locked);
+        if (change.quality === 'domain') {
+          changeDomain = true;
+        }
+      }
+      
+      gameState.event = {
+        data: activeEvent,
+        changes,
+        changedQualities,
+      }
+    } // end if activeEvent
+  } // end if events
+  
+  if (changeDomain) {
+    playerDomainValue = state.actions.get('domain');
+    activeDomain = loadDomain(playerDomainValue);
+  }
+
+  gameState.domain = activeDomain;
+  
+  renderGame(gameState);
+}
+
+function renderGame(gameState) {
+  const conclusionContainer = document.getElementById("conclusion-container");
+  const eventContainer = document.getElementById("event-container");
+  const domainContainer = document.getElementById("domain-container");
   const actionsContainer = document.getElementById('actions-container');
-  let backButtonContainer = document.getElementById("back-button-container")
-  let domainContainer = document.getElementById("domain-container");
-  let oldDomain = document.getElementById("domain")
+  const backButtonContainer = document.getElementById("back-button-container");
+  
+  const oldDomain = document.getElementById("domain");
   if (oldDomain) oldDomain.remove();
   u.removeChildren(actionsContainer);
   u.removeChildren(backButtonContainer);
-  let newDomain = components.createDomain(activeDomain);
-  domainContainer.prepend(newDomain);
-
+  u.removeChildren(conclusionContainer);
+  u.removeChildren(eventContainer);
+  
+  const playerDomainValue = state.actions.get('domain');
   const previousDomain = state.actions.getPreviousDomain();
-  if (!activeDomain.locked && previousDomain && previousDomain !== playerDomainValue) {
+  if (!gameState.domain.locked && previousDomain && previousDomain !== playerDomainValue) {
     let backButton = components.createBackButton();
     backButton.addEventListener("click", (event) => {
-      u.removeChildren(document.getElementById('conclusion-container'));
       state.actions.setPreviousDomain(playerDomainValue);
       state.actions.set('domain', previousDomain);
-      renderDomain();
+      mainCycle();
     }); // end back button event listener
     backButtonContainer.appendChild(backButton);
   } 
 
-  if (activeDomain.actions && activeDomain.actions.length > 0) {
-    for (let action of activeDomain.actions) {
-      const newAction = renderAction(action, activeDomain.locked);
+  if (gameState.conclusion) {
+    const {data, changes, changedQualities} = gameState.conclusion;
+    let newConclusion = components.createConclusion(data, changes, changedQualities);
+    conclusionContainer.appendChild(newConclusion);
+  }
+
+  if (gameState.event) {
+    const {data, changes, changedQualities} = gameState.event;
+    let newEvent = components.createEvent(data, changes, changedQualities);
+    eventContainer.appendChild(newEvent);
+  }
+
+  let newDomain = components.createDomain(gameState.domain);
+  domainContainer.prepend(newDomain);
+  
+  if (gameState.domain.actions && gameState.domain.actions.length > 0) {
+    for (let action of gameState.domain.actions) {
+      const newAction = renderAction(action, gameState.domain.locked);
       if (newAction) actionsContainer.append(newAction);
     }
   }
 }
 
 function renderAction(action, domainLock = false) {
-  const conclusionContainer = document.getElementById('conclusion-container');
   const newAction = components.createAction(action);
   
   if (action.challenge) {
@@ -108,9 +188,47 @@ function renderAction(action, domainLock = false) {
     newAction.querySelector(".action-challenge-container").appendChild(newChallengeText);
   } // end if challenge
 
+    const {active, labels} = evaluateReqs(action.reqs)
+    
+    for (const label of labels) {
+      newAction.querySelector(".action-reqs-container").appendChild(label);
+    }
+
+    if (active) { 
+      newAction.setAttribute('tabindex', '0');
+      newAction.addEventListener('click', (event) => { selectAction(action) });
+  } else {
+    if (action.reqs.hidden) {
+      newAction.remove();
+      return;
+    }
+    newAction.classList.add('action-disabled');
+  }
+
+  return newAction;
+}
+
+/*** HELPER FUNCTIONS ***/
+
+function selectAction(action) {
+  let results = action.results
+    if (action.challenge) {
+      let result = Math.ceil(Math.random() * 6) + state.actions.get(action.challenge.quality);
+      passed = result >= action.challenge.value ? true : false;
+      console.log(`${result} vs. ${action.challenge.value}. ${passed}.`);
+      results = passed ? action.results.success : action.results.failure
+    }
+
+    mainCycle(results);
+}
+
+function evaluateReqs(reqs) {
+  if (!reqs) return {active: true, labels: []}
+  
   let reqArray = [];
-  if (action.reqs && action.reqs.qualities.length > 0) {
-    for (let req of action.reqs.qualities) {
+  let labels = [];
+  if (reqs && reqs.qualities.length > 0) {
+    for (let req of reqs.qualities) {
       let playerValue = state.actions.get(req.quality)
       let qualityData = story.actions.get(req.quality);
       let min = req.min || -Infinity;
@@ -129,72 +247,23 @@ function renderAction(action, domainLock = false) {
           label += " ≤ "
           label += max.toString();
         }
-        const newReq = components.createActionReq({label, passed});
-        newAction.querySelector(".action-reqs-container").appendChild(newReq);
+        const newLabel = components.createActionReq({label, passed});
+        labels.push(newLabel);
       }
     }
   }
-  let disabled = false;
-  if (action.reqs && action.reqs.type === 'all') {
-    if (reqArray.length > 0 && !reqArray.every(passed => passed)) {
-      disabled = true;
+  let active = false;
+  if (reqs.type === 'all') {
+    if (reqArray.length > 0 && reqArray.every(passed => passed)) {
+      active = true;
     }
-  } else if (action.reqs && action.reqs.type === 'any') {
-    if (reqArray.length > 0 && !reqArray.some(passed => passed)) {
-      disabled = true;
+  } else if (reqs.type === 'any') {
+    if (reqArray.length > 0 && reqArray.some(passed => passed)) {
+      active = true;
     }
   }
 
-  if (disabled) { 
-    if (action.reqs.hidden) {
-      newAction.remove();
-      return;
-    }
-    newAction.classList.add('action-disabled');
-  } else {
-    newAction.setAttribute('tabindex', '0');
-    
-    newAction.addEventListener('click', (event) => {
-      u.removeChildren(conclusionContainer);
-      let results = action.results
-      if (action.challenge) {
-        let result = Math.ceil(Math.random() * 6) + state.actions.get(action.challenge.quality);
-        passed = result >= action.challenge.value ? true : false;
-        console.log(`${result} vs. ${action.challenge.value}. ${passed}.`);
-        results = passed ? action.results.success : action.results.failure
-      }
-
-      for (let change of results.changes) {
-        if (change.quality === 'domain' && !domainLock ) {
-          state.actions.setPreviousDomain(state.actions.get('domain'))
-        };
-        switch (change.type) {
-          case 'set':
-            state.actions.set(change.quality, change.value);
-            break;
-          case 'adjust':
-            state.actions.adjust(change.quality, change.value);
-            break;
-          default:
-            console.error('No valid change type found.');
-        }
-        renderQuality(change.quality, state.actions.get(change.quality));
-      }
-      if (results.conclusion) {
-        let changedQualities = {};
-        for (let change of results.changes) {
-          changedQualities[change.quality] = story.actions.get(change.quality);
-        }
-        let conclusion = results.conclusion;
-        let changes = results.changes;
-        let newConclusion = components.createConclusion(conclusion, changes, changedQualities);
-        conclusionContainer.appendChild(newConclusion);
-      }
-      renderDomain();
-      
-    }) // end click event
-  } // end if disabled
-  return newAction;
+  return {active, labels};
 }
 
 function loadDomain(domainId) {
@@ -203,11 +272,21 @@ function loadDomain(domainId) {
     const storyRaw = fs.readFileSync(storyLocation);
     const storyData = JSON.parse(storyRaw);
     let activeDomain = storyData.domains[domainId];
+    
     let actions = [];
-    for (action of activeDomain.actions) {
-      actions.push(storyData.actions[action]);
+    for (const actionId of activeDomain.actions) {
+      actions.push(storyData.actions[actionId]);
     }
     activeDomain.actions = actions;
+    
+    if (activeDomain.events && activeDomain.events.length > 0) {
+      let events = [];
+      for (const eventId of activeDomain.events) {
+        events.push(storyData.events[eventId])
+      }
+      activeDomain.events = events;
+    } 
+    
     return activeDomain;
 
   } catch(error) {
@@ -216,13 +295,21 @@ function loadDomain(domainId) {
   }
 }
 
-
-function setupToolbar() {
-  const qualitiesContainer = document.getElementById('qualities-container');
-  document.getElementById('qualities-button').addEventListener('click', (event) => {
-    event.preventDefault();
-    qualitiesContainer.classList.toggle('offstage');
-  }) // end quality button click handler
+function handleChange(change, domainLock) {
+  if (change.quality === 'domain' && !domainLock ) {
+    state.actions.setPreviousDomain(state.actions.get('domain'));
+  };
+  switch (change.type) {
+    case 'set':
+      state.actions.set(change.quality, change.value);
+      break;
+    case 'adjust':
+      state.actions.adjust(change.quality, change.value);
+      break;
+    default:
+      console.error('No valid change type found.');
+  }
+  renderQuality(change.quality, state.actions.get(change.quality));
 }
 
 function renderQuality(qualityId, value) {  
@@ -247,7 +334,7 @@ function renderQuality(qualityId, value) {
 
   if (targetQuality) {
     const parent = targetQuality.parentElement;
-    if (!value) {
+    if (!value || value === 0) {
       targetQuality.remove();
       if (parent.classList.contains('qualities-category') && parent.children.length < 2) {
         parent.remove();
@@ -273,4 +360,12 @@ function renderQuality(qualityId, value) {
 
     parent.appendChild(newQuality);
   }
+}
+
+function setupToolbar() {
+  const qualitiesContainer = document.getElementById('qualities-container');
+  document.getElementById('qualities-button').addEventListener('click', (event) => {
+    event.preventDefault();
+    qualitiesContainer.classList.toggle('offstage');
+  }) // end quality button click handler
 }

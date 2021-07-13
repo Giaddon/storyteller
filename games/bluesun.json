@@ -5,6 +5,11 @@
       "hidden": true,
       "startvalue": 1
     },
+    "suspicion": {
+      "label": "Suspicion",
+      "startvalue": 3,
+      "category": "Risks"
+    },
     "spices": {
       "label": "Spices",
       "category": "Goods",
@@ -101,7 +106,11 @@
       "title": "Xylax Bazaar.",
       "text": "A thousand languages reverberate through the packed halls of the bazaar, but the dialect of barter is universal.",
       "actions": [
-        "sellSpices"
+        "sellSpices",
+        "loiter"
+      ],
+      "events":[
+        "suspicious"
       ]
     }
   },
@@ -245,12 +254,29 @@
         ]
       }
     },
+    "loiter": {
+      "title": "Loiter suspiciously.",
+      "text": "There's no law against it, right?",
+      "results": {
+        "conclusion": {
+          "title": "You're up to something...",
+          "text": "You fidget. You squirm. You lean against a beam then change your mind. Why are you sweating?"
+        },
+        "changes": [
+          {
+            "type": "adjust",
+            "quality": "suspicion",
+            "value": 1
+          }
+        ]
+      }
+    },
     "sellSpices": {
       "title": "Sell some spice.",
       "text": "A serpentine creature with three tounges is offering 100 credits per block of spice.",
       "challenge": {
         "quality": "cunning",
-        "value": 7 
+        "value": 1 
       },
       "reqs": {
         "type": "all",
@@ -294,6 +320,40 @@
           ]
         }
       } 
+    }
+  },
+  "events": {
+    "suspicious": {
+      "title": "You've caught the authorities' eye!",
+      "text":"Your behavior has driven your suspicion beyond tolerable levels. A couple of uniformed goons start following you. After a few attempts to lose them in the chaos of the station, they corner you and shake you down.",
+      "reqs": {
+        "type": "all",
+        "qualities":[
+          {
+            "quality": "suspicion",
+            "min": 5
+          }
+        ]
+      },
+      "results": {
+        "changes":[
+          {
+            "quality": "suspicion",
+            "type": "set",
+            "value": 0
+          },
+          {
+            "quality": "credits",
+            "type": "adjust",
+            "value": -36          
+          },
+          {
+            "quality": "domain",
+            "type": "set",
+            "value": 3         
+          }
+        ]
+      }
     }
   }
 }

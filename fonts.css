@@ -10,6 +10,7 @@
 
 .domain h1, 
 .conclusion-container h1,
+.event-container h1,
 .qualities-title,
 .qualities-category-title  {
   font-family: 'Title';
@@ -29,13 +30,15 @@
   margin-bottom: 15px;
 }
 
-.conclusion p {
+.conclusion p, 
+.event p {
   font-family: 'Standard';
   font-size: 15px;
   line-height: 1.4;
 }
 
-.conclusion-outcomes p {
+.conclusion-outcomes p,
+.event-outcomes p  {
   color: white;
   font-family: 'Title', sans-serif;
   font-size: 12px;
