@@ -13,6 +13,31 @@
       },
       "startvalue": 5
     },
+    "parts": {
+      "label": "Machine parts",
+      "category": "Goods",
+      "startvalue": 3
+    },
+    "gems": {
+      "label": "Gems",
+      "category": "Goods",
+      "startvalue": 7
+    },
+    "secrets": {
+      "label": "Trade secrets",
+      "category": "Goods",
+      "startvalue": 9
+    },
+    "minerals": {
+      "label": "Minerals",
+      "category": "Goods",
+      "startvalue": 15
+    },
+    "eggs": {
+      "label": "Eggs",
+      "category": "Goods",
+      "startvalue": 4
+    },
     "archetype": {
       "label": "Archetype",
       "category": "Background",
@@ -51,6 +76,7 @@
     "1": {
       "title": "Staring Down the Barrel of a Modified X-42 Laser Blaster",
       "text": "It's true what they say about your life flashing before your eyes when you're about to die. As the finger on the trigger starts to squeeze, what do you see?",
+      "locked": true,
       "actions": [
         "warrior",
         "trader"
@@ -59,6 +85,7 @@
     "2": {
       "title": "ZAP!",
       "text": "The searing hot bolt of purple energy grazes your cheek. You're alive.\n\"Your kind isn't so useful with a laser-hole in your skull. Bring back a thousand credits. Or you're dead for real.\" \nThe enforcer whips her scaled tale behind her with a flourish and is gone.",
+      "locked": true,
       "actions": [
         "getUpTrader",
         "getUpWarrior"

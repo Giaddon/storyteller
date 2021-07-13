@@ -120,8 +120,20 @@ function createConclusion(conclusion, changes = [], qualities = {}) {
       newConclusionOutcomes.appendChild(outcome);
     }
     newConclusion.appendChild(newConclusionOutcomes);
+
+    let seperator = document.createElement("div");
+    seperator.classList.add("conclusion-seperator");
+
+    newConclusion.appendChild(seperator);
   }
   return newConclusion
+}
+
+function createBackButton() {
+  let backButton = document.createElement("button");
+  backButton.innerText = "Go back."
+
+  return backButton;
 }
 
 module.exports = { 
@@ -130,4 +142,5 @@ module.exports = {
   createActionReq,
   createQualityCategory, 
   createQuality,
-  createConclusion };
+  createConclusion,
+  createBackButton };

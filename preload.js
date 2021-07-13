@@ -57,25 +57,40 @@ function startGame(gameName) {
 }
 
 function renderDomain() {
+  console.log('Domain rendering');
   const playerDomainValue = state.actions.get('domain');
   const activeDomain = loadDomain(playerDomainValue);
   const actionsContainer = document.getElementById('actions-container');
-  let domainContainer = document.querySelector("#domain-container");
-  let oldDomain = document.querySelector("#domain")
+  let backButtonContainer = document.getElementById("back-button-container")
+  let domainContainer = document.getElementById("domain-container");
+  let oldDomain = document.getElementById("domain")
   if (oldDomain) oldDomain.remove();
   u.removeChildren(actionsContainer);
+  u.removeChildren(backButtonContainer);
   let newDomain = components.createDomain(activeDomain);
   domainContainer.prepend(newDomain);
 
+  const previousDomain = state.actions.getPreviousDomain();
+  if (!activeDomain.locked && previousDomain && previousDomain !== playerDomainValue) {
+    let backButton = components.createBackButton();
+    backButton.addEventListener("click", (event) => {
+      u.removeChildren(document.getElementById('conclusion-container'));
+      state.actions.setPreviousDomain(playerDomainValue);
+      state.actions.set('domain', previousDomain);
+      renderDomain();
+    }); // end back button event listener
+    backButtonContainer.appendChild(backButton);
+  } 
+
   if (activeDomain.actions && activeDomain.actions.length > 0) {
     for (let action of activeDomain.actions) {
-      const newAction = renderAction(action);
+      const newAction = renderAction(action, activeDomain.locked);
       if (newAction) actionsContainer.append(newAction);
     }
   }
 }
 
-function renderAction(action) {
+function renderAction(action, domainLock = false) {
   const conclusionContainer = document.getElementById('conclusion-container');
   const newAction = components.createAction(action);
   
@@ -150,6 +165,9 @@ function renderAction(action) {
       }
 
       for (let change of results.changes) {
+        if (change.quality === 'domain' && !domainLock ) {
+          state.actions.setPreviousDomain(state.actions.get('domain'))
+        };
         switch (change.type) {
           case 'set':
             state.actions.set(change.quality, change.value);
