@@ -1,7 +1,9 @@
 let playerQualities = {};
-let qualityData = {};
+let worldData = {};
 let game = {
-  activeDomain: {},
+  inStory: false,
+  activeDomain: null,
+  activeStory: null,
   previousDomainId: "",
   hands: {},
   activeCard: {
@@ -9,9 +11,10 @@ let game = {
     cardId: "",
   },
   window: {
-    domain: null,
+    header: null,
+    options: null,
     conclusion: null,
-    event: null,
+    locked: null,
   }  
 }
 
@@ -32,17 +35,22 @@ let actions = {
       delete playerQualities[qualityId];
     } 
   },
-  getQualityData: (qualityId) => qualityData[qualityId],
-  setQualityData: (data) => {qualityData = data}, 
-  setDomain: (domain) => {
-    if (Object.keys(game.activeDomain).length > 0) {
-      if (game.activeDomain.locked !== true) {
-        setPreviousDomain(game.activeDomain.id);
-      }
+  setWorldData: (data) => worldData = data,
+  getQualityData: (qualityId) => worldData.qualities[qualityId],
+  getDomainData: (domainId) => ({...worldData.domains[domainId]}),
+  getStoryData: (storyId) => ({...worldData.stories[storyId]}),
+  getEventData: (eventId) => ({...worldData.events[eventId]}),
+  getActionData: (actionId) => ({...worldData.actions[actionId]}),
+  setActiveDomain: (domain) => game.activeDomain = domain,
+  getActiveDomain: () => {
+    if (game.activeDomain) {
+      return {...game.activeDomain};
+    } else {
+      return null
     }
-    game.activeDomain = domain
   },
-  getDomain: () => game.activeDomain,
+  setActiveStory: (storyId) => {game.activeStory = storyId},
+  getActiveStory: () => game.activeStory,
   setPreviousDomain: (domainId) => {game.previousDomainId = domainId},
   getPreviousDomain: () => game.previousDomainId,
   getHand: (domainId) => game.hands[domainId],
@@ -75,11 +83,23 @@ let actions = {
       console.error(error.message);
     }
   },
-  setWindowDomain: (domain) => {game.window.domain = domain},
-  getWindowDomain: () => game.window.domain,
+  enterStory: (storyId) => {
+    game.inStory = true;
+    game.activeStory = storyId;
+  },
+  exitStory: () => {
+    game.inStory = false;
+    game.activeStory = null;
+  },
+  isInStory: () => game.inStory,
+  setWindowHeader: (header) => {game.window.header = header},
+  getWindowHeader: () => ({...game.window.header}),
+  setWindowOptions: (options) => {game.window.options = options},
+  getWindowOptions: () => ({...game.window.options}),
   setWindowEvent: (event) => {game.window.event = event},
   getWindowEvent: () => game.window.event,
   setWindowConclusion: (conclusion) => {game.window.conclusion = conclusion},
+  setWindowLocked: (boolean) => {game.window.locked = boolean},
   getWindowConclusion: () => game.window.conclusion,
   getWindow: () => game.window,
 }

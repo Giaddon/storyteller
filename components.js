@@ -1,39 +1,56 @@
-function createAction(action) {
-  const newAction = document.createElement("div");
-  newAction.classList.add('action');
+function createHeader(headerData) {
+  let header = document.createElement("div");
+  let title = document.createElement("h1");
+  let text = document.createElement("p");
 
-  const newActionTitle = document.createElement("h1");
-  newActionTitle.innerText = action.title;
-  newAction.appendChild(newActionTitle);
-  
-  const newActionText = document.createElement("p");
-  newActionText.innerText = action.text;
-  newAction.appendChild(newActionText);
+  header.classList.add("header");
+  header.id = "header";
+  title.innerText = headerData.title;
+  text.innerText = headerData.text;
 
-  const newActionChallengeContainer = document.createElement('div');
-  newActionChallengeContainer.classList.add("action-challenge-container");
-  newAction.appendChild(newActionChallengeContainer);
+  header.appendChild(title);
+  header.appendChild(text);
 
-  const newActionReqsContainer = document.createElement('div');
-  newActionReqsContainer.classList.add("action-reqs-container");
-  newAction.appendChild(newActionReqsContainer);
-
-  return newAction;
+  return header;
 }
 
-function createActionReq(req){
-  const newReq = document.createElement('div');
-  newReq.classList.add('action-req');
+
+function createOption(optionData) {
+  let option = document.createElement("div");
+  option.classList.add('option');
+
+  let title = document.createElement("h1");
+  title.innerText = optionData.title;
+  option.appendChild(title);
+  
+  let text = document.createElement("p");
+  text.innerText = optionData.text;
+  option.appendChild(text);
+
+  let challengeContainer = document.createElement('div');
+  challengeContainer.classList.add("option-challenge-container");
+  option.appendChild(challengeContainer);
+
+  let reqsContainer = document.createElement('div');
+  reqsContainer.classList.add("option-reqs-container");
+  option.appendChild(reqsContainer);
+
+  return option;
+}
+
+function createOptionReq(reqData){
+  const req = document.createElement('div');
+  req.classList.add('option-req');
 
   const label = document.createElement('h1');
-  label.innerText = req.label;
-  newReq.appendChild(label);
+  label.innerText = reqData.label;
+  req.appendChild(label);
 
-  if (!req.passed) {
-    newReq.classList.add('req-disabled');
+  if (!reqData.passed) {
+    req.classList.add('req-disabled');
   }
 
-  return newReq;
+  return req;
 }
 
 
@@ -69,21 +86,7 @@ function createQuality(id, label, value, description = "", ) {
   return newQuality;
 }
 
-function createDomain(domain) {
-  let newDomain = document.createElement("div");
-  let newDomainTitle = document.createElement("h1");
-  let newDomainText = document.createElement("p");
 
-  newDomain.classList.add("domain");
-  newDomain.id = "domain";
-  newDomainTitle.innerText = domain.title;
-  newDomainText.innerText = domain.text;
-
-  newDomain.appendChild(newDomainTitle);
-  newDomain.appendChild(newDomainText);
-
-  return newDomain;
-}
 
 function createConclusion(conclusion, changes = [], qualities = {}, challenge) {
   let newConclusion = document.createElement("div");
@@ -200,9 +203,9 @@ function createDrawButton() {
 }
 
 module.exports = { 
-  createDomain,
-  createAction, 
-  createActionReq,
+  createHeader,
+  createOption, 
+  createOptionReq,
   createQualityCategory, 
   createQuality,
   createConclusion,

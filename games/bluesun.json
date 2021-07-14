@@ -1,10 +1,5 @@
 {
   "qualities": {
-    "domain": {
-      "label": "Domain",
-      "hidden": true,
-      "startvalue": 1
-    },
     "suspicion": {
       "label": "Suspicion",
       "startvalue": 3,
@@ -77,74 +72,120 @@
       "category": "Currency"
     }
   },
-  "domains": {
-    "1": {
-      "id": "1",
+  "stories": {
+    "start": {
+      "id": "start",
+      "start": true,
       "title": "Staring Down the Barrel of a Modified X-42 Laser Blaster",
       "text": "It's true what they say about your life flashing before your eyes when you're about to die. As the finger on the trigger starts to squeeze, what do you see?",
-      "locked": true,
+      "button": {
+        "title": "",
+        "text": ""
+      },
+      "reqs": {
+        "type": "",
+        "visibility": "",
+        "qualities": []
+      },
       "actions": [
         "warrior",
         "trader"
       ]
     },
-    "2": {
-      "id": "2",
+    "zap": {
+      "id": "zap",
       "title": "ZAP!",
       "text": "The searing hot bolt of purple energy grazes your cheek. You're alive.\n\"Your kind isn't so useful with a laser-hole in your skull. Bring back a thousand credits. Or you're dead for real.\" \nThe enforcer whips her scaled tale behind her with a flourish and is gone.",
-      "locked": true,
+      "button": {
+        "title": "",
+        "text": ""
+      },
+      "reqs": {
+        "type": "",
+        "visibility": "",
+        "qualities": []
+      },
       "actions": [
         "getUpTrader",
         "getUpWarrior"
       ]
     },
-    "3": {
-      "id": "3",
-      "title": "Blue Sun Station",
-      "text": "A nexus of illegal trade, gambling, criminality, and other profitable activities. Orbits an ancient, artificial sun left behind by one of the countless species lost to the galaxy.",
-      "actions": ["bazaar"
-      ],
-      "cards": [
-        "brigands",
-        "credits"
-      ]
-    },
-    "4": {
-      "id": "4",
+    "bazaar": {
+      "id": "bazaar",
       "title": "Xylax Bazaar.",
       "text": "A thousand languages reverberate through the packed halls of the bazaar, but the dialect of barter is universal.",
+      "button": {
+        "title": "Browse Xylx Bazaar.",
+        "text": "If you want to make some money, trading at the bazaar is a great place to do it."
+      },
+      "reqs": null,
       "actions": [
         "sellSpices",
         "loiter"
+      ]
+    },
+    "brigands": {
+      "id": "brigands",
+      "title": "Under Attack!",
+      "text": "Klaxons sound throughout the station! An assault ship full of raiders is launching drill-pods packed full of bandits!",
+      "button":{
+        "title": "Brigands!",
+        "text": "Klaxons sounds throughout the station!"
+      },
+      "actions": [
+        "repel"
+      ]
+    },
+    "credits": {
+      "id": "credits",
+      "title": "",
+      "text": "",
+      "button": {
+        "title": "Some credits on the floor.",
+        "text": "That's lucky. Better scoop them up."
+      },
+      "reqs": null,
+      "actions": [
+        "pickUpCredits"
+      ]
+    }
+  },
+  "domains": {
+    "station": {
+      "id": "station",
+      "title": "Blue Sun Station",
+      "text": "A nexus of illegal trade, gambling, criminality, and other profitable activities. Orbits an ancient, artificial sun left behind by one of the countless species lost to the galaxy.",
+      "locked": false,
+      "stories": [
+        "bazaar"
+      ],
+      "discoverableStories": [
+        "brigands",
+        "credits"
       ],
       "events":[
         "suspicious"
-      ]
-    },
-    "5": {
-      "id": "5",
-      "title": "Under Attack!",
-      "text": "Klaxons sound throughout the station! An assault ship full of raiders is launching drill-pods packed full of bandits!",
-      "actions": [
-        "repel"
       ]
     }
   },
   "actions": {
     "warrior": {
-      "title": "A life of adventure and conflict.",
-      "text": "I was an explorer. A warrior. And to some, a hero.",
+      "id": "warrior",
+      "button": {
+        "title": "A life of adventure and conflict.",
+        "text": "I was an explorer. A warrior. And to some, a hero."
+      },
+      "reqs": null,
       "results": {
         "conclusion": {
           "title": "A Hero.",
           "text": "Of course it would end this way. You've made a lot of enemies as you fought your way across the galaxy."
         },
+        "traverse": {
+          "type":"story",
+          "destination": "zap"
+        },
         "changes": [
-          {
-            "type": "set",
-            "quality": "domain",
-            "value": 2
-          },
           {
             "type": "set",
             "quality": "archetype",
@@ -164,19 +205,21 @@
       }
     },
     "trader": {
-      "title": "A life of industry and trade.",
-      "text": "I was a negotiator. A merchant. I found opportunities few could.",
+      "id": "trader",
+      "button": {
+        "title": "A life of industry and trade.",
+        "text": "I was a negotiator. A merchant. I found opportunities few could."
+      },
       "results": {
         "conclusion": {
           "title": "A Trader",
           "text": "Is this the result of an exchange gone wrong? With a little more time, you're sure you could find a way out of this. There's always a way to make a deal."
         },
+        "traverse": {
+          "type":"story",
+          "destination": "zap"
+        },
         "changes": [
-          {
-            "type": "set",
-            "quality": "domain",
-            "value": 2
-          },
           {
             "type": "set",
             "quality": "archetype",
@@ -196,8 +239,11 @@
       }
     },
     "getUpTrader": {
-      "title": "Pick yourself up.",
-      "text": "All this over a thousand credits?",
+      "id": "getUpTrader",
+      "button": {
+        "title": "Pick yourself up.",
+        "text": "All this over a thousand credits?"
+      },
       "reqs": {
         "type": "all",
         "hidden": true,
@@ -210,18 +256,30 @@
         ]
       },
       "results": {
-        "changes": [
+        "traverse": {
+          "type":"domain",
+          "destination": "station"
+        },
+        "changes": [ 
           {
-            "quality": "domain",
+            "quality": "debt",
             "type": "set",
-            "value": 3
+            "value": 1
+          },
+          {
+            "quality": "credits",
+            "type": "set",
+            "value": 10
           }
         ]
       }
     },
     "getUpWarrior": {
-      "title": "Pick yourself up.",
-      "text": "A thousand credits!?",
+      "id": "getUpWarrior",
+      "button": {
+        "title": "Pick yourself up.",
+        "text": "A thousand credits!?"
+      },
       "reqs": {
         "type": "all",
         "hidden": true,
@@ -238,12 +296,11 @@
           "title": "A debt to pay.",
           "text": "A thousand credits is a lot to scrape together quickly. Fortunately this station is home to a lot of black market hustlers and gangsters. Plenty of people with money who need some muscle."
         },
+        "traverse": {
+          "type":"domain",
+          "destination": "station"
+        },
         "changes": [
-          {
-            "quality": "domain",
-            "type": "set",
-            "value": 3
-          },
           {
             "quality": "debt",
             "type": "set",
@@ -257,22 +314,12 @@
         ]
       }
     },
-    "bazaar": {
-      "title": "Browse Xylx Bazaar.",
-      "text": "If you want to make some money, trading at the bazaar is a great place to do it.",
-      "results": {
-        "changes": [
-          {
-            "type": "set",
-            "quality": "domain",
-            "value": 4
-          }
-        ]
-      }
-    },
     "loiter": {
-      "title": "Loiter suspiciously.",
-      "text": "There's no law against it, right?",
+      "id": "loiter",
+      "button": {
+        "title": "Loiter suspiciously.",
+        "text": "There's no law against it, right?"
+      },
       "results": {
         "conclusion": {
           "title": "You're up to something...",
@@ -288,11 +335,14 @@
       }
     },
     "sellSpices": {
-      "title": "Sell some spice.",
-      "text": "A serpentine creature with three tounges is offering 100 credits per block of spice.",
+      "id": "sellSpices",
+      "button": {
+        "title": "Sell some spice.",
+        "text": "A serpentine creature with three tounges is offering 100 credits per block of spice."
+      },
       "challenge": {
         "quality": "cunning",
-        "value": 5 
+        "difficulty": 5 
       },
       "reqs": {
         "type": "all",
@@ -337,46 +387,15 @@
         }
       } 
     },
-    "brigands": {
-      "id": "brigands",
-      "type": "card",
-      "title": "Brigands!",
-      "text": "Klaxons sounds throughout the station!",
-      "results": {
-        "changes": [
-          {
-            "quality": "domain",
-            "type": "set",
-            "value": 5
-          }
-        ]
-      }
-    },
-    "credits": {
-      "id": "credits",
-      "type": "card",
-      "title": "Some credits on the floor.",
-      "text": "That's lucky. Better scoop them up.",
-      "results": {
-        "conclusion": {
-          "title": "Easy money.",
-          "text": "You hurridly stash the credits in your pockets."
-        },
-        "changes": [
-          {
-            "quality": "credits",
-            "type": "adjust",
-            "value": 24
-          }
-        ]
-      }
-    },
     "repel": {
-      "title": "Repel them!",
-      "text": "Blue Sun often comes under attack from bandits and raiders. The station pays those who defend it well.",
+      "id": "repel",
+      "button": {
+        "title": "Repel them!",
+        "text": "Blue Sun often comes under attack from bandits and raiders. The station pays those who defend it well."
+      },
       "challenge": {
         "quality": "strength",
-        "value": 5
+        "difficulty": 5
       },
       "results": {
         "success": {
@@ -385,11 +404,6 @@
             "text": "With a prismatic spray of blaster fire, the brigands are sent packing. You personally throttled their leader and delivered her to a representative of the station masters."
           },
           "changes": [
-            {
-              "quality": "domain",
-              "type": "set",
-              "value": 3
-            },
             {
               "quality": "credits",
               "type": "adjust",
@@ -404,11 +418,6 @@
           },
           "changes": [
             {
-              "quality": "domain",
-              "type": "set",
-              "value": 3
-            },
-            {
               "quality": "credits",
               "type": "adjust",
               "value": 100
@@ -416,12 +425,87 @@
           ]
         }
       }
+    },
+    "pickUpCredits": {
+      "id": "pickUpCredits",
+      "button": {
+        "title": "Scoop 'em up.",
+        "text": "Quick, while no one's watching."
+      },
+      "results": {
+        "conclusion": {
+          "title": "Easy money.",
+          "text": "You hurridly stash the credits in your pockets."
+        },
+        "changes": [
+          {
+            "quality": "credits",
+            "type": "adjust",
+            "value": 24
+          }
+        ]
+      }
+    },
+    "escapeAttempt": {
+      "id": "escapeAttempt",
+      "button": {
+        "title":"Try to lose them.",
+        "text": "Surely they're not paid enough to follow you across the entire station?"
+      },
+      "challenge": {
+        "quality": "cunning",
+        "difficulty": 4
+      },
+      "results": {
+        "success": {
+          "conclusion":{
+            "title": "Like smoke.",
+            "text": "A right, then a left. Two rights, then eight lefts in quick succession. You stop, survey the crowd discreetly. No sign of them."
+          },
+          "traverse": {
+            "type": "domain",
+            "destination": "station"
+          },
+          "changes":[
+            {
+              "quality": "suspicion",
+              "type": "adjust",
+              "value": -3
+            }
+          ]
+        },
+        "failure": {
+          "conclusion":{
+            "title": "No escape.",
+            "text": "After a few attempts to lose them in the chaos of the station, they corner you and shake you down."
+          },
+          "traverse": {
+            "type": "domain",
+            "destination": "station"
+          },
+          "changes":[
+            {
+              "quality": "suspicion",
+              "type": "set",
+              "value": 0
+            },
+            {
+              "quality": "credits",
+              "type": "adjust",
+              "value": -36          
+            }
+          ]
+        }
+        
+      }
     }
   },
   "events": {
     "suspicious": {
+      "id": "suspicious",
+      "locked": true,
       "title": "You've caught the authorities' eye!",
-      "text":"Your behavior has driven your suspicion beyond tolerable levels. A couple of uniformed goons start following you. After a few attempts to lose them in the chaos of the station, they corner you and shake you down.",
+      "text":"Your behavior has driven your suspicion beyond tolerable levels. A couple of uniformed goons start following you.",
       "reqs": {
         "type": "all",
         "qualities":[
@@ -431,25 +515,9 @@
           }
         ]
       },
-      "results": {
-        "changes":[
-          {
-            "quality": "suspicion",
-            "type": "set",
-            "value": 0
-          },
-          {
-            "quality": "credits",
-            "type": "adjust",
-            "value": -36          
-          },
-          {
-            "quality": "domain",
-            "type": "set",
-            "value": 3         
-          }
-        ]
-      }
+      "actions":[
+        "escapeAttempt"
+      ]
     }
   }
 }

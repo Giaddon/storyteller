@@ -33,18 +33,18 @@ body{
   flex: 0 1 auto;
   width: 250px;
   min-width: 200px;
-  padding: 10px 10px 50px 10px;
+  padding: 10px 20px 50px 10px;
   height: 100vh;
   /* border-right: 1px solid black; */
   outline: 1px solid black;
   overflow-y:scroll;
 }
 
-.actions-container {
+.options-container {
   margin-top: 15px;
 }
 
-.domain {
+.header {
   /* padding: 15px 20px; */
   background-color: inherit;
   margin-bottom: 30px;
@@ -74,12 +74,12 @@ body{
   background-color: tomato;
 }
 
-.actions-container {
+.options-container {
   /* max-width: 550px;
   margin: 20px auto;*/
 } 
 
-.action {
+.option {
   background-color: inherit;
   padding: 15px 15px 15px 30px;
   margin: 0px auto 15px auto;
@@ -91,33 +91,33 @@ body{
   /* transition: outline ease 0.3s; */
 }
 
-.action:hover,
-.action:focus {
+.option:hover,
+.option:focus {
   outline: 3px solid gold;
 }
 
-.action-disabled {
+.option-disabled {
   background-color: inherit;
   cursor: default;
   color: grey;
   outline: 1px solid tomato;
 }
-.action-disabled:hover {
+.option-disabled:hover {
   color: grey;
   outline: 1px solid tomato;
 }
 
-.action-challenge-container {
+.option-challenge-container {
   margin-top: 10px;
 }
 
-.action-reqs-container {
+.option-reqs-container {
   margin-top: 10px;
   display: flex;
   flex-flow: row wrap;
 }
 
-.action-req {
+.option-req {
   flex: 0 1 auto;
   padding: 5px;
   color: white;

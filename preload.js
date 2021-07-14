@@ -11,7 +11,6 @@ const gamesFolder = path.join(__dirname, 'games');
 
 window.addEventListener('DOMContentLoaded', () => {
   startGame("bluesun.json");
-  mainCycle();
 })
 
 function getActiveProfile() {
@@ -42,8 +41,9 @@ function parseGameData(gameName) {
 
 function startGame(gameName) {
   gameData = parseGameData(gameName);
-  state.actions.setQualityData(gameData.qualities);
-  //Setup starting qualities
+  state.actions.setWorldData(gameData);
+  
+  //Set up starting qualities
   for (const [id, quality] of Object.entries(gameData.qualities)) {
     if (quality.startvalue) {
       state.actions.setQuality(id, quality.startvalue);
@@ -52,185 +52,268 @@ function startGame(gameName) {
       }
     }
   }
+  //Set up starting story
+  let storyId = null;
+  for (const story of Object.values(gameData.stories)) {
+    if (story.start) {
+      storyId = story.id;
+      break;
+    }
+  }
+  const results = {
+    "traverse": {
+      "type": "story",
+      "destination": storyId,
+    }
+  } 
+  
+  mainCycle(results);
 }
 
 /*** CORE GAME LOOP ***/
 function mainCycle(results=null) {
+  console.log("Cycling with results: ", results)
+  
   state.actions.setWindowConclusion(null);
-  state.actions.setWindowEvent(null);
-
+  state.actions.setWindowOptions(null);
+  state.actions.setWindowLocked(false);
+  
   if (results) {
-    for (let change of results.changes) {
-      handleChange(change);
+    if (results.changes && results.changes.length > 0) {
+      for (let change of results.changes) {
+        handleChange(change);
+      }
     }
 
     if (results.conclusion) {
       const conclusion = prepareWindow(results, results.conclusion)
       state.actions.setWindowConclusion(conclusion);
     }
-  }
 
-  let playerDomainValue = state.actions.getQuality('domain');
-  let activeDomain = loadDomain(playerDomainValue);
+    if (results.traverse) {
+      if (results.traverse.type === "story") {
+        state.actions.enterStory(results.traverse.destination);
+        const story = loadStory(results.traverse.destination)
+        const header = {
+          title: story.title,
+          text: story.text
+        }
+        state.actions.setWindowHeader(header);
+        state.actions.setWindowOptions(story.actions);
+        state.actions.setWindowLocked(story.locked);
 
-  let changeDomain = false;
-  let activeEvent = null;
-  if (activeDomain.events && activeDomain.events.length > 0) {
-    for (const event of activeDomain.events) {
-      const {active} = evaluateReqs(event.reqs);
-      if (active) {
-        activeEvent = event;
-        break;
+      } else if (results.traverse.type === "domain") {
+        state.actions.exitStory();
+        const domain = loadDomain(results.traverse.destination);
+        state.actions.setActiveDomain(domain);
+        const header = {
+          title: domain.title,
+          text: domain.text
+        }
+        state.actions.setWindowHeader(header);
+        state.actions.setWindowOptions(domain.stories);
       }
-    } // end event loop
-    
-    if (activeEvent) {
-      const results = activeEvent.results
-      const changes = results.changes;
-      for (let change of changes) {
-        handleChange(change);
-        if (change.quality === 'domain') {
-          changeDomain = true;
+    } else {
+      if (state.actions.isInStory()) {
+        const activeStoryId = state.actions.getActiveStory()
+        const story = loadStory(activeStoryId)
+        const header = {
+          title: story.title,
+          text: story.text
+        }
+        state.actions.setWindowHeader(header);
+        state.actions.setWindowOptions(story.actions);
+        state.actions.setWindowLocked(story.locked);
+      } else {
+        const activeDomain = state.actions.getActiveDomain()
+        const domain = loadDomain(activeDomain.id);
+        const header = {
+          title: domain.title,
+          text: domain.text
+        }
+        state.actions.setWindowHeader(header);
+        state.actions.setWindowOptions(domain.stories);
+      }
+    }
+
+    let activeDomain = state.actions.getActiveDomain();
+    if (activeDomain) {
+      if (activeDomain.events && activeDomain.events.length > 0) {
+        let activeEvent;
+        for (const event of activeDomain.events) {
+          const {active} = evaluateReqs(event.reqs);
+          if (active) {
+            activeEvent = event;
+            break;
+          }
+        }
+        if (activeEvent) {
+          state.actions.enterStory(activeEvent.id);
+          const event = loadEvent(activeEvent.id)
+          const header = {
+            title: event.title,
+            text: event.text
+          }
+          state.actions.setWindowHeader(header);
+          state.actions.setWindowOptions(event.actions);
+          state.actions.setWindowLocked(true);
         }
       }
-      activeEvent = prepareWindow(results, activeEvent);
-      state.actions.setWindowEvent(activeEvent);
-    } 
-  }
-  
-  
-  if (changeDomain) {
-    playerDomainValue = state.actions.getQuality('domain');
-    activeDomain = loadDomain(playerDomainValue);
-  }
-
-  state.actions.setWindowDomain(activeDomain);
-  
+    }
+  } // end if results
   renderGame();
 }
 
 function renderGame() {
   const eventContainer = document.getElementById("event-container");
   const conclusionContainer = document.getElementById("conclusion-container");
-  const domainContainer = document.getElementById("domain-container");
-  const actionsContainer = document.getElementById('actions-container');
+  const headerContainer = document.getElementById("header-container");
+  const optionsContainer = document.getElementById('options-container');
   const cardsContainer = document.getElementById('cards-container');
   const drawButtonContainer = document.getElementById("draw-button-container");
   const backButtonContainer = document.getElementById("back-button-container");
-  const oldDomain = document.getElementById("domain");
-  if (oldDomain) { 
-    oldDomain.remove();
+  const oldHeader = document.getElementById("header");
+  if (oldHeader) { 
+    oldHeader.remove();
   }
-  u.removeChildren(actionsContainer);
+  u.removeChildren(optionsContainer);
   u.removeChildren(cardsContainer);
   u.removeChildren(backButtonContainer);
   u.removeChildren(drawButtonContainer);
   u.removeChildren(conclusionContainer);
   u.removeChildren(eventContainer);
   
-  const {domain, conclusion, event} = state.actions.getWindow();
+  const {header, options, conclusion, locked} = state.actions.getWindow();
 
-  // const playerDomainValue = state.actions.getQuality('domain');
-  // const previousDomain = state.actions.getPreviousDomain();
-  // if (!gameState.domain.locked && previousDomain && previousDomain !== playerDomainValue) {
-  //   let backButton = components.createBackButton();
-  //   backButton.addEventListener("click", (event) => {
-  //     state.actions.setPreviousDomain(playerDomainValue);
-  //     state.actions.setQuality('domain', previousDomain);
-  //     mainCycle();
-  //   }); // end back button event listener
-  //   backButtonContainer.appendChild(backButton);
-  // } 
+  const headerElement = components.createHeader(header);
+  headerContainer.appendChild(headerElement);
 
   if (conclusion) {
     const {data, changes, changedQualities, challenge} = conclusion;
     let newConclusion = components.createConclusion(data, changes, changedQualities, challenge);
     conclusionContainer.appendChild(newConclusion);
   }
-
-  if (event) {
-    const {data, changes, changedQualities} = event;
-    let newEvent = components.createEvent(data, changes, changedQualities);
-    eventContainer.appendChild(newEvent);
-  }
-
-  let newDomain = components.createDomain(domain);
-  domainContainer.prepend(newDomain);
   
-  if (domain.actions && domain.actions.length > 0) {
-    for (const action of domain.actions) {
-      const newAction = renderAction(action, domain.locked);
-      if (newAction) {
-        actionsContainer.appendChild(newAction);
+  if (options && options.length > 0) {
+    for (const option of options) {
+      const optionElement = renderOption(option);
+      if (optionElement) { // Will be undefined if it doesn't meet requierements and is marked hidden.
+        optionsContainer.appendChild(optionElement);
       }
     }
   }
 
-  const hand = state.actions.getHand(domain.id);
-  if (hand) {
-    for (const card of hand) {
-      const newCard = renderAction(card, domain.locked);
-      if (newCard) document.getElementById("cards-container").appendChild(newCard);
-    }
-  }
-
-  if (domain.cards && domain.cards.length > 0) {
-    let cards = [];
-    if (hand) {
-      for (const card of domain.cards) {
-        if (hand.every(h => h.id !== card.id)) {
-          cards.push(card);
+  const activeDomain = state.actions.getActiveDomain();
+  if (state.actions.isInStory() && activeDomain && locked !== true) {
+    let backButton = components.createBackButton();
+    backButton.addEventListener("click", (event) => {
+      const results = {
+        traverse: {
+          type: "domain",
+          destination: activeDomain.id,
         }
       }
-    } else {
-      cards = domain.cards
-    }
-    if (cards.length > 0) {
-      let drawButton = components.createDrawButton();
-      drawButton.addEventListener("click", (event) => {
-        drawCard(domain.id, cards, domain.locked);
-      }); // end draw button event listener
-      drawButtonContainer.appendChild(drawButton);
-    }
-  }
+      mainCycle(results);
+    }); // end back button event listener
+    backButtonContainer.appendChild(backButton);
+  } 
+
+  // const playerDomainValue = state.actions.getQuality('domain');
+  // const previousDomain = state.actions.getPreviousDomain();
+  // if (!gameState.domain.locked && previousDomain && previousDomain !== playerDomainValue) {
+
+
+ 
+
+  // if (event) {
+  //   const {data, changes, changedQualities} = event;
+  //   let newEvent = components.createEvent(data, changes, changedQualities);
+  //   eventContainer.appendChild(newEvent);
+  // }
+
+  // let newDomain = components.createDomain(domain);
+  // domainContainer.prepend(newDomain);
+  
+  // if (domain.actions && domain.actions.length > 0) {
+  //   for (const action of domain.actions) {
+  //     const newAction = renderAction(action, domain.locked);
+  //     if (newAction) {
+  //       actionsContainer.appendChild(newAction);
+  //     }
+  //   }
+  // }
+
+  // const hand = state.actions.getHand(domain.id);
+  // if (hand) {
+  //   for (const card of hand) {
+  //     const newCard = renderAction(card, domain.locked);
+  //     if (newCard) document.getElementById("cards-container").appendChild(newCard);
+  //   }
+  // }
+
+  // if (domain.cards && domain.cards.length > 0) {
+  //   let cards = [];
+  //   if (hand) {
+  //     for (const card of domain.cards) {
+  //       if (hand.every(h => h.id !== card.id)) {
+  //         cards.push(card);
+  //       }
+  //     }
+  //   } else {
+  //     cards = domain.cards
+  //   }
+  //   if (cards.length > 0) {
+  //     let drawButton = components.createDrawButton();
+  //     drawButton.addEventListener("click", (event) => {
+  //       drawCard(domain.id, cards, domain.locked);
+  //     }); // end draw button event listener
+  //     drawButtonContainer.appendChild(drawButton);
+  //   }
+  // }
 
 }
 
-function renderAction(action) {
-  const newAction = components.createAction(action);
-  
-  if (action.challenge) {
-    let playerValue = state.actions.getQuality(action.challenge.quality);
-    if (!playerValue) playerValue = 0;
-    let qualityLabel = state.actions.getQualityData(action.challenge.quality).label;
-    let chance = action.challenge.value - playerValue;
-    if (chance > 6) chance = 0;
-    else if (chance < 2) chance = 100;  
-    else chance = Math.round((1/6 * (6 - (chance - 1))) * 100)
-    let challengePhrase = `This is a ${qualityLabel} challenge.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
-    let newChallengeText = document.createElement("p");
-    newChallengeText.innerText = challengePhrase;
-    newAction.querySelector(".action-challenge-container").appendChild(newChallengeText);
-  } // end if challenge
+function renderOption(option) {
+  const optionElement = components.createOption(option.button);
+  const {active, labels} = evaluateReqs(option.reqs)
 
-    const {active, labels} = evaluateReqs(action.reqs)
-    
-    for (const label of labels) {
-      newAction.querySelector(".action-reqs-container").appendChild(label);
-    }
-
-    if (active) { 
-      newAction.setAttribute('tabindex', '0');
-      newAction.addEventListener('click', (event) => { selectAction(action) });
-  } else {
-    if (action.reqs.hidden) {
-      newAction.remove();
-      return;
-    }
-    newAction.classList.add('action-disabled');
+  for (const label of labels) {
+    optionElement.querySelector(".option-reqs-container").appendChild(label);
   }
 
-  return newAction;
+  if (active) { 
+    optionElement.setAttribute('tabindex', '0');
+    optionElement.addEventListener('click', (event) => { selectOption(option) });
+  } else {
+    if (option.reqs.hidden) {
+      optionElement.remove();
+      return;
+    }
+    optionElement.classList.add('option-disabled');
+  }
+
+  if (option.challenge) {
+    let playerValue = state.actions.getQuality(option.challenge.quality);
+    if (playerValue === undefined) {
+      playerValue = 0;
+    } 
+    let qualityLabel = state.actions.getQualityData(option.challenge.quality).label;
+    let chance = option.challenge.difficulty - playerValue;
+    if (chance > 6) {
+      chance = 0;
+    } else if (chance < 2) {
+      chance = 100;  
+    }
+    else {
+      chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
+    } 
+    let challengePhrase = `This is a ${qualityLabel} challenge.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+    let challengeText = document.createElement("p");
+    challengeText.innerText = challengePhrase;
+    optionElement.querySelector(".option-challenge-container").appendChild(challengeText);
+  } // end if challenge
+
+  return optionElement;
 }
 
 /*** HELPER FUNCTIONS ***/
@@ -261,16 +344,27 @@ function drawCard(domainId, cards) {
   mainCycle();
 }
 
-function selectAction(action) {
-  let results = action.results;
-  if (action.challenge) {
-    let result = Math.ceil(Math.random() * 6) + state.actions.getQuality(action.challenge.quality);
-    passed = result >= action.challenge.value;
-    console.log(`${result} vs. ${action.challenge.value}. ${passed}.`);
-    results = passed ? action.results.success : action.results.failure
+function selectOption(option) {
+  let results;
+  if (state.actions.isInStory()) {
+    results = option.results
+  } else {
+    results = {
+      traverse: {
+        type: "story",
+        destination: option.id
+      }
+    }
+  }
+    
+  if (option.challenge) {
+    let result = Math.ceil(Math.random() * 6) + state.actions.getQuality(option.challenge.quality);
+    passed = result >= option.challenge.difficulty;
+    console.log(`${result} vs. ${option.challenge.difficulty}. ${passed}.`);
+    results = passed ? option.results.success : option.results.failure
     results.challenge = {
       passed,
-      quality: action.challenge.quality,
+      quality: option.challenge.quality,
     }
   }
 
@@ -291,8 +385,6 @@ function selectAction(action) {
   //   }
   // }
 
-  
-  
   mainCycle(results);
 }
 
@@ -320,7 +412,7 @@ function evaluateReqs(reqs) {
           label += " ≤ "
           label += max.toString();
         }
-        const newLabel = components.createActionReq({label, passed});
+        const newLabel = components.createOptionReq({label, passed});
         labels.push(newLabel);
       }
     }
@@ -339,43 +431,50 @@ function evaluateReqs(reqs) {
   return {active, labels};
 }
 
-function loadDomain(domainId) {
-  const storyFile = path.join(__dirname, 'games', "bluesun.json");
-  try {
-    const storyRaw = fs.readFileSync(storyFile);
-    const storyData = JSON.parse(storyRaw);
-    let activeDomain = storyData.domains[domainId];
-    
-    if (activeDomain.actions && activeDomain.actions.length > 0) {
-      let actions = [];
-      for (const actionId of activeDomain.actions) {
-        actions.push(storyData.actions[actionId]);
-      }
-      activeDomain.actions = actions;
+
+function loadStory(storyId) {
+  let story = state.actions.getStoryData(storyId);
+  if (story.actions && story.actions.length > 0) {
+    let actions = [];
+    for (const actionId of story.actions) {
+      actions.push(state.actions.getActionData(actionId));
     }
-
-    if (activeDomain.events && activeDomain.events.length > 0) {
-      let events = [];
-      for (const eventId of activeDomain.events) {
-        events.push(storyData.events[eventId])
-      }
-      activeDomain.events = events;
-    } 
-    
-    if (activeDomain.cards && activeDomain.cards.length > 0) {
-      let cards = [];
-      for (const cardId of activeDomain.cards) {
-        cards.push(storyData.actions[cardId])
-      }
-      activeDomain.cards = cards;
-    } 
-
-    return activeDomain;
-
-  } catch(error) {
-    console.error(error.message);
-    return;
+    story.actions = actions;
   }
+  return story;
+}
+
+function loadEvent(eventId) {
+  let event = state.actions.getEventData(eventId);
+  if (event.actions && event.actions.length > 0) {
+    let actions = [];
+    for (const actionId of event.actions) {
+      actions.push(state.actions.getActionData(actionId));
+    }
+    event.actions = actions;
+  }
+  return event;
+}
+
+function loadDomain(domainId) {
+  let domain = state.actions.getDomainData(domainId);
+  if (domain.stories && domain.stories.length > 0) {
+    let stories = [];
+    for (const storyId of domain.stories) {
+      stories.push(state.actions.getStoryData(storyId));
+    }
+    domain.stories = stories;
+  }
+
+  if (domain.events && domain.events.length > 0) {
+    let events = [];
+    for (const eventId of domain.events) {
+      events.push(state.actions.getEventData(eventId))
+    }
+    domain.events = events;
+  } 
+  
+  return domain;
 }
 
 function handleChange(change) {
