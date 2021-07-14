@@ -85,7 +85,7 @@ function createDomain(domain) {
   return newDomain;
 }
 
-function createConclusion(conclusion, changes = [], qualities = {}) {
+function createConclusion(conclusion, changes = [], qualities = {}, challenge) {
   let newConclusion = document.createElement("div");
   let newConclusionTitle = document.createElement("h1");
   let newConclusionText = document.createElement("p");
@@ -99,8 +99,20 @@ function createConclusion(conclusion, changes = [], qualities = {}) {
 
   if (changes.length > 0) {
     let newConclusionOutcomes = document.createElement("div");
-
     newConclusionOutcomes.classList.add("conclusion-outcomes");
+
+    if (challenge) {
+      if (challenge.passed) {
+        newConclusionOutcomes.classList.add("challenge-passed")
+      } else {
+        newConclusionOutcomes.classList.add("challenge-failed")
+      }
+      let outcome = document.createElement("p");
+      let outcomeText = `You ${passed ? "passed" : "failed"} a ${qualities[challenge.quality].label} challenge!`
+      outcome.innerText = outcomeText;
+      newConclusionOutcomes.appendChild(outcome);
+    }
+    
     for (let change of changes) {
       let quality = change.quality;
       if (qualities[quality].hidden) continue;
@@ -180,6 +192,13 @@ function createBackButton() {
   return backButton;
 }
 
+function createDrawButton() {
+  let drawButton = document.createElement("button");
+  drawButton.innerText = "Draw."
+
+  return drawButton;
+}
+
 module.exports = { 
   createDomain,
   createAction, 
@@ -188,4 +207,6 @@ module.exports = {
   createQuality,
   createConclusion,
   createEvent,
-  createBackButton };
+  createBackButton,
+  createDrawButton 
+};

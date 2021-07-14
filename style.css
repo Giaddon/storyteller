@@ -67,6 +67,13 @@ body{
   max-width: 550px;
 }
 
+.challenge-passed {
+  background-color: yellowgreen;
+}
+.challenge-failed {
+  background-color: tomato;
+}
+
 .actions-container {
   /* max-width: 550px;
   margin: 20px auto;*/
@@ -75,7 +82,7 @@ body{
 .action {
   background-color: inherit;
   padding: 15px 15px 15px 30px;
-  margin: 0px auto 20px auto;
+  margin: 0px auto 15px auto;
   width: 550px;
   cursor: pointer;
   

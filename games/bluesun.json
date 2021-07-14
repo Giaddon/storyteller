@@ -16,7 +16,7 @@
       "description": {
         "1": "Spices have been weirdly valuable for thousands of years."
       },
-      "startvalue": 5
+      "startvalue": 20
     },
     "parts": {
       "label": "Machine parts",
@@ -79,6 +79,7 @@
   },
   "domains": {
     "1": {
+      "id": "1",
       "title": "Staring Down the Barrel of a Modified X-42 Laser Blaster",
       "text": "It's true what they say about your life flashing before your eyes when you're about to die. As the finger on the trigger starts to squeeze, what do you see?",
       "locked": true,
@@ -88,6 +89,7 @@
       ]
     },
     "2": {
+      "id": "2",
       "title": "ZAP!",
       "text": "The searing hot bolt of purple energy grazes your cheek. You're alive.\n\"Your kind isn't so useful with a laser-hole in your skull. Bring back a thousand credits. Or you're dead for real.\" \nThe enforcer whips her scaled tale behind her with a flourish and is gone.",
       "locked": true,
@@ -97,12 +99,18 @@
       ]
     },
     "3": {
+      "id": "3",
       "title": "Blue Sun Station",
       "text": "A nexus of illegal trade, gambling, criminality, and other profitable activities. Orbits an ancient, artificial sun left behind by one of the countless species lost to the galaxy.",
       "actions": ["bazaar"
+      ],
+      "cards": [
+        "brigands",
+        "credits"
       ]
     },
     "4": {
+      "id": "4",
       "title": "Xylax Bazaar.",
       "text": "A thousand languages reverberate through the packed halls of the bazaar, but the dialect of barter is universal.",
       "actions": [
@@ -111,6 +119,14 @@
       ],
       "events":[
         "suspicious"
+      ]
+    },
+    "5": {
+      "id": "5",
+      "title": "Under Attack!",
+      "text": "Klaxons sound throughout the station! An assault ship full of raiders is launching drill-pods packed full of bandits!",
+      "actions": [
+        "repel"
       ]
     }
   },
@@ -276,7 +292,7 @@
       "text": "A serpentine creature with three tounges is offering 100 credits per block of spice.",
       "challenge": {
         "quality": "cunning",
-        "value": 1 
+        "value": 5 
       },
       "reqs": {
         "type": "all",
@@ -320,6 +336,86 @@
           ]
         }
       } 
+    },
+    "brigands": {
+      "id": "brigands",
+      "type": "card",
+      "title": "Brigands!",
+      "text": "Klaxons sounds throughout the station!",
+      "results": {
+        "changes": [
+          {
+            "quality": "domain",
+            "type": "set",
+            "value": 5
+          }
+        ]
+      }
+    },
+    "credits": {
+      "id": "credits",
+      "type": "card",
+      "title": "Some credits on the floor.",
+      "text": "That's lucky. Better scoop them up.",
+      "results": {
+        "conclusion": {
+          "title": "Easy money.",
+          "text": "You hurridly stash the credits in your pockets."
+        },
+        "changes": [
+          {
+            "quality": "credits",
+            "type": "adjust",
+            "value": 24
+          }
+        ]
+      }
+    },
+    "repel": {
+      "title": "Repel them!",
+      "text": "Blue Sun often comes under attack from bandits and raiders. The station pays those who defend it well.",
+      "challenge": {
+        "quality": "strength",
+        "value": 5
+      },
+      "results": {
+        "success": {
+          "conclusion": {
+            "title":"Fought them off!",
+            "text": "With a prismatic spray of blaster fire, the brigands are sent packing. You personally throttled their leader and delivered her to a representative of the station masters."
+          },
+          "changes": [
+            {
+              "quality": "domain",
+              "type": "set",
+              "value": 3
+            },
+            {
+              "quality": "credits",
+              "type": "adjust",
+              "value": 300
+            }
+          ]
+        },
+        "failure": {
+          "conclusion": {
+            "title":"Routed!",
+            "text": "Whooping bandits smash several valuable doohickies then escape back to their shuttle. You find a few valuables after searching the wreckage."
+          },
+          "changes": [
+            {
+              "quality": "domain",
+              "type": "set",
+              "value": 3
+            },
+            {
+              "quality": "credits",
+              "type": "adjust",
+              "value": 100
+            }
+          ]
+        }
+      }
     }
   },
   "events": {
