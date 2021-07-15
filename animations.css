@@ -5,7 +5,6 @@
 
 .header, 
 .option, 
-.conclusion, 
-.event {
+.conclusion {
     animation: fade-in 0.6s 1 normal linear forwards 0s;
 }

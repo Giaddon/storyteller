@@ -9,6 +9,17 @@ function removeChildren(element) {
   }
 }
 
+function create(tag) {
+  const element = document.createElement(tag)
+  return element;
+}
+
+function appendChildren(parent, children) {
+  for (const child of children) {
+    parent.append(child);
+  }
+}
+
 //vanilla event delegation function taken from: 
 //https://flaviocopes.com/javascript-event-delegation/
 function on(selector, eventType, childSelector, eventHandler) {
@@ -22,4 +33,9 @@ function on(selector, eventType, childSelector, eventHandler) {
   }
 }
 
-module.exports = { replaceText, removeChildren, on };
+module.exports = { 
+  replaceText, 
+  removeChildren, 
+  on, 
+  create,
+  appendChildren, };

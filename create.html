@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="create-style.css">
+    <title>Storyteller</title>
+  </head>
+  <body>
+    <div class="canvas">
+      <!-- <div id="qualities-container" class="form-container">
+        <div id="qualities-list-container">
+          <div id="qualities-list" class="item-list"></div>
+          <div id="new-quality-button-container"></div>
+        </div>
+      </div> -->
+      <div id="stories-container" class="form-container">
+        <div id="story-list-container">
+          <div id="story-list" class="item-list"></div>
+          <div id="new-story-button-container"></div>
+        </div>
+        <form id="story-form" class="story-form">
+          <p>Story Header</p>
+          <div class="form-section">
+            <label for="story-title">Title</label>
+            <input
+              type="text"
+              id="story-title"
+              name="story-title"
+              class="story-title"
+              placeholder="Story Title"
+            />
+            <label for="story-text">Text</label>
+            <textarea
+              id="story-text"
+              name="story-text"
+              class="story-text"
+              placeholder="Story text."
+            ></textarea>
+          </div>
+          <p>Story Button</p>
+          <div id="story-button" class="story-button">
+            <label for="story-button-title">Title</label>
+            <input
+              type="text"
+              id="story-button-title"
+              name="story-button-title"
+              class="story-button-title"
+              placeholder="Button Title"
+            />
+            <label for="story-button-text">Text</label>
+            <textarea
+              id="story-button-text"
+              name="story-button-text"
+              class="story-button-text"
+              placeholder="Button text."
+            ></textarea>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

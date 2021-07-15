@@ -85,11 +85,9 @@ function mainCycle(results=null) {
       }
     }
 
-    if (results.conclusion) {
-      const conclusion = prepareWindow(results, results.conclusion)
-      state.actions.setWindowConclusion(conclusion);
-    }
-
+    const conclusion = prepareWindow(results, results.conclusion)
+    state.actions.setWindowConclusion(conclusion);
+    
     if (results.traverse) {
       if (results.traverse.type === "story") {
         state.actions.enterStory(results.traverse.destination);
@@ -165,7 +163,6 @@ function mainCycle(results=null) {
 }
 
 function renderGame() {
-  const eventContainer = document.getElementById("event-container");
   const conclusionContainer = document.getElementById("conclusion-container");
   const headerContainer = document.getElementById("header-container");
   const optionsContainer = document.getElementById('options-container');
@@ -181,7 +178,6 @@ function renderGame() {
   u.removeChildren(backButtonContainer);
   u.removeChildren(drawButtonContainer);
   u.removeChildren(conclusionContainer);
-  u.removeChildren(eventContainer);
   
   const {header, options, conclusion, locked} = state.actions.getWindow();
 
@@ -319,10 +315,18 @@ function renderOption(option) {
 /*** HELPER FUNCTIONS ***/
 
 function prepareWindow(results, data) {
+  if (data === undefined) {
+    data = {
+      "title": "",
+      "text": ""
+    }
+  }
   let changedQualities = {};
   const changes = results.changes;
-  for (const change of changes) {
-    changedQualities[change.quality] = state.actions.getQualityData(change.quality);
+  if (changes) {
+    for (const change of changes) {
+      changedQualities[change.quality] = state.actions.getQualityData(change.quality);
+    }
   }
   if (results.challenge) {
     changedQualities[results.challenge.quality] = state.actions.getQualityData(results.challenge.quality);
