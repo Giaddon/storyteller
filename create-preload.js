@@ -1,6 +1,22 @@
 const u = require('./utilities');
 const { v4: uuidv4 } = require('uuid');
 
+// TODO
+// ACTIONS
+// - Challenge
+// - Visibility
+// - Add new
+// RESULTS
+// - Flow.
+// - More change logic (if x then y)?
+// - Change type random (set to a random # within range.)
+// QUALITIES
+// - Quality types (items vs attribues)?
+// - Descriptions and labels.
+// - Messages? 
+// DOMAINS
+// - Figure out event and card implementation. 
+
 let worldState = {
   qualities: {
     coins: {
@@ -73,10 +89,12 @@ let worldState = {
             "title": "Sell some spice.",
             "text": "A serpentine creature with three tounges is offering 100 credits per block of spice."
           },
-          "challenge": {
-            "quality": "cunning",
-            "difficulty": 5 
-          },
+          "challenges": [
+            {
+              "quality": "cunning",
+              "difficulty": 5 
+            },
+          ],
           "reqs": {
             "type": "all",
             "qualities": [
@@ -295,8 +313,6 @@ function createInput(inputType, formType, contentType, content, suffix) {
   else if (inputType === "number") {
     input = u.create("input");
     input.type = "number";
-    input.min = 0;
-    input.max = 999;
   }
   input.name = `${formType}-${contentType}${suffix}`;
   input.id = `${formType}-${contentType}${suffix}`;
@@ -481,8 +497,38 @@ function createActionDiv(data, count) {
     }
   }
   
+  let actionChallengeContainer = u.create("div");
+  actionChallengeContainer.classList.add("action-challenge-container");
+  actionChallengeContainer.id = `action-${count}-challenge-container`
+  actionDetailsContainer.append(actionChallengeContainer);
+
+  let challengeLabel = u.create("label");
+  challengeLabel.innerText = "Challenge"
+  actionChallengeContainer.append(challengeLabel);
+
+  if (data.challenges) {
+    let challengeCount = 0;
+    for (const challenge of data.challenges) {
+      let challengeElement = createChallenge(challenge, count, challengeCount);
+      actionChallengeContainer.append(challengeElement);
+      challengeCount++
+    }
+    let removeChallengeButton = u.create("button");
+    removeChallengeButton.innerText = "Remove Challenge"
+    removeChallengeButton.classList.add("remove-challenge-button");
+    removeChallengeButton.addEventListener("click", removeChallenge.bind(null, count));
+    actionChallengeContainer.append(removeChallengeButton);
+  } else {
+    let addChallengeButton = u.create("button");
+    addChallengeButton.innerText = "Make Challenge"
+    addChallengeButton.classList.add("add-challenge-button");
+    addChallengeButton.addEventListener("click", makeChallenge.bind(null, count));
+    actionChallengeContainer.append(addChallengeButton);
+  }
+
   let actionResultsContainer = u.create("div");
   actionResultsContainer.classList.add("action-results-container");
+  actionResultsContainer.id = `action-${count}-results-container`;
   action.append(actionResultsContainer);
 
   if (data.results) {
@@ -490,7 +536,7 @@ function createActionDiv(data, count) {
     resultsLabel.innerText = "Result"
     actionResultsContainer.append(resultsLabel);
     
-    if (data.challenge) {
+    if (data.challenges) {
       let successLabel = u.create("label");
       successLabel.innerText = "Success"
       actionResultsContainer.append(successLabel);
@@ -513,6 +559,80 @@ function createActionDiv(data, count) {
   }
 
   return action 
+}
+
+function makeChallenge(actionIdx, event) {
+  event.preventDefault();
+  
+  let targetAction = document.getElementById(`action-${actionIdx}`);
+  console.log(targetAction);
+  let data = {
+    quality: Object.values(worldState.qualities)[0].id,
+    difficulty: 1,
+  }
+
+  let challenge = createChallenge(data, actionIdx, 0);
+  targetAction.querySelector(`#action-${actionIdx}-challenge-container`).append(challenge);
+
+  let removeChallengeButton = u.create("button");
+  removeChallengeButton.innerText = "Remove Challenge"
+  removeChallengeButton.classList.add("remove-challenge-button");
+  removeChallengeButton.addEventListener("click", removeChallenge.bind(null, actionIdx));
+  targetAction.querySelector(`#action-${actionIdx}-challenge-container`).append(removeChallengeButton);
+
+  let targetResultsContainer = targetAction.querySelector(`#action-${actionIdx}-results-container`);
+  u.removeChildren(targetResultsContainer);
+
+  let successData = {
+    title: "Success",
+    text: "Success."
+  }
+
+  let failureData = {
+    title: "Failure",
+    text: "Failure."
+  }
+
+  let successLabel = u.create("label");
+  successLabel.innerText = "Success"
+  targetResultsContainer.append(successLabel);
+  
+  let success = createActionResult(successData, actionIdx, "success"); 
+  success.classList.add("result-success")
+  targetResultsContainer.append(success);
+
+  let failureLabel = u.create("label");
+  failureLabel.innerText = "Failure"
+  targetResultsContainer.append(failureLabel);
+
+  let failure = createActionResult(failureData, actionIdx, "failure");
+  failure.classList.add("result-failure")
+  targetResultsContainer.append(failure);
+
+  event.target.remove();
+}
+
+function removeChallenge(actionIdx, event) {
+  event.preventDefault();
+  
+  let targetAction = document.getElementById(`action-${actionIdx}`);
+  let targetChallengeContainer = targetAction.querySelector(`#action-${actionIdx}-challenge-container`)
+  let targetResultsContainer = targetAction.querySelector(`#action-${actionIdx}-results-container`);
+  let currentChallenges = targetChallengeContainer.querySelectorAll(".challenge");
+  for (const challenge of currentChallenges) {
+    challenge.remove();
+  }
+  event.target.remove();
+  u.removeChildren(targetResultsContainer);
+
+  let result = createActionResult({}, actionIdx, "result");
+  targetResultsContainer.append(result);
+
+  let addChallengeButton = u.create("button");
+  addChallengeButton.innerText = "Make Challenge"
+  addChallengeButton.classList.add("add-challenge-button");
+  addChallengeButton.addEventListener("click", makeChallenge.bind(null, actionIdx));
+  targetChallengeContainer.append(addChallengeButton);
 }
 
 function attachNewReq(actionIdx, event) {
@@ -599,6 +719,48 @@ function createReq(data, parentCount, count) {
   return req;
 }
 
+function createChallenge(data, parentCount, count) {
+  let challenge = u.create("div");
+  challenge.classList.add("challenge");
+
+  let qualityDiv = u.create("div");
+  qualityDiv.classList.add("req-group");
+  challenge.append(qualityDiv);
+
+  let qualityLabel = u.create("label");
+  qualityLabel.innerText = "Quality";
+  qualityLabel.htmlFor = `challenge-quality-${parentCount}-${count}`;
+  qualityDiv.append(qualityLabel);
+
+  let qualitySelect = u.create("select");
+  qualitySelect.id = `challenge-quality-${parentCount}-${count}`;
+  for (const quality of Object.values(worldState.qualities)) {
+    let option = u.create("option");
+    option.value = quality.id;
+    option.text = quality.name;
+    qualitySelect.add(option);
+  }
+
+  qualitySelect.value = data.quality;
+  qualityDiv.append(qualitySelect);
+
+  let diffDiv = u.create("div");
+  diffDiv.classList.add("req-group");
+  challenge.append(diffDiv);
+
+  let {input: diff, label: diffLabel} = createInput(
+    "number", 
+    "challenge", 
+    "difficulty", 
+    data.difficulty, 
+    `${parentCount}-${count}`
+  );
+  diffDiv.append(diffLabel);
+  diffDiv.append(diff);
+
+  return challenge;
+}
+
 function createActionResult(data, parent, resultType) {
   let result = u.create("div");
   result.classList.add("result");
@@ -609,7 +771,7 @@ function createActionResult(data, parent, resultType) {
     "text", 
     "result", 
     "title", 
-    data.title, 
+    data.title || "Title", 
     `-${parent}-${resultType}`
   );
   result.append(titleLabel);
@@ -620,7 +782,7 @@ function createActionResult(data, parent, resultType) {
     "textarea", 
     "result", 
     "text", 
-    data.text, 
+    data.text || "Text", 
     `-${parent}-${resultType}`
   );
   result.append(textLabel);
