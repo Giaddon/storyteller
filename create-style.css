@@ -61,7 +61,7 @@ select {
  
 }
 
-.story-form {
+.storylet-form {
   flex: 1 1 auto;
   padding: 10px 60px;
   margin: 0 auto;
@@ -69,7 +69,7 @@ select {
   min-height: 100vh;
 }
 
-.story-title,
+.storylet-title,
 .result-title {
   font-family: "Title", sans-serif;
   font-size: 22px;
@@ -79,7 +79,7 @@ select {
   width: 100%;
 }
 
-.story-text,
+.storylet-text,
 .result-text {
   font-family: 'Standard', serif;
   font-size: 15px;
@@ -89,7 +89,7 @@ select {
   height: 80px;
 }
 
-.story-button {
+.storylet-button {
   display: flex;
   flex-flow: column nowrap;
   outline: 1px solid black;
@@ -99,7 +99,7 @@ select {
 }
 
 .action-title,
-.story-button-title {
+.storylet-button-title {
   font-family: "Standard", serif;
   font-size: 18px;
   margin-bottom: 5px;
@@ -110,7 +110,7 @@ select {
 }
 
 .action-text,
-.story-button-text {
+.storylet-button-text {
   font-family: 'Standard', serif;
   font-size: 15px;
   padding: 5px;
@@ -118,7 +118,7 @@ select {
   height: 60px;
 }
 
-.story-button-text {
+.storylet-button-text {
   max-width: 500px;
   min-width: 400px;
 }

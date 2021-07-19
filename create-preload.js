@@ -1,4 +1,7 @@
 const u = require('./utilities');
+const ReqForm = require("./create/ReqForm");
+const ActionForm = require("./create/ActionForm");
+const StoryletForm = require("./create/StoryletForm");
 const { v4: uuidv4 } = require('uuid');
 
 // TODO
@@ -244,9 +247,17 @@ let worldState = {
 
 
 
+
+
+
+
+let activeStoryletForm;
 window.addEventListener('DOMContentLoaded', () => {
   // populateQualityList();
   populateStoryList();
+  activeStoryletForm = new StoryletForm({id: "new"});
+  let renderedStoryletForm = activeStoryletForm.render();
+  document.getElementById("storylet-form-container").append(renderedStoryletForm);
   // let newButton = u.create("button");
   // newButton.innerText = "+ Add New"
   // newButton.addEventListener("click", createNewQuality);
@@ -294,7 +305,7 @@ function createNewQuality() {
   populateQualityList();
 }
 
-function createInput(inputType, formType, contentType, content, suffix) {
+function createInput(inputType, formType, contentType, content, suffix = "") {
   let input;
   if (suffix === undefined) {
     suffix = "";
@@ -314,8 +325,7 @@ function createInput(inputType, formType, contentType, content, suffix) {
     input = u.create("input");
     input.type = "number";
   }
-  input.name = `${formType}-${contentType}${suffix}`;
-  input.id = `${formType}-${contentType}${suffix}`;
+  input.id = `${formType}-${contentType}-${suffix}`;
   input.classList.add(`${formType}-${contentType}`);
 
   if (inputType === "checkbox") {
@@ -325,7 +335,7 @@ function createInput(inputType, formType, contentType, content, suffix) {
   }
 
   let label = u.create("label");
-  label.htmlFor = `${formType}-${contentType}${suffix}`;
+  label.htmlFor = `${formType}-${contentType}-${suffix}`;
   label.innerText = `${contentType}`
 
   return {input, label};
@@ -435,9 +445,9 @@ function saveForm(type, id, event) {
 }
 
 
-function createActionDiv(data, count) {
+function createActionDiv(data) {
   let action = u.create("div");
-  action.id = `action-${count}`;
+  action.id = `action-${data.id}`;
   action.classList.add("action");
 
   let idLabel = u.create("p");
@@ -459,7 +469,7 @@ function createActionDiv(data, count) {
     "action", 
     "title", 
     data.button.title, 
-    `-${count}`
+    `${data.id}`
   );
   actionHeaderContainer.append(titleLabel)
   actionHeaderContainer.append(title);
@@ -469,7 +479,7 @@ function createActionDiv(data, count) {
     "action", 
     "text", 
     data.button.text, 
-    `-${count}`
+    `${data.id}`
   );
   actionHeaderContainer.append(textLabel)
   actionHeaderContainer.append(text);
@@ -485,13 +495,13 @@ function createActionDiv(data, count) {
   let newReqButton = u.create("button");
   newReqButton.innerText = "+ New Requirement";
   newReqButton.classList.add("add-req-button");
-  newReqButton.addEventListener("click", attachNewReq.bind(null, count))
+  newReqButton.addEventListener("click", attachNewReq.bind(null, data.id))
   actionDetailsContainer.append(newReqButton);
   
   if (data.reqs) {
     let reqCount = 0;
     for (const req of data.reqs.qualities) {
-      let reqElement = createReq(req, count, reqCount);
+      let reqElement = createReq(req, data.id, reqCount);
       reqCount++;
       actionReqsContainer.append(reqElement);
     }
@@ -499,7 +509,7 @@ function createActionDiv(data, count) {
   
   let actionChallengeContainer = u.create("div");
   actionChallengeContainer.classList.add("action-challenge-container");
-  actionChallengeContainer.id = `action-${count}-challenge-container`
+  actionChallengeContainer.id = `action-${data.id}-challenge-container`
   actionDetailsContainer.append(actionChallengeContainer);
 
   let challengeLabel = u.create("label");
@@ -509,26 +519,26 @@ function createActionDiv(data, count) {
   if (data.challenges) {
     let challengeCount = 0;
     for (const challenge of data.challenges) {
-      let challengeElement = createChallenge(challenge, count, challengeCount);
+      let challengeElement = createChallenge(challenge, data.id, challengeCount);
       actionChallengeContainer.append(challengeElement);
       challengeCount++
     }
     let removeChallengeButton = u.create("button");
     removeChallengeButton.innerText = "Remove Challenge"
     removeChallengeButton.classList.add("remove-challenge-button");
-    removeChallengeButton.addEventListener("click", removeChallenge.bind(null, count));
+    removeChallengeButton.addEventListener("click", removeChallenge.bind(null, data.id));
     actionChallengeContainer.append(removeChallengeButton);
   } else {
     let addChallengeButton = u.create("button");
     addChallengeButton.innerText = "Make Challenge"
     addChallengeButton.classList.add("add-challenge-button");
-    addChallengeButton.addEventListener("click", makeChallenge.bind(null, count));
+    addChallengeButton.addEventListener("click", makeChallenge.bind(null, data.id));
     actionChallengeContainer.append(addChallengeButton);
   }
 
   let actionResultsContainer = u.create("div");
   actionResultsContainer.classList.add("action-results-container");
-  actionResultsContainer.id = `action-${count}-results-container`;
+  actionResultsContainer.id = `action-${data.id}-results-container`;
   action.append(actionResultsContainer);
 
   if (data.results) {
@@ -541,7 +551,7 @@ function createActionDiv(data, count) {
       successLabel.innerText = "Success"
       actionResultsContainer.append(successLabel);
       
-      let success = createActionResult(data.results.success, count, "success"); 
+      let success = createActionResult(data.results.success, data.id, "success"); 
       success.classList.add("result-success")
       actionResultsContainer.append(success);
 
@@ -549,11 +559,11 @@ function createActionDiv(data, count) {
       failureLabel.innerText = "Failure"
       actionResultsContainer.append(failureLabel);
 
-      let failure = createActionResult(data.results.failure, count, "failure");
+      let failure = createActionResult(data.results.failure, data.id, "failure");
       failure.classList.add("result-failure")
       actionResultsContainer.append(failure);
     } else {
-      let result = createActionResult(data.results, count, "result");
+      let result = createActionResult(data.results, data.id, "result");
       actionResultsContainer.append(result);
     } 
   }
