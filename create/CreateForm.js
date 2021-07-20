@@ -1,12 +1,20 @@
+const { v4: uuidv4 } = require('uuid');
+const API = require("./StateAPI");
+
 class CreateForm {
-  constructor() {
-    
+  constructor(api) {
+    this.api = api
+  }
+
+  generateId() {
+    return uuidv4();
   }
 
   captureField(field, event) {
     field = field.split(" ");
     if (field.length === 1) {
       this[field[0]] = event.target.value;
+      console.log(this[field[0]]);
     }
     if (field.length === 2) {
       this[field[0]][field[1]] = event.target.value
@@ -53,9 +61,25 @@ class CreateForm {
     delete this[key][childId];
   }
 
-  removeReq(reqId) {
-    this.reqs.qualities = this.reqs.qualities.filter(change => change.id !== reqId);
+  removeFromArray(arrayName, itemId) {
+    if (arrayName === "reqs") {
+      this.reqs.qualities = this.reqs.qualities.filter(req => req.id !== itemId);
+    }
+    else if (arrayName === "changes") {
+      this.changes = this.changes.filter(change => change.id !== itemId);
+    }
   }
+
+  getQualities() {
+    return this.api.getQualities();
+  }
+  getStorylets() {
+    return this.api.getStorylets();
+  }
+  getDomains() {
+    return this.api.getDomains();
+  }
+
 }
 
 module.exports = CreateForm

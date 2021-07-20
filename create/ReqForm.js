@@ -1,9 +1,8 @@
 const CreateForm = require("./CreateForm");
-const state = require("./createState");
 
 class ReqForm extends CreateForm {
-  constructor(req, parentId, removeReq) {
-    super();
+  constructor(api, req, parentId, removeReq) {
+    super(api);
     this.id = req.id;
     this.quality = req.quality || "";
     this.min = req.min || 0;
@@ -14,11 +13,15 @@ class ReqForm extends CreateForm {
 
   render() {
     let req = document.createElement("div");
-    req.classList.add("req");
+    req.classList.add("form-section", "flex-column", "flex-item");
   
+    let detailSection = document.createElement("div");
+    detailSection.classList.add("flex-row");
+    req.append(detailSection);
+
     let qualityDiv = document.createElement("div");
-    qualityDiv.classList.add("req-group");
-    req.append(qualityDiv);
+    qualityDiv.classList.add("input-group");
+    detailSection.append(qualityDiv);
   
     let qualityLabel = document.createElement("label");
     qualityLabel.innerText = "Quality";
@@ -27,7 +30,7 @@ class ReqForm extends CreateForm {
   
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `req-quality-${this.parentId}-${this.id}`;
-    for (const quality of Object.values(state.actions.getQualities())) {
+    for (const quality of Object.values(this.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;
@@ -38,8 +41,8 @@ class ReqForm extends CreateForm {
     qualityDiv.append(qualitySelect);
 
     let minDiv = document.createElement("div");
-    minDiv.classList.add("req-group");
-    req.append(minDiv);
+    minDiv.classList.add("input-group");
+    detailSection.append(minDiv);
   
     let {input: min, label: minLabel} = this.createInput(
       "number", 
@@ -53,8 +56,8 @@ class ReqForm extends CreateForm {
     minDiv.append(min);
   
     let maxDiv = document.createElement("div");
-    maxDiv.classList.add("req-group");
-    req.append(maxDiv);
+    maxDiv.classList.add("input-group");
+    detailSection.append(maxDiv);
   
     let {input: max, label: maxLabel} = this.createInput(
       "number", 
@@ -69,6 +72,7 @@ class ReqForm extends CreateForm {
 
     let removeButton = document.createElement("button");
     removeButton.innerText = "Remove Requirement";
+    removeButton.classList.add("remove-button");
     removeButton.addEventListener("click", event => {
       event.preventDefault()
       this.removeReq(this.id);
@@ -77,6 +81,15 @@ class ReqForm extends CreateForm {
     req.append(removeButton);
   
     return req;
+  }
+
+  returnData() {
+    return {
+      id: this.id,
+      quality: this.quality,
+      min: this.min,
+      max: this.max,
+    }
   }
 }
 

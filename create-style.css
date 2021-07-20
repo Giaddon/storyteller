@@ -17,35 +17,35 @@ label {
   display: block;
 }
 
-input {
+input, 
+textarea,
+select {
   flex: 0 1 auto;
+  margin-bottom: 10px;
+}
+textarea {
+  flex: 0 1 auto;
+  margin: 5px;
 }
 input[type="number"] {
   max-width: 60px;
   padding: 5px;
 }
-
 select {
   padding: 5px;
 }
-
 .canvas {
-  max-width: 1000px;
-  margin: 0px auto;
-  background-color: white;
-  height: 100vh;
-}
-.form-section {
-  display: flex;
-  flex-flow: column nowrap;
-  outline: 1px solid black;
-  padding: 20px;
-}
-.form-container {
   display: flex;
   flex-flow: row nowrap;
-  background-color: white;
+  max-width: 900px;
+  margin: 0px auto;
+  background-color: yellow;
   height: 100vh;
+}
+
+.item-list-container {
+  flex: 0 0 150px;
+  background-color: gainsboro;
 }
 
 .item-list {
@@ -56,9 +56,63 @@ select {
   padding: 10px;
   overflow-y: scroll;
 }
-
 .item-button {
- 
+  margin: 3px;
+  padding: 5px 0px;
+}
+
+.form-container {
+  display: flex;
+  flex: 1 1 auto;
+  max-width: 750px;
+  background-color: white;
+  flex-flow: row nowrap;
+  height: 100vh;
+  margin-bottom: 60px;
+}
+
+.form-section {
+  outline: 1px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+}
+
+.flex-column {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.flex-row {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.flex-item {
+  flex: 0 1 auto;
+  margin: 5px;
+}
+
+.item-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.input-group {
+  margin: 3px;
+}
+.remove-button {
+  background-color: tomato;
+  color: white;
+  border: 1px solid gray;
+  border-radius: 3px;
+  max-width: 150px;
+  padding: 5px;
+}
+.add-button {
+  height: fit-content;
+  width: fit-content;
+  margin: 5px;
+  padding: 5px;
 }
 
 .storylet-form {
@@ -156,34 +210,40 @@ select {
   flex-flow: row wrap;
 }
 .action-results-container {
-  margin: 15px 0 0 35px;
+  margin: 15px 0 15px 25px;
   background-color: cornsilk;
   padding: 10px;
   border-radius: 4px;
 }
-.result {
 
+.save-pillow {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+.save-button {
+  padding: 1px 40px;
+  color: white;
+  border: none;
+  outline: 1px solid darkslategray;
+  background-color: darkseagreen;
+  font-family: "Title", sans-serif;
 }
 
-.req {
-  display: flex;
-  flex-flow: row nowrap;
-  padding: 10px;
-  outline: 1px solid black;
-  margin: 5px;
+.save-button:hover {
+  background-color: darkolivegreen;
+}
+.save-button:active {
+  background-color: darkseagreen;
 }
 
-.challenge {
-  display: flex;
-  flex-flow: row nowrap;
-  outline: 1px solid black;
-  padding: 5px;
-  width: fit-content;
-}
 
-.req-group {
-  margin: 5px;
-}
+
+
 .add-req-button,
 .add-change-button,
 .add-challenge-button,
@@ -202,7 +262,6 @@ select {
 }
 
 .result {
-  outline: 1px solid black;
   padding: 10px;
   background-color: white;
   margin-top: 15px;
@@ -232,9 +291,4 @@ select {
   padding: 5px;
   margin: 5px;
   background-color: white;
-}
-
-.action-challenge-container {
-  margin-top: 15px;
-
 }

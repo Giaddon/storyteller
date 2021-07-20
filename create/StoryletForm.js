@@ -4,20 +4,28 @@ const ReqForm = require("./ReqForm");
 const { v4: uuidv4 } = require('uuid');
 
 class StoryletForm extends CreateForm {
-  constructor(storylet) {
-    super();
+  constructor(api, storylet) {
+    super(api);
     this.id = storylet.id;
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
-    this.button = storylet.button || {
-      "title": "New Storylet",
-      "text": "Button text.", 
+    
+    let qualities = [];
+    for (const req of storylet.reqs.qualities) {
+      qualities.push(new ReqForm(this.api, req, this.id, this.removeFromArray.bind(this, "reqs")))
+    }
+    
+    this.reqs = {
+      visibility: storylet.reqs.visibility || "always",
+      qualities,
     };
-    this.reqs = storylet.reqs || {
-      visibility: "always",
-      qualities: [],
-    };
-    this.actions = storylet.actions || {}; 
+
+    let actions = {};
+    for (const action of (Object.values(storylet.actions))) {
+      actions[action.id] = new ActionForm(this.api, action, this.removeChild.bind(this, "actions"))
+    }
+
+    this.actions = actions; 
   }
 
   render() {
@@ -31,7 +39,7 @@ class StoryletForm extends CreateForm {
     form.append(idLabel);
 
     let headerSection = document.createElement("div");
-    headerSection.classList.add("form-section");
+    headerSection.classList.add("form-section", "flex-column");
     form.append(headerSection);
     
     let headerLabel = document.createElement("label");
@@ -58,24 +66,45 @@ class StoryletForm extends CreateForm {
     headerSection.append(textLabel);
     headerSection.append(textInput);
 
+    let visLabel = document.createElement("label");
+    visLabel.innerText = "Visibility";
+    visLabel.htmlFor = `storylet-${this.id}-visibility`;
+    headerSection.append(visLabel); 
+
+    let visSelect = document.createElement("select");
+    visSelect.id = `storylet-${this.id}-visibility`;
+    for (const visType of [
+      {value: "always", label: "Always"}, 
+      {value: "any", label: "Any"}, 
+      {value: "all", label: "All"}
+    ]) {
+      let option = document.createElement("option");
+      option.value = visType.value;
+      option.text = visType.label;
+      visSelect.add(option);
+    }
+    visSelect.value = this.reqs.visibility;
+    visSelect.addEventListener("change", this.captureField.bind(this, "reqs visibility"));
+    headerSection.append(visSelect);
+
     let reqsLabel = document.createElement("label");
     reqsLabel.innerText = "Quality Requirements";
     headerSection.append(reqsLabel); 
 
     let reqsContainer = document.createElement("div");
-    reqsContainer.classList.add("reqs-container");
+    reqsContainer.classList.add("item-container");
     headerSection.append(reqsContainer);
 
     let newReqButton = document.createElement("button");
     newReqButton.innerText = "+ New Requirement";
-    newReqButton.classList.add("add-req-button");
+    newReqButton.classList.add("add-button");
     newReqButton.addEventListener("click", event => {
       event.preventDefault();
-      const id = uuidv4();
+      const id = this.generateId();
       const reqData = {
         id
       }
-      const newReq = new ReqForm(reqData, this.id, this.removeReq.bind(this));
+      const newReq = new ReqForm(this.api, reqData, this.id, this.removeFromArray.bind(this, "reqs"));
       this.reqs.qualities.push(newReq);
       const renderedReq = newReq.render();
       reqsContainer.append(renderedReq);
@@ -89,34 +118,6 @@ class StoryletForm extends CreateForm {
       }
     }
 
-    let buttonSection = document.createElement("div");
-    buttonSection.classList.add("storylet-button");
-    form.append(buttonSection);
-
-    let buttonLabel = document.createElement("label");
-    buttonLabel.innerText = "Storylet Button";
-    buttonSection.append(buttonLabel);
-
-    let {input: buttonTitleInput, label: buttonTitleLabel} = this.createInput(
-      "text", 
-      "storylet-button", 
-      "title", 
-      this.button.title,
-    );
-    buttonTitleInput.addEventListener("input", this.captureField.bind(this, "button title"));
-    buttonSection.append(buttonTitleLabel);
-    buttonSection.append(buttonTitleInput);
-
-    let {input: buttonTextInput, label: buttonTextLabel} = this.createInput(
-      "textarea", 
-      "storylet-button", 
-      "text", 
-      this.button.text,
-    );
-    buttonTextInput.addEventListener("input", this.captureField.bind(this, "button text"));
-    buttonSection.append(buttonTextLabel);
-    buttonSection.append(buttonTextInput);
-    
     let actionSection = document.createElement("div");
     form.append(actionSection);
 
@@ -125,42 +126,61 @@ class StoryletForm extends CreateForm {
     actionSection.append(actionLabel);
 
     for (const action of Object.values(this.actions)) {
-      const newAction = createActionDiv(action);
-      actionSection.append(newAction);
+      const newActionElement = action.render();
+      actionSection.append(newActionElement);
     }
 
     let newActionButton = document.createElement("button");
     newActionButton.innerText = "+ New Action";
+    newActionButton.classList.add("add-button");
     newActionButton.addEventListener("click", event => {
       event.preventDefault();
-      const id = uuidv4();
+      const id = this.generateId();
       const newActionData = {
         id,
-        button: {
-          title: "New action",
-          text: "Action text.",
-        },
+        title: "New action",
+        text: "Action text.",
         reqs: {
           visibility: "always",
           qualities: [],
         },
+        challenges: [],
         results: {
-          title: "New result",
-          text: "Result text.",
-          changes: [],
+          neutral: {
+            title: "Neutral Result",
+            text: "Result text.",
+            flow: "return",
+            changes: [],
+          },
+          success: {
+            title: "Success Result",
+            text: "Result text.",
+            flow: "return",
+            changes: [],
+          },
+          failure: {
+            title: "Failure Result",
+            text: "Result text.",
+            flow: "return",
+            changes: [],
+          }
         },
       }
-      const newAction = new ActionForm(newActionData, this.removeChild.bind(this, "actions"));
+      const newAction = new ActionForm(this.api, newActionData, this.removeChild.bind(this, "actions"));
       this.actions[id] = newAction;
       const newActionElement = newAction.render();
       actionSection.append(newActionElement);
     })
-    actionSection.append(newActionButton);
+    form.append(newActionButton);
 
+    let savePillow = document.createElement("div");
+    savePillow.classList.add("save-pillow");
+    form.append(savePillow);
     let saveButton = document.createElement("button");
+    saveButton.classList.add("save-button");
     saveButton.addEventListener("click", this.saveForm.bind(this));
     saveButton.innerText = "Save";
-    form.append(saveButton);
+    savePillow.append(saveButton);
 
     return form;
   }
@@ -168,6 +188,28 @@ class StoryletForm extends CreateForm {
   saveForm(event) {
     event.preventDefault();
     console.log(this);
+    let qualities = [];
+    for (const req of this.reqs.qualities) {
+      qualities.push(req.returnData());
+    }
+    let reqs = {
+      visibility: this.reqs.visibility,
+      qualities
+    }
+    
+    let actions = {}
+    for (const action of (Object.values(this.actions))) {
+      actions[action.id] = action.returnData();
+    }
+    const storylet = {
+      id: this.id,
+      title: this.title,
+      text: this.text,
+      reqs,
+      actions,
+    }
+    
+    this.api.addStorylet(this.id, storylet);
   }
 
 }
