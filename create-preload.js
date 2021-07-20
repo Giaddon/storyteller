@@ -22,7 +22,7 @@ const manager = new CreateManager(api);
 // let activeStoryletForm;
 window.addEventListener('DOMContentLoaded', () => {
   // populateQualityList();
-  manager.populateStoryletList();
+  manager.populateSectionList();
   // activeStoryletForm = new StoryletForm({id: "new"});
   // let renderedStoryletForm = activeStoryletForm.render();
   // document.getElementById("storylet-form-container").append(renderedStoryletForm);

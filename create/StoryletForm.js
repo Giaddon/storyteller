@@ -31,7 +31,7 @@ class StoryletForm extends CreateForm {
   render() {
     let form = document.createElement("form");
     form.id = "storylet-form";
-    form.classList.add("storylet-form");
+    form.classList.add("active-form");
     
     let idLabel = document.createElement("p");
     idLabel.innerText = `ID: ${this.id}`;
@@ -42,6 +42,21 @@ class StoryletForm extends CreateForm {
     headerSection.classList.add("form-section", "flex-column");
     form.append(headerSection);
     
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("remove-button", "delete-button")
+    deleteButton.innerText = "Delete Storylet."
+    deleteButton.addEventListener("click", event => {
+      event.preventDefault();
+      const confirmation = confirm("This will remove this storylet and associated actions from your world. It can't be undone.")
+      if (confirmation) {
+        this.deleteStorylet(this.id);
+        form.remove();
+      } else {
+        return;
+      }
+    });
+    headerSection.append(deleteButton);
+
     let headerLabel = document.createElement("label");
     headerLabel.innerText = "Storylet Header";
     headerSection.append(headerLabel);

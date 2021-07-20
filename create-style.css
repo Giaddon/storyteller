@@ -37,7 +37,7 @@ select {
 .canvas {
   display: flex;
   flex-flow: row nowrap;
-  max-width: 900px;
+  max-width: 1050px;
   margin: 0px auto;
   background-color: yellow;
   height: 100vh;
@@ -47,6 +47,11 @@ select {
   flex: 0 0 150px;
   background-color: gainsboro;
 }
+.section-list-container {
+  flex: 0 0 150px;
+  background-color:lightsteelblue;
+}
+
 
 .item-list {
   display: flex;
@@ -115,16 +120,17 @@ select {
   padding: 5px;
 }
 
-.storylet-form {
+.active-form {
   flex: 1 1 auto;
-  padding: 10px 60px;
+  padding: 10px 30px 50px 30px;
   margin: 0 auto;
   overflow-y: scroll;
   min-height: 100vh;
 }
 
 .storylet-title,
-.result-title {
+.result-title,
+.quality-name {
   font-family: "Title", sans-serif;
   font-size: 22px;
   border: none;
@@ -153,7 +159,7 @@ select {
 }
 
 .action-title,
-.storylet-button-title {
+.quality-category {
   font-family: "Standard", serif;
   font-size: 18px;
   margin-bottom: 5px;
@@ -233,13 +239,13 @@ select {
   background-color: darkseagreen;
   font-family: "Title", sans-serif;
 }
-
 .save-button:hover {
   background-color: darkolivegreen;
 }
 .save-button:active {
   background-color: darkseagreen;
 }
+
 
 
 

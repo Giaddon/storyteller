@@ -8,13 +8,17 @@ class StateAPI {
   constructor(worldName) {
     this.source = path.join("worlds", worldName);
   }
-
+  addQuality(id, quality) {
+    let world = this.getWorld()
+    world.qualities[id] = quality;
+    this.setWorld(world);
+  }
   addStorylet(id, storylet) {
     let world = this.getWorld()
     world.storylets[id] = storylet;
     this.setWorld(world);
   }
-  removeStorylet(id) {
+  deleteStorylet(id) {
     let world = this.getWorld()
     delete world.storylets[id];
     this.setWorld(world);
@@ -26,6 +30,10 @@ class StateAPI {
     } catch (error) {
       console.error(error.message);
     }
+  }
+  getValue(key) {
+    let world = this.getWorld();
+    return world[key];
   }
   getQualities() {
     try {
@@ -56,9 +64,9 @@ class StateAPI {
       const stringWorld = JSON.stringify(world)
       fs.writeFileSync(this.source, stringWorld)
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     } finally {
-      document.getElementById("storylet-list").dispatchEvent(new CustomEvent("world"));
+      //document.getElementById("storylet-list").dispatchEvent(new CustomEvent("world"));
     }
   }
 }

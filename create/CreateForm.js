@@ -14,7 +14,6 @@ class CreateForm {
     field = field.split(" ");
     if (field.length === 1) {
       this[field[0]] = event.target.value;
-      console.log(this[field[0]]);
     }
     if (field.length === 2) {
       this[field[0]][field[1]] = event.target.value
@@ -41,7 +40,7 @@ class CreateForm {
       input = document.createElement("input");
       input.type = "number";
     }
-    input.id = `${formType}-${contentType}-${suffix}`;
+    input.id = `${formType}-${contentType}${suffix}`;
     input.classList.add(`${formType}-${contentType}`);
   
     if (inputType === "checkbox") {
@@ -51,7 +50,7 @@ class CreateForm {
     }
   
     let label = document.createElement("label");
-    label.htmlFor = `${formType}-${contentType}-${suffix}`;
+    label.htmlFor = `${formType}-${contentType}${suffix}`;
     label.innerText = `${contentType}`
   
     return {input, label};
@@ -70,6 +69,12 @@ class CreateForm {
     }
   }
 
+  saveQuality(id, quality) {
+    this.api.addQuality(id, quality);
+  }
+  deleteStorylet(storyletId) {
+    this.api.deleteStorylet(storyletId);
+  }
   getQualities() {
     return this.api.getQualities();
   }

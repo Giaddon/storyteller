@@ -167,7 +167,7 @@ class ActionForm extends CreateForm {
     } else {
       let addChallengeButton = document.createElement("button");
       addChallengeButton.innerText = "Add Challenge"
-      addChallengeButton.classList.add("add-challenge-button");
+      addChallengeButton.classList.add("add-button");
       addChallengeButton.addEventListener("click", this.addChallenge.bind(this, challengeContainer, resultsContainer))
       challengeContainer.append(addChallengeButton);
       let renderedResult = this.results.neutral.render();
