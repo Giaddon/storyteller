@@ -42,6 +42,10 @@ class CreateManager {
     list.classList.add("item-list");
     list.id = "quality-list";
     
+    list.addEventListener("updatedWorld", event => {
+      this.populateQualityList();
+    });
+
     let newButton = document.createElement("button");
     newButton.innerText = "+ New Quality";
     newButton.classList.add("item-button");
@@ -76,8 +80,7 @@ class CreateManager {
     let storyletList = document.createElement("div");
     storyletList.classList.add("item-list");
     storyletList.id = "storylet-list";
-    storyletList.addEventListener("world", event => {
-      storyletList.remove();
+    storyletList.addEventListener("updatedWorld", event => {
       this.populateStoryletList();
     });
     storyletListContainer.append(storyletList);
@@ -108,7 +111,7 @@ class CreateManager {
   }
 
   createItemButton(data, type) {
-    let button = u.create("button");
+    let button = document.createElement("button");
     button.classList.add("item-button");
     button.innerText = data.title || data.name;
     return button

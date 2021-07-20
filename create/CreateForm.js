@@ -13,12 +13,16 @@ class CreateForm {
   captureField(field, event) {
     field = field.split(" ");
     if (field.length === 1) {
-      this[field[0]] = event.target.value;
+      this[field[0]] = event.target.value
     }
     if (field.length === 2) {
       this[field[0]][field[1]] = event.target.value
     }
   }
+
+  captureCheckbox(field, event) {
+    this[field] = event.target.checked;
+    }
 
   createInput(inputType, formType, contentType, content, suffix = "") {
     let input;
@@ -74,6 +78,9 @@ class CreateForm {
   }
   deleteStorylet(storyletId) {
     this.api.deleteStorylet(storyletId);
+  }
+  deleteQuality(qualityId) {
+    this.api.deleteQuality(qualityId);
   }
   getQualities() {
     return this.api.getQualities();

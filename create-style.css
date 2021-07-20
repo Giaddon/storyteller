@@ -95,6 +95,8 @@ select {
 .flex-item {
   flex: 0 1 auto;
   margin: 5px;
+  outline: 1px solid black;
+  padding: 5px;
 }
 
 .item-container {
@@ -149,15 +151,13 @@ select {
   height: 80px;
 }
 
-.storylet-button {
-  display: flex;
-  flex-flow: column nowrap;
-  outline: 1px solid black;
-  padding: 15px;
-  margin: 0 auto 15px auto;
-  width: fit-content;
+.quality-description,
+.quality-label {
+  font-family: "Standard", serif;
+  font-size: 12px;
+  min-width: 200px;
+  padding: 5px;
 }
-
 .action-title,
 .quality-category {
   font-family: "Standard", serif;
@@ -176,11 +176,6 @@ select {
   padding: 5px;
   width: 100%;
   height: 60px;
-}
-
-.storylet-button-text {
-  max-width: 500px;
-  min-width: 400px;
 }
 
 .id-label {

@@ -11,7 +11,6 @@ const StateAPI = require("./create/StateAPI");
 // -- Change type random (set to a random # within range.)
 // QUALITIES
 // - Quality types (items vs attribues)?
-// - Descriptions and labels.
 // - Messages? 
 // DOMAINS
 // - Figure out event and card implementation. 

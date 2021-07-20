@@ -12,16 +12,60 @@ class StateAPI {
     let world = this.getWorld()
     world.qualities[id] = quality;
     this.setWorld(world);
+    document.getElementById("quality-list").dispatchEvent(new CustomEvent("updatedWorld"));
   }
   addStorylet(id, storylet) {
     let world = this.getWorld()
     world.storylets[id] = storylet;
     this.setWorld(world);
+    document.getElementById("storylet-list").dispatchEvent(new CustomEvent("updatedWorld"));
   }
   deleteStorylet(id) {
     let world = this.getWorld()
     delete world.storylets[id];
     this.setWorld(world);
+    document.getElementById("storylet-list").dispatchEvent(new CustomEvent("updatedWorld"));
+  }
+  deleteQuality(id) {
+    let world = this.getWorld()
+    delete world.qualities[id];
+    for (const storylet of Object.values(world.storylets)) {
+      let targetReqs = new Set();
+      for (const req of storylet.reqs.qualities) {
+        if (req.quality === id) {
+          targetReqs.add(req.id)
+        }  
+      }
+      storylet.reqs.qualities = storylet.reqs.qualities.filter(req => !targetReqs.has(req.id))
+      for (const action of Object.values(storylet.actions)) {
+        let targetReqs = new Set();
+        for (const req of action.reqs.qualities) {
+          if (req.quality === id) {
+            targetReqs.add(req.id)
+          }  
+        }
+        action.reqs.qualities = action.reqs.qualities.filter(req => !targetReqs.has(req.id))
+        let targetChallenges = new Set();
+        for (const challenge of action.challenges) {
+          if (challenge.quality === id) {
+            targetChallenges.add(challenge.id);
+          }
+        }
+        action.challenges = action.challenges.filter(challenge => !targetChallenges.has(challenge.id));
+        for (const result of Object.values(action.results)) {
+          let targetChanges = new Set();
+          for (const change of result.changes) {
+            if (change.quality === id) {
+              targetChanges.add(change.id)
+            } 
+          }
+          result.changes = result.changes.filter(change => !targetChanges.has(change.id));
+        }
+      }
+    }
+
+    this.setWorld(world);
+    document.getElementById("quality-list").dispatchEvent(new CustomEvent("updatedWorld"));
   }
   getWorld() {
     try {
@@ -65,8 +109,6 @@ class StateAPI {
       fs.writeFileSync(this.source, stringWorld)
     } catch (error) {
       console.error(error.message);
-    } finally {
-      //document.getElementById("storylet-list").dispatchEvent(new CustomEvent("world"));
     }
   }
 }

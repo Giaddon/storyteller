@@ -9,8 +9,16 @@ function removeChildren(element) {
   }
 }
 
-function create(tag) {
+function create(elementObject) {
+  const {tag, classes, id, content} = elementObject;
   const element = document.createElement(tag)
+  if (classes) {
+    for (let className of classes) {
+      element.classList.add(className);
+    }
+  }
+  if (id) element.id = id;
+  if (content) element.innerText = content;
   return element;
 }
 
