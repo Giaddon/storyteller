@@ -30,10 +30,27 @@ class StateAPI {
       const qualities = {} 
       for (const quality of Object.values(this.world.qualities)) {
         if (quality.startvalue && quality.startvalue > 0) {
-          qualities[quality.id] = quality.startvalue;
+          qualities[quality.id] = Number(quality.startvalue);
         }
       }
       return {qualities, storylet: this.getStart()} 
+    }
+  }
+
+  adjustQuality(qualityId, value) {
+    const newValue = (this.player.qualities[qualityId] || 0) + Number(value);
+    if (newValue < 1) {
+      delete this.player.qualities[qualityId];
+    } else {
+      this.player.qualities[qualityId] = newValue;
+    }
+  }
+
+  setQuality(qualityId, value) {
+    if (value < 1) {
+      delete this.player.qualities[qualityId]
+    } else {
+      this.player.qualities[qualityId] = Number(value);
     }
   }
 
@@ -44,11 +61,21 @@ class StateAPI {
   getPlayerQualities() {
     return {...this.player.qualities}
   }
+  getStorylets() {
+    return {...this.world.storylets};
+   }
+   getStorylet(storyletId) {
+     return {...this.world.storylets[storyletId]};
+   }
   getCurrentStorylet() {
     return {...this.player.storylet}
   }
+  enterStorylet(storyletId) {
+    this.player.storylet = this.getStorylet(storyletId);
+    return {...this.player.storylet};
+  }
   getPlayerQuality(id) {
-    return this.player.qualities[id]
+    return this.player.qualities[id] || 0;
   }
   getQualities() {
     return {...this.world.qualities};
@@ -56,9 +83,7 @@ class StateAPI {
   getQuality(id) {
     return {...this.world.qualities[id]};
   }
-  getStorylets() {
-   return {...this.world.storylets};
-  }
+  
 
   getDomains() {
     return {...this.world.domains};

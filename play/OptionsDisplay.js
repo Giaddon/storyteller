@@ -1,8 +1,9 @@
 const u = require("../utilities");
 
 class OptionsDisplay {
-  constructor(api) {
+  constructor(api, prepareResults) {
     this.api = api;
+    this.prepareResults = prepareResults;
   }
 
   render() {
@@ -33,7 +34,7 @@ class OptionsDisplay {
 
     if (active) { 
       optionElement.setAttribute('tabindex', '0');
-      //optionElement.addEventListener('click', (event) => { selectOption(option) });
+      optionElement.addEventListener('click', (event) => { this.prepareResults(option) });
     } else {
       // if (option.reqs.hidden) {
       //   optionElement.remove();

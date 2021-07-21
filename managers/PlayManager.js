@@ -23,7 +23,7 @@ class PlayManager {
     const renderedQualities = this.qualityDisplay.render();
     qualitiesContainer.append(renderedQualities);
 
-    const storyContainer = u.create({tag: "div", classes:["story-container"]});
+    const storyContainer = u.create({tag: "div", classes:["story-container"], id: "story-container"});
     canvas.append(storyContainer);
 
     const resultContainer = u.create({tag: "div", classes:["result-container"], id: "result-container"});
@@ -38,13 +38,269 @@ class PlayManager {
     const start = this.api.getStart()
     const header = this.createHeader(start);
 
-    this.optionsDisplay = new OptionsDisplay(this.api);
+    this.optionsDisplay = new OptionsDisplay(this.api, this.prepareResults.bind(this));
     const renderedOptions = this.optionsDisplay.render();
     optionsContainer.append(renderedOptions)
     
     headerContainer.append(header);
 
   }
+
+  // After the user selects an option, prepareResults packages the data in a result and
+  // executes this function, which handles the changes, sets the text, and redraws the game.
+  mainCycle(result = null) {
+    for (const change of result.changes) {
+      this.handleChange(change);
+    }
+
+    let location;
+    if (result.flow === "return") {
+      location = this.api.getCurrentStorylet()
+    } else {
+      location = this.api.enterStorylet(result.flow);
+
+    }
+
+    const header = this.createHeader(location);
+    const conclusion = this.prepareWindow(result)
+    const options = this.optionsDisplay.render();
+    const qualities = this.qualityDisplay.render();
+    
+    this.renderGame(conclusion, header, options, qualities)
+  }
+
+  // Clears dom and adds the supplied elements.
+  renderGame(conclusion, header, options, qualities) {
+    const containers = this.clearGame();
+
+    containers.qualitiesContainer.append(qualities);
+    containers.headerContainer.append(header);
+    containers.resultContainer.append(conclusion);
+    containers.optionsContainer.append(options);
+
+    document.getElementById("story-container").scroll(0, 0);
+  }
+
+  clearGame() {
+    const qualitiesContainer = document.getElementById("qualities-container");
+    const resultContainer = document.getElementById("result-container");
+    const headerContainer = document.getElementById("header-container");
+    const optionsContainer = document.getElementById("options-container");
+
+    for (const container of [qualitiesContainer, resultContainer, headerContainer, optionsContainer]) {
+      u.removeChildren(container);
+    }
+    return {
+      qualitiesContainer,
+      resultContainer,
+      headerContainer,
+      optionsContainer
+    }
+  }
+
+
+  createOptions(options) {
+    const optionsList = u.create({tags:"div", classes:["options-list"]});
+    for (const option of options) {
+      const renderedOption = createOption(option);
+      if (renderedOption) {
+        optionsList.append(renderedOption);
+      }
+    }
+
+    return optionsList;
+  }
+
+  createOption(option) {
+    const optionDiv = u.create({tag:"div", classes:["option"]});
+    const title = u.create({tag:"h1", content: option.title});
+    const text = u.create({tag:"p", content: option.text});
+    optionDiv.append(title);
+    optionDiv.append(text);
+
+    // let challengeContainer = document.createElement('div');
+    // challengeContainer.classList.add("option-challenge-container");
+    // option.appendChild(challengeContainer);
+  
+    // let reqsContainer = document.createElement('div');
+    // reqsContainer.classList.add("option-reqs-container");
+    // option.appendChild(reqsContainer);
+    
+    
+    const {active, labels} = this.evaluateReqs(option.reqs)
+  
+    for (const label of labels) {
+      optionElement.querySelector(".option-reqs-container").appendChild(label);
+    }
+  
+    if (active) { 
+      optionElement.setAttribute('tabindex', '0');
+      optionElement.addEventListener('click', (event) => { selectOption(option) });
+    } else {
+      if (option.reqs.hidden) {
+        optionElement.remove();
+        return;
+      }
+      optionElement.classList.add('option-disabled');
+    }
+  
+    if (option.challenge) {
+      let playerValue = state.actions.getQuality(option.challenge.quality);
+      if (playerValue === undefined) {
+        playerValue = 0;
+      } 
+      let qualityLabel = state.actions.getQualityData(option.challenge.quality).label;
+      let chance = option.challenge.difficulty - playerValue;
+      if (chance > 6) {
+        chance = 0;
+      } else if (chance < 2) {
+        chance = 100;  
+      }
+      else {
+        chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
+      } 
+      let challengePhrase = `This is a ${qualityLabel} challenge.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+      let challengeText = document.createElement("p");
+      challengeText.innerText = challengePhrase;
+      optionElement.querySelector(".option-challenge-container").appendChild(challengeText);
+    } // end if challenge
+  
+    return optionElement;
+  }
+
+
+
+  // Fired when player selects an action or storylet. 
+  // Determines what result to send to the main cycle.
+  prepareResults(option) {
+    if (option.challenges.length > 0) {
+      let passed = [];
+      for (const challenge of option.challenges) {
+        passed.push(this.attemptChallenge(challenge))
+      }
+      if (passed.every(outcome => outcome)) {
+        this.mainCycle({
+          ...option.results.success,
+          challenge: {
+            passed: true,
+            challenges: option.challenges
+          } 
+        });
+      } else {
+        this.mainCycle({
+          ...option.results.failure,
+          challenge: {
+            passed: false,
+            challenges: option.challenges
+          } 
+        });
+      }
+    } else {
+      this.mainCycle(option.results.neutral);
+    }
+  }
+
+  attemptChallenge({quality, difficulty}) {
+    const result = Math.ceil(Math.random() * 6) + this.api.getPlayerQuality(quality);
+    return result >= difficulty;
+  }
+
+  handleChange(change) {
+    switch (change.type) {
+      case 'set':
+        this.api.setQuality(change.quality, change.value);
+        break;
+      case 'adjust':
+        this.api.adjustQuality(change.quality, change.value);
+        break;
+      default:
+        console.error('No valid change type found.');
+    }
+    //renderQuality(change.quality, state.actions.getQuality(change.quality));
+  }
+
+  // Prepares the result data or the action conclusion, returns the completed conclusion element.
+  prepareWindow(result) {
+    let changedQualities = {};
+    const changes = result.changes;
+    if (changes) {
+      for (const change of changes) {
+        changedQualities[change.quality] = this.api.getQuality(change.quality);
+      }
+    }
+    if (result.challenge) {
+      for (challenge of result.challenge.challenges)
+      changedQualities[challenge.quality] = this.api.getQuality(challenge.quality);
+    }
+
+    return this.createConclusion(result, changedQualities)
+  }
+
+  // creates and returns the conclusion element for display. 
+  createConclusion(result, qualities = {}) {
+    const conclusion = u.create({tag: "div", classes:["conclusion"]})
+    const conclusionTitle = u.create({tag:"h1", content: result.title})
+    const conclusionText = u.create({tag: "p", content: result.text});
+    const outcomes = u.create({tag: "div", classes: ["conclusion-outcomes"]});
+    conclusion.append(conclusionTitle);
+    conclusion.append(conclusionText);
+
+    if (result.challenge) {
+      if (result.challenge.passed) {
+        outcomes.classList.add("challenge-passed");
+      } else {
+        outcomes.classList.add("challenge-failed");
+      }
+      // Not quite right if multiple challenges get added (uses same passed for all qualities).
+      for (const challenge of result.challenge.challenges) {
+        const outcome = u.create({
+          tag:"p", 
+          content: `You ${result.challenge.passed ? "passed" : "failed"} a ${qualities[challenge.quality].name} challenge!`
+        });
+        outcomes.append(outcome);
+      }
+    }
+
+    if (result.changes.length > 0) {      
+      for (const change of result.changes) {
+        const qualityId = change.quality;
+        if (qualities[qualityId].hidden) continue;
+        const outcome = u.create({tag:"p"});
+        let changePhrase = "";
+        if (change.type === "set") {
+          changePhrase = "is now"
+        } else if (change.type === "adjust") {
+          if (change.value > 0) {
+            changePhrase = "increased by"
+          } else {
+            changePhrase = "decreased by"
+          }
+        }
+        // TODO add text for removal / 0 or below.
+        outcome.innerText = `${qualities[qualityId].name} ${changePhrase} ${Math.abs(change.value)}.`;
+        outcomes.append(outcome);
+      }
+
+      //This won't be accurate once events are working.
+      // if (result.flow === "return") {
+      //   const outcome = u.create({tag:"p", content: `You are still in ${this.api.getCurrentStorylet().title}`});
+      //   outcomes.append(outcome);
+      // }
+      
+      if (outcomes.children.length < 1) {
+        outcomes.remove();
+      } else {
+        conclusion.append(outcomes);
+      }
+    }
+
+    const seperator = u.create({tag:"div", classes:["conclusion-seperator"]});
+    conclusion.append(seperator);
+
+    return conclusion;
+  }
+
+
 
   createHeader(headerData) {
     let header = document.createElement("div");
@@ -131,7 +387,6 @@ class PlayManager {
       parent.appendChild(newQuality);
     }
   }
-
 
   createQualityCategory(category) {
     const newCategory = document.createElement('div');
