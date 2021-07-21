@@ -1,11 +1,12 @@
 const u = require('../utilities');
 
 class MainMenuManager {
-  constructor(profile, passToCreate) {
+  constructor(profile, passToCreate, passToPlay) {
     this.profileName = profile.profileName;
     this.playing = profile.playing;
     this.creating = profile.creating;
     this.passToCreate = passToCreate;
+    this.passToPlay = passToPlay;
   }
 
   renderMainMenu() {
@@ -24,6 +25,7 @@ class MainMenuManager {
     mainMenuDiv.append(gameNameLabel);
 
     let continueButton = u.create({tag: "button", classes:["main-menu-button"], content: "Continue Game"});
+    continueButton.addEventListener("click", this.continuePlaying.bind(this));
     mainMenuDiv.append(continueButton);
 
     let loadButton = u.create({tag: "button", classes:["main-menu-button"], content: "Load Game"});
@@ -66,6 +68,11 @@ class MainMenuManager {
   continueEditing(event) {
     event.preventDefault();
     this.passToCreate(this.creating);
+  }
+
+  continuePlaying(event) {
+    event.preventDefault();
+    this.passToPlay(this.playing);
   }
 
 }

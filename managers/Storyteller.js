@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const MainMenuManager = require("./MainMenuManager");
-const CreateStateAPI = require("../create/StateAPI");
 const CreateManager = require('./CreateManager');
+const PlayManager = require('./PlayManager');
+const CreateStateAPI = require("../create/StateAPI");
+const PlayStateAPI = require("../play/StateAPI");
 
 const configFile = path.join(__dirname, "../", 'config.json');
 const worldsFolder = path.join(__dirname, "../", 'worlds');
@@ -11,7 +13,7 @@ const profilesFolder = path.join(__dirname, "../", 'profiles');
 class Storyteller {
   constructor() {
     const profileData = this.startup()
-    this.mainMenuManager = new MainMenuManager(profileData, this.passToCreate.bind(this))
+    this.mainMenuManager = new MainMenuManager(profileData, this.passToCreate.bind(this), this.passToPlay.bind(this))
     this.playManager;
     this.createManager;
   }
@@ -69,10 +71,10 @@ class Storyteller {
     this.createManager.startupCreate();
   }
 
-  // passToPlay(playWorldName) {
-  //   this.playManager = new CreateManager(new CreateStateAPI(playWorldName));
-  //   this.playManager.startupCreate();
-  // }
+  passToPlay(playWorldName) {
+    this.playManager = new PlayManager(new PlayStateAPI(playWorldName));
+    this.playManager.startupPlay();
+  }
 
 
 }

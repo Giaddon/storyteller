@@ -54,7 +54,23 @@ select {
   height: 1px;
   margin: 20px 0px;
 }
-
+.qualities-container {
+  flex: 0 1 250px;
+  width: 250px;
+  min-width: 200px;
+  padding: 10px 20px 50px 10px;
+  height: 100vh;
+  /* border-right: 1px solid black; */
+  outline: 1px solid black;
+  overflow-y:scroll;
+}
+.story-container {
+  flex: 0 1 750px;
+  margin-left: 25px;
+  padding: 15px 15px 50px 15px;
+  overflow-y: scroll;
+  height: 100vh;
+}
 
 
 
