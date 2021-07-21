@@ -11,8 +11,8 @@ const schemas = {
   quality: {
     name: "New Quality",
     startvalue: 0,
-    descriptions: {},
-    labels: {},
+    descriptions: [],
+    labels: [],
     category: "",
     hidden: false,
   }

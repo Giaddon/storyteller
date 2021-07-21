@@ -71,8 +71,8 @@ class Storyteller {
     this.createManager.startupCreate();
   }
 
-  passToPlay(playWorldName) {
-    this.playManager = new PlayManager(new PlayStateAPI(playWorldName));
+  passToPlay(playWorldName, profileName) {
+    this.playManager = new PlayManager(new PlayStateAPI(playWorldName, profileName));
     this.playManager.startupPlay();
   }
 

@@ -1,8 +1,12 @@
 const u = require("../utilities");
+const QualityDisplay = require("../play/QualityDisplay");
+const OptionsDisplay = require("../play/OptionsDisplay");
 
 class PlayManager {
   constructor(api) {
     this.api = api;
+    this.qualityDisplay = null;
+    this.optionsDisplay = null;
   }
 
   startupPlay() {
@@ -15,17 +19,9 @@ class PlayManager {
     const qualitiesContainer = u.create({tag: "div", classes: ["qualities-container"], id: "qualities-container"});
     canvas.append(qualitiesContainer);
     
-    const qualitiesTitle = u.create({tag: "h1", classes: ["qualities-title"], content: "Qualities"});
-    qualitiesContainer.append(qualitiesTitle);
-      
-    const qualitiesCategoriesContainer = u.create({tag: "div", classes: ["qualities-catagories-container"], id: "qualities-catagories-container"});
-    qualitiesContainer.append(qualitiesCategoriesContainer);
-
-    const uncategorizedContainer = u.create({tag: "div", id: "cat-Uncategorized"});
-    qualitiesContainer.append(uncategorizedContainer);
-
-    const uncategorizedTitle = u.create({tag: "h1", classes: ["qualities-category-title"], content: "Uncategorized"});
-    uncategorizedContainer.append(uncategorizedTitle);
+    this.qualityDisplay = new QualityDisplay(this.api);
+    const renderedQualities = this.qualityDisplay.render();
+    qualitiesContainer.append(renderedQualities);
 
     const storyContainer = u.create({tag: "div", classes:["story-container"]});
     canvas.append(storyContainer);
@@ -41,6 +37,11 @@ class PlayManager {
 
     const start = this.api.getStart()
     const header = this.createHeader(start);
+
+    this.optionsDisplay = new OptionsDisplay(this.api);
+    const renderedOptions = this.optionsDisplay.render();
+    optionsContainer.append(renderedOptions)
+    
     headerContainer.append(header);
 
   }
@@ -60,6 +61,110 @@ class PlayManager {
   
     return header;
   }
+
+  renderQuality(qualityId, value) {  
+    const quality = this.api.getQuality(qualityId);
+    if (quality.hidden) return;
+    
+    let displayValue = value.toString();
+    let displayDescription = '';
+  
+    if (quality.labels && quality.labels.length > 0) {
+      const keys = quality.labels.sort((a, b) => a.value - b.value);
+      displayValue = quality.labels[Math.min(value, keys[keys.length - 1])];
+    }
+
+    if (quality.descriptions) {
+      const keys = quality.descriptions.sort((a, b) => a.value - b.value);
+      displayDescription = quality.descriptions[Math.min(value, keys[keys.length - 1])];
+    }
+  
+    const qualitiesContainer = document.getElementById('qualities-categories-container');
+    const targetQuality = document.getElementById(`qual-${qualityId}`);
+    if (targetQuality) {
+      const parent = targetQuality.parentElement;
+      if (!value) {
+        targetQuality.remove();
+        if (parent.classList.contains('quality-category') && parent.children.length < 2) {
+          parent.remove();
+        }
+      } else targetQuality.firstElementChild.innerText = `${quality.label} • ${displayValue}`;
+    }
+    else {
+      if (!value) return;
+  
+      let parent;
+      const category = quality.category || 'Uncategorized';
+      let targetCategory = document.getElementById(`cat-${category}`);
+      if (targetCategory) {
+        parent = targetCategory;
+      }
+      if (!parent) {
+        const newCategory = document.createElement('div');
+        const newCategoryTitle = document.createElement('h1');
+        newCategory.id = `cat-${category}`;
+        newCategory.classList.add('qualities-category');
+        newCategoryTitle.classList.add('qualities-category-title');
+        newCategoryTitle.innerText = category;
+        newCategory.appendChild(newCategoryTitle);
+        qualitiesContainer.appendChild(newCategory);
+        parent = newCategory;
+      }
+      
+      const newQuality = document.createElement('div');
+      const newQualityTitle = document.createElement('p');
+      newQualityTitle.classList.add('quality-title');
+      newQualityTitle.innerText = `${quality.label} • ${displayValue}`
+  
+      newQuality.appendChild(newQualityTitle);
+  
+      if (displayDescription) {
+        const newQualityDescription = document.createElement('p');
+        newQualityDescription.innerHTML = displayDescription;
+        newQualityDescription.classList.add('quality-description');
+        newQuality.appendChild(newQualityDescription);
+      }
+  
+      newQuality.classList.add('quality');
+      newQuality.id = `qual-${qualityId}`;
+  
+      parent.appendChild(newQuality);
+    }
+  }
+
+
+  createQualityCategory(category) {
+    const newCategory = document.createElement('div');
+    const newCategoryTitle = document.createElement('h1');
+    newCategory.id = `cat-${category}`;
+    newCategory.classList.add('qualities-category');
+    newCategoryTitle.classList.add('qualities-category-title');
+    newCategoryTitle.innerText = category;
+    newCategory.appendChild(newCategoryTitle);
+
+    return newCategory;
+  }
+
+  createQuality(id, label, value, description = "", ) {
+    const newQuality = document.createElement('div');
+    newQuality.classList.add('quality');
+    newQuality.id = `qual-${id}`;
+    
+    const newQualityTitle = document.createElement('p');
+    newQualityTitle.classList.add('quality-title');
+    newQualityTitle.innerText = `${label} • ${value}`
+    newQuality.appendChild(newQualityTitle);
+
+    if (description) {
+      const newQualityDescription = document.createElement('p');
+      newQualityDescription.innerHTML = description;
+      newQualityDescription.classList.add('quality-description');
+      newQuality.appendChild(newQualityDescription);
+    }
+
+    return newQuality;
+  }
+
 }
 
 module.exports = PlayManager

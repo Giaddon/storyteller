@@ -64,6 +64,11 @@ select {
   outline: 1px solid black;
   overflow-y:scroll;
 }
+.quality {
+  outline: 1px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 .story-container {
   flex: 0 1 750px;
   margin-left: 25px;
@@ -71,8 +76,66 @@ select {
   overflow-y: scroll;
   height: 100vh;
 }
+.header {
+  /* padding: 15px 20px; */
+  background-color: inherit;
+  margin-bottom: 30px;
+}
+.options-container {
+  margin-top: 15px;
+}
 
+.option {
+  background-color: inherit;
+  padding: 15px 15px 15px 30px;
+  margin: 0px auto 15px auto;
+  width: 550px;
+  cursor: pointer;
+  
+  /* min-height: 100px; */
+  outline: 1px solid black;
+  /* transition: outline ease 0.3s; */
+}
 
+.option:hover,
+.option:focus {
+  outline: 3px solid gold;
+}
+
+.option-disabled {
+  background-color: inherit;
+  cursor: default;
+  color: grey;
+  outline: 1px solid tomato;
+}
+.option-disabled:hover {
+  color: grey;
+  outline: 1px solid tomato;
+}
+
+.option-challenge-container {
+  margin-top: 10px;
+}
+
+.option-reqs-container {
+  margin-top: 10px;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.option-req {
+  flex: 0 1 auto;
+  padding: 5px;
+  color: white;
+  background-color: yellowgreen;
+  width: fit-content;
+  height: 30px;
+  margin-right: 5px;
+}
+
+.req-disabled {
+  background-color: tomato;
+}
 
 
 .item-list-container {

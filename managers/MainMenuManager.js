@@ -72,7 +72,7 @@ class MainMenuManager {
 
   continuePlaying(event) {
     event.preventDefault();
-    this.passToPlay(this.playing);
+    this.passToPlay(this.playing, this.profileName);
   }
 
 }
