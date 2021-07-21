@@ -1,4 +1,1 @@
-{
-  "profiles": ["default"],
-  "activeProfile": "default"
-}
+{"profiles":["default","franz"],"activeProfile":"default"}

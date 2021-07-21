@@ -6,7 +6,7 @@ const fs = require("fs");
 
 class StateAPI {
   constructor(worldName) {
-    this.source = path.join("worlds", worldName);
+    this.source = path.join(__dirname, "../", "worlds", worldName);
   }
   addQuality(id, quality) {
     let world = this.getWorld()

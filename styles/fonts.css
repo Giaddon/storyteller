@@ -1,12 +1,25 @@
 @font-face {
   font-family: 'Title';
-  src: local('Alata'), url(./assets/fonts/Alata.ttf) format('truetype');
+  src: local('Alata'), url(../assets/fonts/Alata.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Standard';
-  src: local('IBMPlexSerif'), url(./assets/fonts/IBMPlexSerif-Regular.ttf) format('truetype');
+  src: local('IBMPlexSerif'), url(../assets/fonts/IBMPlexSerif-Regular.ttf) format('truetype');
 }
+
+.main-menu-small {
+  font-family: "Title", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+.main-menu-big {
+  font-family: "Title", sans-serif;
+  font-size: 32px;
+  text-transform: uppercase;
+}
+
+
 
 .header h1, 
 .conclusion-container h1,

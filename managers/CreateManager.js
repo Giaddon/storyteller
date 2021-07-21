@@ -1,13 +1,31 @@
 const u = require("../utilities");
-const schemas = require("./schemas");
+const schemas = require("../create/schemas");
 const { v4: uuidv4 } = require('uuid');
-const StoryletForm = require("./StoryletForm");
-const QualityForm = require("./QualityForm");
+const StoryletForm = require("../create/StoryletForm");
+const QualityForm = require("../create/QualityForm");
 
 class CreateManager {
   constructor(api) {
     this.api = api;
     this.activeForm = null;
+  }
+
+  startupCreate() {
+    const root = document.getElementById("root");
+    u.removeChildren(root);
+    
+    const canvas = u.create({tag: "div", classes: ["canvas"], id: "canvas"});
+    root.append(canvas);
+
+    const sectionListContainer = u.create({tag: "div", classes: ["section-list-container"], id: "section-list-container"})
+    const itemListContainer = u.create({tag: "div", classes: ["item-list-container"], id: "item-list-container"})
+    const formContainer = u.create({tag: "div", classes: ["form-container"], id: "form-container"})
+
+    canvas.append(sectionListContainer);
+    canvas.append(itemListContainer);
+    canvas.append(formContainer);
+
+    this.populateSectionList();
   }
 
   populateSectionList() {

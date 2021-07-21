@@ -9,7 +9,8 @@ class StoryletForm extends CreateForm {
     this.id = storylet.id;
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
-    
+    this.start = storylet.start;
+
     let qualities = [];
     for (const req of storylet.reqs.qualities) {
       qualities.push(new ReqForm(this.api, req, this.id, this.removeFromArray.bind(this, "reqs")))
@@ -81,6 +82,16 @@ class StoryletForm extends CreateForm {
     headerSection.append(textLabel);
     headerSection.append(textInput);
 
+    let {input: startInput, label: startLabel} = this.createInput(
+      "checkbox", 
+      "storylet", 
+      "start", 
+      this.start,
+    );
+    startInput.addEventListener("input", this.captureCheckbox.bind(this, "start"));
+    headerSection.append(startLabel);
+    headerSection.append(startInput);
+    
     let visLabel = document.createElement("label");
     visLabel.innerText = "Visibility";
     visLabel.htmlFor = `storylet-${this.id}-visibility`;
@@ -220,6 +231,7 @@ class StoryletForm extends CreateForm {
       id: this.id,
       title: this.title,
       text: this.text,
+      start: this.start,
       reqs,
       actions,
     }
