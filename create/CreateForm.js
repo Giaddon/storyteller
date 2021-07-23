@@ -10,6 +10,7 @@ class CreateForm {
     return uuidv4();
   }
 
+  
   captureField(field, event) {
     field = field.split(" ");
     if (field.length === 1) {

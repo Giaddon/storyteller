@@ -64,15 +64,33 @@ class StateAPI {
   getStorylets() {
     return {...this.world.storylets};
    }
-   getStorylet(storyletId) {
-     return {...this.world.storylets[storyletId]};
-   }
+  getStorylet(storyletId) {
+    return {...this.world.storylets[storyletId]};
+  }
   getCurrentStorylet() {
-    return {...this.player.storylet}
+    if (this.player.storylet) {
+      return {...this.player.storylet};
+    } else
+    return;
   }
   enterStorylet(storyletId) {
     this.player.storylet = this.getStorylet(storyletId);
     return {...this.player.storylet};
+  }
+  exitStorylet() {
+    this.player.storylet = undefined;
+    console.log("Leaving storylet ", this.player.storylet)
+    return;
+  }
+  getDomain(id) {
+    return {...this.world.domains[id]}
+  }
+  enterDomain(id) {
+    this.player.domain = this.getDomain(id);
+    return {...this.player.domain}
+  }
+  getCurrentDomain() {
+    return {...this.player.domain};
   }
   getPlayerQuality(id) {
     return this.player.qualities[id] || 0;
@@ -83,8 +101,6 @@ class StateAPI {
   getQuality(id) {
     return {...this.world.qualities[id]};
   }
-  
-
   getDomains() {
     return {...this.world.domains};
   }

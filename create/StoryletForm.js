@@ -234,6 +234,14 @@ class StoryletForm extends CreateForm {
       start: this.start,
       reqs,
       actions,
+      results: {
+        neutral: {
+          flow: this.id,
+          changes: [],
+          title: "",
+          text: "",
+        }
+      }
     }
     
     this.api.saveItem(this.id, "storylets", storylet);

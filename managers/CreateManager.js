@@ -144,7 +144,7 @@ class CreateManager {
     u.removeChildren(listContainer);
     let itemList = u.create({tag: "div", classes:["item-list"], id:"item-list"});
     itemList.addEventListener("updatedWorld", event => {
-      const {type} = event.detail;
+      const type = event.detail;
       this.populateItemList(type);
     });
     listContainer.append(itemList);

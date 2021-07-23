@@ -12,7 +12,17 @@ class OptionsDisplay {
     if (activeStorylet) {
       options = activeStorylet.actions;
     } else {
-      //domain
+      let activeDomain = this.api.getCurrentDomain();
+      for (const storyletId of activeDomain.storylets) {
+        const storylet = this.api.getStorylet(storyletId);
+        const option = {
+          id: storylet.id,
+          title: storylet.title,
+          text: (storylet.text.split(".")[0] + ".."),
+          results: storylet.results
+        }
+        options[storylet.id] = option;
+      }
     }
     let optionsList = u.create({tag:"div", class:["options-list"]})
     for (const option of Object.values(options)) {
@@ -34,7 +44,7 @@ class OptionsDisplay {
 
     if (active) { 
       optionElement.setAttribute('tabindex', '0');
-      optionElement.addEventListener('click', (event) => { this.prepareResults(option) });
+      optionElement.addEventListener('click', this.prepareResults.bind(null, option));
     } else {
       // if (option.reqs.hidden) {
       //   optionElement.remove();

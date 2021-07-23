@@ -38,7 +38,7 @@ class PlayManager {
     const start = this.api.getStart()
     const header = this.createHeader(start);
 
-    this.optionsDisplay = new OptionsDisplay(this.api, this.prepareResults.bind(this));
+    this.optionsDisplay = new OptionsDisplay(this.api, this.prepareResults);
     const renderedOptions = this.optionsDisplay.render();
     optionsContainer.append(renderedOptions)
     
@@ -49,6 +49,7 @@ class PlayManager {
   // After the user selects an option, prepareResults packages the data in a result and
   // executes this function, which handles the changes, sets the text, and redraws the game.
   mainCycle(result = null) {
+    console.log("Cycling with: ", result);
     for (const change of result.changes) {
       this.handleChange(change);
     }
@@ -56,12 +57,14 @@ class PlayManager {
     let location;
     if (result.flow === "return") {
       location = this.api.getCurrentStorylet()
+      console.log("returning")
     } else {
-      location = this.api.getDomain(result.flow);
+      console.log("flowing")
+      this.api.exitStorylet();
+      location = this.api.enterDomain(result.flow);
       if (location === undefined) {
         location = this.api.enterStorylet(result.flow);
       }
-
     }
 
     const header = this.createHeader(location);
@@ -176,7 +179,8 @@ class PlayManager {
   // Fired when player selects an action or storylet. 
   // Determines what result to send to the main cycle.
   prepareResults(option) {
-    if (option.challenges.length > 0) {
+    console.log("preparing results")
+    if (option.challenges && option.challenges.length > 0) {
       let passed = [];
       for (const challenge of option.challenges) {
         passed.push(this.attemptChallenge(challenge))
@@ -199,6 +203,7 @@ class PlayManager {
         });
       }
     } else {
+      console.log("preparing neutral")
       this.mainCycle(option.results.neutral);
     }
   }
