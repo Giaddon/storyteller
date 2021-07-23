@@ -249,7 +249,8 @@ select {
 
 .storylet-title,
 .result-title,
-.quality-name {
+.quality-name,
+.create-title {
   font-family: "Title", sans-serif;
   font-size: 22px;
   border: none;
@@ -259,7 +260,8 @@ select {
 }
 
 .storylet-text,
-.result-text {
+.result-text,
+.create-text {
   font-family: 'Standard', serif;
   font-size: 15px;
   line-height: 1.4;

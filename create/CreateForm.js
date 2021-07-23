@@ -45,7 +45,8 @@ class CreateForm {
       input.type = "number";
     }
     input.id = `${formType}-${contentType}${suffix}`;
-    input.classList.add(`${formType}-${contentType}`);
+    input.classList.add(`create-${contentType}`);
+    //input.classList.add(`${formType}-${contentType}`);
   
     if (inputType === "checkbox") {
       input.checked = content

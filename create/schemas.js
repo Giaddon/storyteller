@@ -7,6 +7,7 @@ const schemas = {
       qualities: [],
     },
     actions: {},
+    locked: false,
   },
   quality: {
     name: "New Quality",
@@ -15,7 +16,16 @@ const schemas = {
     labels: [],
     category: "",
     hidden: false,
-  }
+  },
+  domain: {
+    title: "New Domain",
+    text: "Domain text.",
+    locked: false,
+    storylets: [],
+    decks: [],
+    events: [],
+  },
+
 }
 
 module.exports = schemas;

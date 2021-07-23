@@ -8,24 +8,25 @@ class StateAPI {
   constructor(worldName) {
     this.source = path.join(__dirname, "../", "worlds", worldName);
   }
-  addQuality(id, quality) {
-    let world = this.getWorld()
-    world.qualities[id] = quality;
+  saveItem (id, type, item) {
+    let world = this.getWorld();
+    world[type][id] = item;
     this.setWorld(world);
-    document.getElementById("quality-list").dispatchEvent(new CustomEvent("updatedWorld"));
-  }
-  addStorylet(id, storylet) {
-    let world = this.getWorld()
-    world.storylets[id] = storylet;
-    this.setWorld(world);
-    document.getElementById("storylet-list").dispatchEvent(new CustomEvent("updatedWorld"));
+    document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: type}));
   }
   deleteStorylet(id) {
     let world = this.getWorld()
     delete world.storylets[id];
     this.setWorld(world);
-    document.getElementById("storylet-list").dispatchEvent(new CustomEvent("updatedWorld"));
+    document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "storylets"}));
   }
+  deleteDomain(id) {
+    let world = this.getWorld()
+    delete world.domains[id];
+    this.setWorld(world);
+    document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "domains"}));
+  }
+
   deleteQuality(id) {
     let world = this.getWorld()
     delete world.qualities[id];
@@ -65,7 +66,7 @@ class StateAPI {
     }
 
     this.setWorld(world);
-    document.getElementById("quality-list").dispatchEvent(new CustomEvent("updatedWorld"));
+    document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "qualities"}));
   }
   getWorld() {
     try {
@@ -75,9 +76,9 @@ class StateAPI {
       console.error(error.message);
     }
   }
-  getValue(key) {
+  getItems(key) {
     let world = this.getWorld();
-    return world[key];
+    return world[key]
   }
   getQualities() {
     try {

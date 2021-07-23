@@ -113,8 +113,6 @@ class QualityForm extends CreateForm {
     })
     qualityDiv.append(addLabelButton);
 
-
-
     let {label: catLabel, input: catInput} = this.createInput(
       "text",
       "quality",
@@ -158,7 +156,7 @@ class QualityForm extends CreateForm {
       category: this.category,
       hidden: this.hidden,
     }
-    this.saveQuality(this.id, qualityData);
+    this.api.saveItem(this.id, "qualities", qualityData);
   }
 
   renderChild(type, data) {

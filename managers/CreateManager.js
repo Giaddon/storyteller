@@ -3,6 +3,7 @@ const schemas = require("../create/schemas");
 const { v4: uuidv4 } = require('uuid');
 const StoryletForm = require("../create/StoryletForm");
 const QualityForm = require("../create/QualityForm");
+const DomainForm = require("../create/DomainForm");
 
 class CreateManager {
   constructor(api) {
@@ -40,7 +41,7 @@ class CreateManager {
     qualitiesButton.classList.add("item-button");
     qualitiesButton.addEventListener("click", event => {
       event.preventDefault();
-      this.populateQualityList();
+      this.populateItemList("qualities");
     })
     sectionList.append(qualitiesButton);
 
@@ -48,10 +49,18 @@ class CreateManager {
     storyletsButton.innerText = "Storylets";
     storyletsButton.classList.add("item-button");
     storyletsButton.addEventListener("click", event => {
-      this.populateStoryletList();
+      this.populateItemList("storylets");
     })
     sectionList.append(storyletsButton);
+
+    let domainsButton = u.create({tag:"button", classes:["item-button"], content:"Domains"});
+    domainsButton.addEventListener("click", event => {
+      this.populateItemList("domains");
+    })
+    sectionList.append(domainsButton);
   }
+
+  
 
   populateQualityList() {
     const listContainer = document.getElementById("item-list-container");
@@ -128,7 +137,55 @@ class CreateManager {
     }
   }
 
-  createItemButton(data, type) {
+  populateItemList(type) {
+    const items = this.api.getItems(type);
+    const listContainer = document.getElementById("item-list-container");
+    const formContainer = document.getElementById("form-container");
+    u.removeChildren(listContainer);
+    let itemList = u.create({tag: "div", classes:["item-list"], id:"item-list"});
+    itemList.addEventListener("updatedWorld", event => {
+      const {type} = event.detail;
+      this.populateItemList(type);
+    });
+    listContainer.append(itemList);
+
+    let label;
+    let schemaKey;
+    if (type === "storylets") label = "Storylet", schemaKey = "storylet";
+    else if (type === "domains") label = "Domain", schemaKey = "domain";
+    else if (type === "qualities") label = "Quality", schemaKey = "quality";
+
+    let newItemButton = document.createElement("button");
+    newItemButton.innerText = `+ New ${label}`;
+    newItemButton.classList.add("item-button");
+    newItemButton.addEventListener("click", event => {
+      event.preventDefault();
+      const id = uuidv4();
+      const newItem = {...schemas[schemaKey]};
+      newItem.id = id;
+      this.api.saveItem(id, type, newItem);
+    })
+    itemList.append(newItemButton);
+
+    for (const item of Object.values(items)) {
+      const button = this.createItemButton(item);
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        let newForm;
+        if (type === "storylets") newForm = new StoryletForm(this.api, item)
+        else if (type === "domains") newForm = new DomainForm(this.api, item);
+        else if (type === "qualities") newForm = new QualityForm(this.api, item);
+        this.activeForm = newForm;
+        let renderedForm = this.activeForm.render();
+        u.removeChildren(formContainer)
+        formContainer.append(renderedForm);
+      });
+      itemList.append(button);
+    }
+
+  }
+
+  createItemButton(data) {
     let button = document.createElement("button");
     button.classList.add("item-button");
     button.innerText = data.title || data.name;
