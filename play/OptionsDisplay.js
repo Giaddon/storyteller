@@ -8,7 +8,7 @@ class OptionsDisplay {
 
   render() {
     const activeStorylet = this.api.getCurrentStorylet();
-    let options;
+    let options = {}
     if (activeStorylet) {
       options = activeStorylet.actions;
     } else {
@@ -18,7 +18,7 @@ class OptionsDisplay {
         const option = {
           id: storylet.id,
           title: storylet.title,
-          text: (storylet.text.split(".")[0] + ".."),
+          text: (storylet.text.split(".")[0] + "..."),
           results: storylet.results
         }
         options[storylet.id] = option;

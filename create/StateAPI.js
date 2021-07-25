@@ -14,6 +14,23 @@ class StateAPI {
     this.setWorld(world);
     document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: type}));
   }
+  saveStorylet(storylet) {
+    let world = this.getWorld();
+    const oldStorylet = world.storylets[storylet.id]
+
+    if (oldStorylet.domain && oldStorylet.domain !== storylet.domain) {
+      world.domains[oldStorylet.domain].storylets = 
+        world.domains[oldStorylet.domain].storylets.filter(s => s.id !== storylet.id); 
+    }
+
+    if (storylet.domain) {
+      world.domains[storylet.domain].storylets.push(storylet.id);
+    }
+
+    world.storylets[storylet.id] = storylet;
+
+    this.setWorld(world);
+  }
   deleteStorylet(id) {
     let world = this.getWorld()
     delete world.storylets[id];
@@ -26,7 +43,10 @@ class StateAPI {
     this.setWorld(world);
     document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "domains"}));
   }
-
+  getItem(type, id) {
+    let world = this.getWorld();
+    return world[type][id];
+  }
   deleteQuality(id) {
     let world = this.getWorld()
     delete world.qualities[id];

@@ -75,7 +75,7 @@ class StateAPI {
   }
   enterStorylet(storyletId) {
     this.player.storylet = this.getStorylet(storyletId);
-    return {...this.player.storylet};
+    return this.getCurrentStorylet();
   }
   exitStorylet() {
     this.player.storylet = undefined;
@@ -83,14 +83,22 @@ class StateAPI {
     return;
   }
   getDomain(id) {
-    return {...this.world.domains[id]}
+    if (this.world.domains[id]) {
+      return {...this.world.domains[id]}
+    } else {
+      return
+    }  
   }
   enterDomain(id) {
     this.player.domain = this.getDomain(id);
-    return {...this.player.domain}
+    return this.getCurrentDomain()
   }
   getCurrentDomain() {
-    return {...this.player.domain};
+    if (this.player.domain) {
+      return {...this.player.domain};
+    } else {
+      return 
+    }
   }
   getPlayerQuality(id) {
     return this.player.qualities[id] || 0;

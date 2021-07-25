@@ -2,6 +2,7 @@ const CreateForm = require("./CreateForm");
 const ActionForm = require("./ActionForm");
 const ReqForm = require("./ReqForm");
 const { v4: uuidv4 } = require('uuid');
+const schemas = require("./schemas");
 
 class StoryletForm extends CreateForm {
   constructor(api, storylet) {
@@ -10,6 +11,7 @@ class StoryletForm extends CreateForm {
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
     this.start = storylet.start;
+    this.domain = storylet.domain || "";
 
     let qualities = [];
     for (const req of storylet.reqs.qualities) {
@@ -92,6 +94,18 @@ class StoryletForm extends CreateForm {
     headerSection.append(startLabel);
     headerSection.append(startInput);
     
+    const {label: domainLabel, select:domainSelect} = this.createSelect(
+      "Inside Domain", 
+      "domains", 
+      this.id, 
+      "", 
+      this.domain
+    );
+
+    domainSelect.addEventListener("change", this.captureField.bind(this, "domain"));
+    headerSection.append(domainLabel);
+    headerSection.append(domainSelect);
+
     let visLabel = document.createElement("label");
     visLabel.innerText = "Visibility";
     visLabel.htmlFor = `storylet-${this.id}-visibility`;
@@ -162,36 +176,7 @@ class StoryletForm extends CreateForm {
     newActionButton.addEventListener("click", event => {
       event.preventDefault();
       const id = this.generateId();
-      const newActionData = {
-        id,
-        title: "New action",
-        text: "Action text.",
-        reqs: {
-          visibility: "always",
-          qualities: [],
-        },
-        challenges: [],
-        results: {
-          neutral: {
-            title: "Neutral Result",
-            text: "Result text.",
-            flow: "return",
-            changes: [],
-          },
-          success: {
-            title: "Success Result",
-            text: "Result text.",
-            flow: "return",
-            changes: [],
-          },
-          failure: {
-            title: "Failure Result",
-            text: "Result text.",
-            flow: "return",
-            changes: [],
-          }
-        },
-      }
+      const newActionData = {id, ...schemas.action};
       const newAction = new ActionForm(this.api, newActionData, this.removeChild.bind(this, "actions"));
       this.actions[id] = newAction;
       const newActionElement = newAction.render();
@@ -227,11 +212,13 @@ class StoryletForm extends CreateForm {
     for (const action of (Object.values(this.actions))) {
       actions[action.id] = action.returnData();
     }
+
     const storylet = {
       id: this.id,
       title: this.title,
       text: this.text,
       start: this.start,
+      domain: this.domain,
       reqs,
       actions,
       results: {
@@ -244,9 +231,10 @@ class StoryletForm extends CreateForm {
       }
     }
     
-    this.api.saveItem(this.id, "storylets", storylet);
+    this.api.saveStorylet(storylet);
   }
 
+  
 }
 
 module.exports = StoryletForm;

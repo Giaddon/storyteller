@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const u = require("../utilities");
 const API = require("./StateAPI");
 
 class CreateForm {
@@ -60,6 +61,22 @@ class CreateForm {
     label.innerText = `${contentType}`
   
     return {input, label};
+  }
+
+  createSelect(labelText, dataType, parentId, id, value) {
+    let label = u.create({tag:"label", content: labelText});
+    label.htmlFor = `${dataType}-select-${parentId}-${id}`;
+    
+    let select = u.create({tag: "select", id: `${dataType}-select-${parentId}-${id}`});
+    for (const item of Object.values(this.api.getItems(dataType))) {
+      let option = document.createElement("option");
+      option.value = item.id;
+      option.text = item.name || item.title
+      select.add(option);
+    }
+    select.value = value;
+
+    return {select, label};
   }
 
   removeChild(key, childId) {
