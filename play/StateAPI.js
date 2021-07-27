@@ -78,8 +78,8 @@ class StateAPI {
     return this.getCurrentStorylet();
   }
   exitStorylet() {
-    this.player.storylet = undefined;
     console.log("Leaving storylet ", this.player.storylet)
+    this.player.storylet = undefined;
     return;
   }
   getDomain(id) {
@@ -100,6 +100,15 @@ class StateAPI {
       return 
     }
   }
+  getCurrentDecks() {
+    if (this.player.domain) {
+      if (Object.values(this.player.domain.decks).length > 0) {
+        return {...this.player.domain.decks}
+      }
+    }
+    return {};
+  }
+
   getPlayerQuality(id) {
     return this.player.qualities[id] || 0;
   }

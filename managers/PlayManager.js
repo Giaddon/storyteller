@@ -2,12 +2,14 @@ const u = require("../utilities");
 const QualityDisplay = require("../play/QualityDisplay");
 const OptionsDisplay = require("../play/OptionsDisplay");
 const Quality = require("../play/Quality");
+const DeckDisplay = require("../play/DeckDisplay");
 
 class PlayManager {
   constructor(api) {
     this.api = api;
     this.qualityDisplay = null;
     this.optionsDisplay = null;
+    this.decksDisplay = null;
   }
 
   startupPlay() {
@@ -33,11 +35,18 @@ class PlayManager {
     const headerContainer = u.create({tag: "div", classes:["header-container"], id: "header-container"});
     storyContainer.append(headerContainer);
 
+    const decksContainer = u.create({tag: "div", classes:["decks-container"], id: "decks-container"});
+    storyContainer.append(decksContainer);
+
     const optionsContainer = u.create({tag: "div", classes:["options-container"], id: "options-container"});
     storyContainer.append(optionsContainer);
 
     const start = this.api.getStart()
     const header = this.createHeader(start);
+
+    this.decksDisplay = new DeckDisplay(this.api, this.prepareResults.bind(this));
+    const renderedDecks = this.decksDisplay.render();
+    decksContainer.append(renderedDecks);
 
     this.optionsDisplay = new OptionsDisplay(this.api, this.prepareResults.bind(this));
     const renderedOptions = this.optionsDisplay.render();
@@ -58,7 +67,11 @@ class PlayManager {
     let location;
     if (result.flow === "return") {
       location = this.api.getCurrentStorylet()
-      console.log("returning")
+      console.log("returning");
+    } else if (result.flow === "leave") {
+      this.api.exitStorylet();
+      location = this.api.getCurrentDomain();
+      console.log("leaving", location);
     } else {
       console.log("flowing")
       this.api.exitStorylet();
@@ -70,19 +83,21 @@ class PlayManager {
 
     const header = this.createHeader(location);
     const conclusion = this.prepareWindow(result)
+    const decks = this.decksDisplay.render();
     const options = this.optionsDisplay.render();
     const qualities = this.qualityDisplay.render();
     
-    this.renderGame(conclusion, header, options, qualities)
+    this.renderGame(conclusion, header, decks, options, qualities)
   }
 
   // Clears dom and adds the supplied elements.
-  renderGame(conclusion, header, options, qualities) {
+  renderGame(conclusion, header, decks, options, qualities) {
     const containers = this.clearGame();
 
     containers.qualitiesContainer.append(qualities);
     containers.headerContainer.append(header);
     containers.resultContainer.append(conclusion);
+    containers.decksContainer.append(decks);
     containers.optionsContainer.append(options);
 
     document.getElementById("story-container").scroll(0, 0);
@@ -92,15 +107,23 @@ class PlayManager {
     const qualitiesContainer = document.getElementById("qualities-container");
     const resultContainer = document.getElementById("result-container");
     const headerContainer = document.getElementById("header-container");
+    const decksContainer = document.getElementById("decks-container");
     const optionsContainer = document.getElementById("options-container");
 
-    for (const container of [qualitiesContainer, resultContainer, headerContainer, optionsContainer]) {
+    for (const container of [
+      qualitiesContainer, 
+      resultContainer, 
+      headerContainer, 
+      decksContainer,
+      optionsContainer
+    ]) {
       u.removeChildren(container);
     }
     return {
       qualitiesContainer,
       resultContainer,
       headerContainer,
+      decksContainer,
       optionsContainer
     }
   }

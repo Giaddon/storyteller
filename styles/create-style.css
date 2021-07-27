@@ -102,6 +102,23 @@ select {
 .option:focus {
   outline: 3px solid gold;
 }
+.deck {
+  border: 1px solid black;
+  border-radius: 4px;
+  height: 140px;
+  width: 100px;
+  text-align: center;
+  padding: 10px;
+}
+.deck-label {
+  font-family: "Title", sans-serif;
+  font-size: 14px;
+}
+.card-count {
+  font-family: "standard", serif;
+  font-size: 12px;
+}
+
 
 .option-disabled {
   background-color: inherit;

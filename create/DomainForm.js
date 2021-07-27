@@ -17,7 +17,19 @@ class DomainForm extends CreateForm {
       storylets.push(storyletData);
     }
     this.storylets = storylets;
-    this.decks = domain.decks || [];
+
+
+    for (const deck of Object.values(domain.decks)) {
+      let storylets = [];
+      for (const storylet of deck.storylets) {
+        storylets.push({
+          id: this.generateId(),
+          storylet
+        });
+      }
+      deck.storylets = storylets;
+    }
+    this.decks = domain.decks || {};
     this.events = domain.events || [];
   }
 
@@ -85,6 +97,35 @@ class DomainForm extends CreateForm {
       storyletsContainer.append(renderedStorylet);
     }
 
+    const decksLabel = u.create({tag:"label", content:"Decks"});
+    form.append(decksLabel);
+
+    const decksSection = u.create({tags: "div", classes:["form-section"]})
+    form.append(decksSection);
+
+    const decksContainer = u.create({tag:"div", classes: ["item-container"]});
+    decksSection.append(decksContainer);
+
+    let addDeckButton = u.create({tag: "button", classes:["add-button"], content:"+ Add Deck"});
+    addDeckButton.addEventListener("click", event => {
+      event.preventDefault();
+      const id = this.generateId();
+      const deckData = {
+        id,
+        name: "New Deck",
+        storylets: [],
+      }
+      this.decks[id] = deckData;
+      const renderedDeck = this.createDeck(deckData);
+      decksContainer.append(renderedDeck);
+    })
+    decksSection.append(addDeckButton);
+
+    for (const deck of Object.values(this.decks)) {
+      const renderedDeck = this.createDeck(deck);
+      decksContainer.append(renderedDeck);
+    }
+
     let savePillow = document.createElement("div");
     savePillow.classList.add("save-pillow");
     form.append(savePillow);
@@ -106,12 +147,21 @@ class DomainForm extends CreateForm {
       storylets.push(storylet.storylet);
     }
 
+    for (const deck of Object.values(this.decks)) {
+      let storylets = [];
+      for (const storylet of deck.storylets) {
+        storylets.push(storylet.storylet)
+      }
+      deck.storylets = storylets;
+    }
+
     const domain = {
       id: this.id,
       title: this.title,
       text: this.text,
       locked: this.locked,
       storylets,
+      decks: this.decks,
     }
     
     this.api.saveItem(this.id, "domains", domain);
@@ -150,6 +200,47 @@ class DomainForm extends CreateForm {
     storylet.append(removeChildButton);
 
     return storylet;
+  }
+
+  createDeck(deckData) {
+    const deck = u.create({tag:"div", classes:["form-section", "flex-item"]});
+
+    const inputGroup = u.create({tag:"div", classes:["input-group"]});
+    deck.append(inputGroup);
+
+    const {label: nameLabel, input: nameInput} = this.createInput("text", "deck", "name", deckData.name);
+    nameInput.addEventListener("input", this.captureField.bind(deckData, "name"));
+    inputGroup.append(nameLabel);
+    inputGroup.append(nameInput);
+
+    const storyletsLabel = u.create({tag:"label", content:"Storylets"});
+    deck.append(storyletsLabel);
+
+    const storyletsSection = u.create({tag: "div", classes:["form-section"]})  
+    deck.append(storyletsSection);  
+
+    const storyletsContainer = u.create({tag:"div", classes: ["item-container"]});
+    storyletsSection.append(storyletsContainer);
+
+    let addStoryletButton = u.create({tag: "button", classes:["add-button"], content:"+ Add Storylet"});
+    addStoryletButton.addEventListener("click", event => {
+      event.preventDefault();
+      const storyletData = {
+        id: this.generateId(),
+        storylet: null,
+      }
+      deckData.storylets.push(storyletData);
+      const renderedStorylet = this.createStorylet(storyletData);
+      storyletsContainer.append(renderedStorylet);
+    })
+    storyletsSection.append(addStoryletButton);
+
+    for (const storylet of deckData.storylets) {
+      const renderedStorylet = this.createStorylet(storylet);
+      storyletsContainer.append(renderedStorylet);
+    }
+
+    return deck;
   }
 
 }
