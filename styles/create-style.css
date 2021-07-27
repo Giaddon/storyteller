@@ -26,6 +26,7 @@ select {
 textarea {
   flex: 0 1 auto;
   margin: 5px;
+  height: 80px;
 }
 input[type="number"] {
   max-width: 60px;
@@ -250,7 +251,9 @@ select {
 .storylet-title,
 .result-title,
 .quality-name,
-.create-title {
+.create-title,
+.create-name
+{
   font-family: "Title", sans-serif;
   font-size: 22px;
   border: none;
@@ -261,24 +264,18 @@ select {
 
 .storylet-text,
 .result-text,
-.create-text {
+.create-text
+{
   font-family: 'Standard', serif;
   font-size: 15px;
   line-height: 1.4;
   padding: 5px;
   width: 100%;
-  height: 80px;
 }
 
-.quality-description,
-.quality-label {
-  font-family: "Standard", serif;
-  font-size: 12px;
-  min-width: 200px;
-  padding: 5px;
-}
 .action-title,
-.quality-category {
+.quality-category,
+.create-category {
   font-family: "Standard", serif;
   font-size: 18px;
   margin-bottom: 5px;

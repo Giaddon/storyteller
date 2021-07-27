@@ -1,4 +1,5 @@
 const u = require("../utilities");
+const Quality = require("./Quality");
 
 class QualityDisplay {
   constructor(api) {
@@ -47,47 +48,25 @@ class QualityDisplay {
     return qualitiesList;
   }
 
-  renderQuality(quality, value) {
+  renderQuality(qualityData, value) {
+    let quality = new Quality(qualityData, value);
     let displayValue = value.toString();
-    let displayDescription = '';
-  
-    if (quality.labels && quality.labels.length > 0) {
-      for (const label of quality.labels) {
-        if (Number(label.value) <= value) {
-          displayValue = label.label;
-        } else {
-          break;
-        }
-      }
-    }
 
-    if (quality.descriptions && quality.descriptions.length > 0) {
-      for (const description of quality.descriptions) {
-        if (Number(description.value) <= value) {
-          displayDescription = description.description;
-        } else {
-          break;
-        }
-      }
-    }
-  
     const newQuality = u.create({tag: "div", classes: ["quality"]});
     const newQualityTitle = u.create({
       tag:"p", 
       classes:["quality-title"], 
-      content:`${quality.name} • ${displayValue}`
+      content:`${quality.name} • ${quality.label || displayValue}`
     });
 
     newQuality.append(newQualityTitle);
+    const newQualityDescription = u.create({
+      tag: "p",
+      classes: ["quality-description"],
+      content: quality.description || "",
+    });
+    newQuality.append(newQualityDescription);
   
-    if (displayDescription) {
-      const newQualityDescription = u.create({
-        tag: "p",
-        classes: ["quality-description"],
-        content: displayDescription,
-      });
-      newQuality.append(newQualityDescription);
-    }
     return newQuality;
   }
 

@@ -1,5 +1,6 @@
 const CreateForm = require("./CreateForm");
 const ActionForm = require("./ActionForm");
+const u = require("../utilities");
 const ReqForm = require("./ReqForm");
 const { v4: uuidv4 } = require('uuid');
 const schemas = require("./schemas");
@@ -101,7 +102,10 @@ class StoryletForm extends CreateForm {
       "", 
       this.domain
     );
-
+    const nullOption = u.create({tag:"option", content:"None"});
+    nullOption.value = "";
+    domainSelect.add(nullOption);
+    domainSelect.value = this.domain;
     domainSelect.addEventListener("change", this.captureField.bind(this, "domain"));
     headerSection.append(domainLabel);
     headerSection.append(domainSelect);

@@ -74,7 +74,6 @@ class CreateForm {
       option.text = item.name || item.title
       select.add(option);
     }
-    select.value = value;
 
     return {select, label};
   }

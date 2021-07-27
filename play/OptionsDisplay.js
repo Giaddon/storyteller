@@ -53,26 +53,25 @@ class OptionsDisplay {
       optionElement.classList.add('option-disabled');
     }
 
-    // if (option.challenge) {
-    //   let playerValue = state.actions.getQuality(option.challenge.quality);
-    //   if (playerValue === undefined) {
-    //     playerValue = 0;
-    //   } 
-    //   let qualityLabel = state.actions.getQualityData(option.challenge.quality).label;
-    //   let chance = option.challenge.difficulty - playerValue;
-    //   if (chance > 6) {
-    //     chance = 0;
-    //   } else if (chance < 2) {
-    //     chance = 100;  
-    //   }
-    //   else {
-    //     chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
-    //   } 
-    //   let challengePhrase = `This is a ${qualityLabel} challenge.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
-    //   let challengeText = document.createElement("p");
-    //   challengeText.innerText = challengePhrase;
-    //   optionElement.querySelector(".option-challenge-container").appendChild(challengeText);
-    // } // end if challenge
+    if (option.challenges) {
+      for (const challenge of option.challenges) {
+        let playerValue = this.api.getPlayerQuality(challenge.quality);
+        let qualityLabel = this.api.getQuality(challenge.quality).name;
+        let chance = challenge.difficulty - playerValue;
+        if (chance > 6) {
+          chance = 0;
+        } else if (chance < 2) {
+          chance = 100;  
+        }
+        else {
+          chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
+        } 
+        let challengePhrase = `This is a ${qualityLabel} challenge with difficulty ${challenge.difficulty}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+        let challengeText = document.createElement("p");
+        challengeText.innerText = challengePhrase;
+        optionElement.querySelector(".option-challenge-container").append(challengeText);
+      }
+    } // end if challenge
 
     return optionElement;
   }

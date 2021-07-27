@@ -20,7 +20,7 @@ class StateAPI {
 
     if (oldStorylet.domain && oldStorylet.domain !== storylet.domain) {
       world.domains[oldStorylet.domain].storylets = 
-        world.domains[oldStorylet.domain].storylets.filter(s => s.id !== storylet.id); 
+        world.domains[oldStorylet.domain].storylets.filter(s => s !== storylet.id); 
     }
 
     if (storylet.domain) {

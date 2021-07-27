@@ -80,7 +80,7 @@ class QualityForm extends CreateForm {
       const newDescription = {
         id,
         value: 1,
-        description: "Description text."
+        text: "Description text."
       }
       this.descriptions.push(newDescription);
       const renderedDescription = this.renderChild("description", newDescription);
@@ -105,7 +105,7 @@ class QualityForm extends CreateForm {
       const newLabel = {
         id,
         value: 1,
-        label: "Label text."
+        text: "Label text."
       }
       this.labels.push(newLabel);
       const renderedLabel = this.renderChild("label", newLabel);
@@ -184,11 +184,11 @@ class QualityForm extends CreateForm {
     let {input: textInput, label: textLabel} = this.createInput(
       "text", 
       "quality",
-      type,
-      data[type],
+      "text",
+      data.text,
       data.id
     );
-    textInput.addEventListener("input", this.captureField.bind(data, type));
+    textInput.addEventListener("input", this.captureField.bind(data, "text"));
     textGroup.append(textLabel);
     textGroup.append(textInput);
 
