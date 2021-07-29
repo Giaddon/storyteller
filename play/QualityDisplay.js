@@ -14,26 +14,35 @@ class QualityDisplay {
     const qualitiesTitle = u.create({tag: "h1", classes: ["qualities-title"], content: "Qualities"});
     qualitiesList.append(qualitiesTitle);
       
-    const qualitiesCategoriesContainer = u.create({tag: "div", classes: ["qualities-catagories-container"], id: "qualities-catagories-container"});
+    const qualitiesCategoriesContainer = u.create({
+      tag: "div", 
+      classes: ["qualities-catagories-container"], 
+      id: "qualities-catagories-container"
+    });
     qualitiesList.append(qualitiesCategoriesContainer);
 
     const uncategorizedContainer = u.create({tag: "div", id: "cat-Uncategorized"});
     qualitiesList.append(uncategorizedContainer);
 
-    const uncategorizedTitle = u.create({tag: "h1", classes: ["qualities-category-title"], content: "Uncategorized"});
+    const uncategorizedTitle = u.create({
+      tag: "h1", 
+      classes: ["qualities-category-title"], 
+      content: "Uncategorized"
+    });
     uncategorizedContainer.append(uncategorizedTitle);
 
     let categories = {}
     for (const [id, value] of Object.entries(playerQualities)) {
-      const quality = this.api.getQuality(id)
-      if (quality.hidden) continue;
+      const qualityData = this.api.getQuality(id)
+      if (qualityData.hidden) continue;
+      const quality = new Quality(qualityData, value)
       if (!quality.category) {
-        uncategorizedContainer.append(this.renderQuality(quality, value)) 
+        uncategorizedContainer.append(quality.render()) 
       } else {
         if (categories[quality.category]) {
-          categories[quality.category].push(this.renderQuality(quality, value))
+          categories[quality.category].push(quality.render())
         } else {
-          categories[quality.category] = [this.renderQuality(quality, value)]
+          categories[quality.category] = [quality.render()]
         }
       }
     }
@@ -46,28 +55,6 @@ class QualityDisplay {
     }
 
     return qualitiesList;
-  }
-
-  renderQuality(qualityData, value) {
-    let quality = new Quality(qualityData, value);
-    let displayValue = value.toString();
-
-    const newQuality = u.create({tag: "div", classes: ["quality"]});
-    const newQualityTitle = u.create({
-      tag:"p", 
-      classes:["quality-title"], 
-      content:`${quality.name} • ${quality.label || displayValue}`
-    });
-
-    newQuality.append(newQualityTitle);
-    const newQualityDescription = u.create({
-      tag: "p",
-      classes: ["quality-description"],
-      content: quality.description || "",
-    });
-    newQuality.append(newQualityDescription);
-  
-    return newQuality;
   }
 
   renderQualityCategory(category) {

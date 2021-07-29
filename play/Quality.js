@@ -1,17 +1,32 @@
+const u = require("../utilities");
+
 class Quality {
-  constructor(data, value) {
-    this.name = data.name;
-    if (data.labels && data.labels.length > 0) {
-      this.label = this.computeText(data.labels, value);
-    }
-    if (data.descriptions && data.descriptions.length > 0) {
-      this.description = this.computeText(data.descriptions, value);
-    }
-    this.hidden = data.hidden;
-    this.category = data.category;
-    
+  constructor({
+    id,
+    name,
+    startvalue,
+    labels,
+    descriptions,
+    category,
+    hidden
+  }, value) {
+    this.id = id;
+    this.name = name;
+    this.startvalue = startvalue;
+    this.labels = labels;
+    this.descriptions = descriptions;
+    this.category = category;
+    this.hidden = hidden;
+    this.value = value;
+    this.label = this.getLabel();
+    this.description = this.getDescription();
+  }
 
-
+  getLabel() {
+    return this.computeText(this.labels, this.value)
+  }
+  getDescription() {
+    return this.computeText(this.descriptions, this.value);
   }
 
   computeText(textArrays, value) {
@@ -25,6 +40,25 @@ class Quality {
     }
     return text;
   }
+
+  render() {
+    const qualityElement = u.create({tag:"div", classes:["quality"]});
+    const title = u.create({
+      tag:"p", 
+      classes:["quality-title"], 
+      content:`${this.name} • ${this.label || this.value.toString()}`
+    });
+    qualityElement.append(title);
+    const description = u.create({
+      tag: "p",
+      classes: ["quality-description"],
+      content: this.description || "",
+    });
+    qualityElement.append(description);
+    return qualityElement;
+  }
+
+
 }
 
 module.exports = Quality;

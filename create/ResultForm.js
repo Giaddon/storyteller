@@ -4,8 +4,8 @@ const ChangeForm = require("./ChangeForm");
 class ResultForm extends CreateForm {
   constructor(api, result, parentId, resultType) {
     super(api);
-    this.title = result.title || "Result";
-    this.text = result.text || "Result text.";
+    this.title = result.title;
+    this.text = result.text;
     this.flow = result.flow || "return";
     let changes = [];
     for (const change of result.changes) {
@@ -44,8 +44,8 @@ class ResultForm extends CreateForm {
     this.createInput(
       "text", 
       "result", 
-      "title", 
-      this.title || "Title", 
+      "title" || "", 
+      this.title, 
       `-${this.parentId}-${this.resultType}`
     );
     title.addEventListener("input", this.captureField.bind(this, "title"));
@@ -57,7 +57,7 @@ class ResultForm extends CreateForm {
       "textarea", 
       "result", 
       "text", 
-      this.text || "Text", 
+      this.text || "", 
       `-${this.parentId}-${this.resultType}`
     );
     text.addEventListener("input", this.captureField.bind(this, "text"))

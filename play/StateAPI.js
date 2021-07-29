@@ -1,4 +1,4 @@
-// Class for reading the game from the json file and storing the content for play.
+// Class for managing game state.
 // worldName: (String) filename of the json file.
 
 const path = require("path");
@@ -33,7 +33,7 @@ class StateAPI {
           qualities[quality.id] = Number(quality.startvalue);
         }
       }
-      return {qualities, storylet: this.getStart()} 
+      return {qualities} 
     }
   }
 
@@ -54,44 +54,34 @@ class StateAPI {
     }
   }
 
-  getStart() {
-    const start = Object.values(this.world.storylets).filter(storylet => storylet.start)
-    return start[0];
-  }
-  getPlayerQualities() {
-    return {...this.player.qualities}
-  }
-  getStorylets() {
-    return {...this.world.storylets};
-   }
-  getStorylet(storyletId) {
-    return {...this.world.storylets[storyletId]};
-  }
-  getCurrentStorylet() {
-    if (this.player.storylet) {
-      return {...this.player.storylet};
-    } else
-    return;
+  start() {
+    // If there is no loaded location
+    const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
+    this.enterStorylet(startingId);
   }
   enterStorylet(storyletId) {
-    this.player.storylet = this.getStorylet(storyletId);
-    return this.getCurrentStorylet();
+    this.player.context = this.getStorylet(storyletId);
+    this.player.inStorylet = true;
+    return this.player.context;
   }
   exitStorylet() {
-    console.log("Leaving storylet ", this.player.storylet)
-    this.player.storylet = undefined;
+    this.player.context = getCurrentDomain();
+    this.player.inStorylet = false;
     return;
   }
-  getDomain(id) {
-    if (this.world.domains[id]) {
-      return {...this.world.domains[id]}
-    } else {
-      return
-    }  
+  isInStorylet() {
+    return this.player.inStorylet;
   }
   enterDomain(id) {
     this.player.domain = this.getDomain(id);
-    return this.getCurrentDomain()
+    this.player.context = this.getDomain(id);
+    this.player.inStorylet = false;
+    return this.player.context;
+  }
+  exitDomain() {
+    delete this.player.domain;
+    delete this.player.context
+    return
   }
   getCurrentDomain() {
     if (this.player.domain) {
@@ -100,24 +90,62 @@ class StateAPI {
       return 
     }
   }
+  getContext() {
+    return {...this.player.context};
+  }
+  getStorylet(storyletId) {
+    return {...this.world.storylets[storyletId]};
+  } 
+  getStorylets() {
+    return {...this.world.storylets};
+   }
+  
+  // getCurrentStorylet() {
+  //   if (this.player.storylet) {
+  //     return {...this.player.storylet};
+  //   } else
+  //   return;
+  // }
+  getDomain(id) {
+    if (this.world.domains[id]) {
+      return this.world.domains[id];
+    } else {
+      return;
+    }  
+  }
+  
+ 
   getCurrentDecks() {
-    if (this.player.domain) {
-      if (Object.values(this.player.domain.decks).length > 0) {
-        return {...this.player.domain.decks}
+    if (this.player.context && this.player.context.decks) {
+      if (Object.values(this.player.context.decks).length > 0) {
+        return {...this.player.context.decks}
       }
     }
     return {};
   }
-
+  setResult(result) {
+    this.player.result = result
+  }
+  getResult() {
+    if (this.player.result) {
+      return {...this.player.result}
+    } else {
+      return;
+    }
+  }
   getPlayerQuality(id) {
     return this.player.qualities[id] || 0;
   }
-  getQualities() {
-    return {...this.world.qualities};
+  getPlayerQualities() {
+    return {...this.player.qualities}
   }
   getQuality(id) {
-    return {...this.world.qualities[id]};
+    return this.world.qualities[id];
   }
+  getQualities() {
+    return this.world.qualities;
+  }
+  
   getDomains() {
     return {...this.world.domains};
   }

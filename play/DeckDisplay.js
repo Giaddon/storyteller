@@ -22,12 +22,13 @@ class DeckDisplay {
   renderDeck(deckData) {
     const deck = u.create({tag:"div", classes:["deck"]});
     deckData.storylets = this.evaluateCards(deckData.storylets);
-    if (deckData.storylets.length < 1) {
+    const cardNum = deckData.storylets.length;
+    if (cardNum < 1) {
       deck.remove();
       return;
     }
     const deckLabel = u.create({tag:"h1", classes:["deck-label"], content:deckData.name});
-    const cardsCount = u.create({tag:"h1", classes:["card-count"], content:`${deckData.storylets.length} cards available.`});
+    const cardsCount = u.create({tag:"h1", classes:["card-count"], content:`${cardNum} ${cardNum > 1 ? "cards" : "card"} available.`});
     deck.addEventListener("click", this.selectDeck.bind(this, deckData))
     deck.append(deckLabel);
     deck.append(cardsCount);
@@ -38,17 +39,16 @@ class DeckDisplay {
     const idx = Math.floor(Math.random() * deck.storylets.length);
     const drawnCardId = deck.storylets[idx];
     const drawnCard = this.api.enterStorylet(drawnCardId);
-    console.log(drawnCard);
     this.prepareResults(drawnCard);
   }
 
   evaluateCards(cards) {
     let passingCards = [];
-    for (const card of cards) {
-      const storyletData = this.api.getStorylet(card);
-      const storylet = new Storylet(this.api, storyletData);
+    for (const cardId of cards) {
+      const storyletData = this.api.getStorylet(cardId);
+      const storylet = new Storylet(storyletData, this.api);
       if (storylet.active) {
-        passingCards.push(card);
+        passingCards.push(cardId);
       }
     }
     console.log(passingCards);

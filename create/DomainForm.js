@@ -18,6 +18,14 @@ class DomainForm extends CreateForm {
     }
     this.storylets = storylets;
 
+    let events = [];
+    for (const event of domain.events) {
+      events.push({
+        id: this.generateId(),
+        event,
+      });
+    }
+    this.events = events;
 
     for (const deck of Object.values(domain.decks)) {
       let storylets = [];
@@ -30,7 +38,6 @@ class DomainForm extends CreateForm {
       deck.storylets = storylets;
     }
     this.decks = domain.decks || {};
-    this.events = domain.events || [];
   }
 
   render() {
@@ -126,6 +133,33 @@ class DomainForm extends CreateForm {
       decksContainer.append(renderedDeck);
     }
 
+    const eventsLabel = u.create({tag:"label", content:"Events"});
+    form.append(eventsLabel);
+
+    const eventsSection = u.create({tags: "div", classes:["form-section"]})
+    form.append(eventsSection);
+
+    const eventsContainer = u.create({tag:"div", classes: ["item-container"]});
+    eventsSection.append(eventsContainer);
+
+    let addEventButton = u.create({tag: "button", classes:["add-button"], content:"+ Add Event"});
+    addEventButton.addEventListener("click", event => {
+      event.preventDefault();
+      const storyletData = {
+        id: this.generateId(),
+        storylet: null,
+      }
+      this.events.push(storyletData);
+      const renderedEvent = this.createEvent(storyletData);
+      eventsContainer.append(renderedEvent);
+    })
+    eventsSection.append(addEventButton);
+
+    for (const event of this.events) {
+      const renderedEvent = this.createEvent(event);
+      eventsContainer.append(renderedEvent);
+    }
+
     let savePillow = document.createElement("div");
     savePillow.classList.add("save-pillow");
     form.append(savePillow);
@@ -147,6 +181,11 @@ class DomainForm extends CreateForm {
       storylets.push(storylet.storylet);
     }
 
+    let events = [];
+    for (const event of this.events) {
+      events.push(event.event);
+    }
+
     for (const deck of Object.values(this.decks)) {
       let storylets = [];
       for (const storylet of deck.storylets) {
@@ -161,6 +200,7 @@ class DomainForm extends CreateForm {
       text: this.text,
       locked: this.locked,
       storylets,
+      events,
       decks: this.decks,
     }
     
@@ -200,6 +240,41 @@ class DomainForm extends CreateForm {
     storylet.append(removeChildButton);
 
     return storylet;
+  }
+
+  createEvent(data) {
+    const event = u.create({tag:"div", classes:["form-section", "flex-item"]});
+    
+    const inputGroup = u.create({tag:"div", classes:["input-group"]});
+    event.append(inputGroup);
+
+    const eventLabel = u.create({tag: "label", content:"Event"});
+    eventLabel.htmlFor = `event-select-${data.id}`
+    const eventSelect = u.create({tag:"select", id:`event-select-${data.id}`});
+    for (const event of Object.values(this.api.getStorylets())) {
+      let option = document.createElement("option");
+      option.value = event.id;
+      option.text = event.title;
+      eventSelect.add(option);
+    }
+    eventSelect.value = data.event;
+    eventSelect.addEventListener("input", this.captureField.bind(data, "event"));
+    inputGroup.append(eventLabel)
+    inputGroup.append(eventSelect);
+    
+    let removeChildButton = u.create({
+      tag:"button", 
+      classes:["remove-button"], 
+      content: "Remove event."
+    });
+    removeChildButton.addEventListener("click", event => {
+      event.preventDefault();
+      this.events = this.events.filter(event => event.id !== data.id)
+      event.remove();
+    });
+    event.append(removeChildButton);
+
+    return event;
   }
 
   createDeck(deckData) {

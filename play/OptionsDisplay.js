@@ -1,4 +1,6 @@
 const u = require("../utilities");
+const Action = require("./Action");
+const Storylet = require("./Storylet");
 
 class OptionsDisplay {
   constructor(api, prepareResults) {
@@ -7,26 +9,13 @@ class OptionsDisplay {
   }
 
   render() {
-    const activeStorylet = this.api.getCurrentStorylet();
-    let options = {}
-    if (activeStorylet) {
-      options = activeStorylet.actions;
-    } else {
-      let activeDomain = this.api.getCurrentDomain();
-      for (const storyletId of activeDomain.storylets) {
-        const storylet = this.api.getStorylet(storyletId);
-        const option = {
-          id: storylet.id,
-          title: storylet.title,
-          text: (storylet.text.split(".")[0] + "..."),
-          results: storylet.results
-        }
-        options[storylet.id] = option;
-      }
-    }
-    let optionsList = u.create({tag:"div", class:["options-list"]})
+    const activeContext = this.api.getContext();
+    const contextType = activeContext.actions ? "storylet" : "domain";
+    const options = contextType === "storylet" ? activeContext.actions : activeContext.storylets
+
+    const optionsList = u.create({tag:"div", class:["options-list"]})
     for (const option of Object.values(options)) {
-      const renderedOption = this.renderOption(option);
+      const renderedOption = this.renderOption(option, contextType);
       if (renderedOption) {
         optionsList.append(renderedOption)
       }
@@ -34,9 +23,22 @@ class OptionsDisplay {
     return optionsList
   }
 
-  renderOption(option) {
-    const optionElement = this.createOption(option);
-    const {active, labels} = this.evaluateReqs(option.reqs)
+  renderOption(optionData, contextType) {
+    const option = contextType === "storylet" ? new Action(optionData, this.api) : new Storylet(optionData, this.api);
+    
+    const optionElement = u.create({tag: "div", classes:["option"]});
+    const titleElement = u.create({tag:"h1", content: option.title});
+    const text = contextType === "domain" ? (option.text.split(".")[0] + "...") : option.text;
+    const textElement = u.create({tag:"p", content:text});
+    const challengeContainer = u.create({tag:"div", classes:["option-challenge-container"]});
+    const reqsContainer = u.create({tag:"div", classes:["option-reqs-container"]});
+
+    optionElement.append(titleElement);
+    optionElement.append(textElement);
+    optionElement.append(challengeContainer);
+    optionElement.append(reqsContainer);
+    
+    const {active, labels} = option.evaluateReqs(option.reqs)
 
     for (const label of labels) {
       optionElement.querySelector(".option-reqs-container").append(label);
@@ -46,10 +48,6 @@ class OptionsDisplay {
       optionElement.setAttribute('tabindex', '0');
       optionElement.addEventListener('click', this.prepareResults.bind(null, option));
     } else {
-      // if (option.reqs.hidden) {
-      //   optionElement.remove();
-      //   return;
-      // }
       optionElement.classList.add('option-disabled');
     }
 
@@ -67,8 +65,7 @@ class OptionsDisplay {
           chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
         } 
         let challengePhrase = `This is a ${qualityLabel} challenge with difficulty ${challenge.difficulty}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
-        let challengeText = document.createElement("p");
-        challengeText.innerText = challengePhrase;
+        let challengeText = u.create({tag:"p", content: challengePhrase});
         optionElement.querySelector(".option-challenge-container").append(challengeText);
       }
     } // end if challenge
@@ -76,165 +73,52 @@ class OptionsDisplay {
     return optionElement;
   }
 
-  evaluateReqs(reqs) {
-    if (!reqs) return {active: true, labels: []}
-    if (reqs.qualities.length < 1) return {active: true, labels: []};
-    let reqArray = [];
-    let labels = [];
-    if (reqs && reqs.qualities.length > 0) {
-      for (const req of reqs.qualities) {
-        const playerValue = this.api.getPlayerQuality(req.quality);
-        const qualityData = this.api.getQuality(req.quality);
-        const min = Number(req.min) || -Infinity;
-        const max = Number(req.max) || Infinity;
-        const passed = (playerValue >= min && playerValue <= max)
-        reqArray.push(passed);
-        if (qualityData.hidden !== true) {
-          let label = "";
-          if (min !== -Infinity) { 
-            label += min.toString();
-            label += " ≤ ";
-          }
-          label += qualityData.name;
-          if (max !== Infinity) {
-            label += " ≤ "
-            label += max.toString();
-          }
-          const newLabel = this.createOptionReq({label, passed});
-          labels.push(newLabel);
-        }
-      }
-    }
-    let active = false;
-    if (reqArray.length > 0 && reqArray.every(passed => passed)) {
-        active = true;
-      }
-    return {active, labels};
-  }
+  // evaluateReqs(reqs) {
+  //   if (!reqs) return {active: true, labels: []}
+  //   if (reqs.qualities.length < 1) return {active: true, labels: []};
+  //   let reqArray = [];
+  //   let labels = [];
+  //   if (reqs && reqs.qualities.length > 0) {
+  //     for (const req of reqs.qualities) {
+  //       const playerValue = this.api.getPlayerQuality(req.quality);
+  //       const qualityData = this.api.getQuality(req.quality);
+  //       const min = Number(req.min) || -Infinity;
+  //       const max = Number(req.max) || Infinity;
+  //       const passed = (playerValue >= min && playerValue <= max)
+  //       reqArray.push(passed);
+  //       if (qualityData.hidden !== true) {
+  //         let label = "";
+  //         if (min !== -Infinity) { 
+  //           label += min.toString();
+  //           label += " ≤ ";
+  //         }
+  //         label += qualityData.name;
+  //         if (max !== Infinity) {
+  //           label += " ≤ "
+  //           label += max.toString();
+  //         }
+  //         const newLabel = this.renderOptionReq({label, passed});
+  //         labels.push(newLabel);
+  //       }
+  //     }
+  //   }
+  //   let active = false;
+  //   if (reqArray.length > 0 && reqArray.every(passed => passed)) {
+  //       active = true;
+  //     }
+  //   return {active, labels};
+  // }
 
-  createOption(optionData) {
-    let option = document.createElement("div");
-    option.classList.add('option');
+  // renderOptionReq(reqData) {
+  //   const req = u.create({tag:'div', classes:["option-req"]});
+  //   const label = u.create({tag:'h1', content: reqData.label});
+  //   req.appendChild(label);
   
-    let title = document.createElement("h1");
-    title.innerText = optionData.title;
-    option.appendChild(title);
-    
-    let text = document.createElement("p");
-    text.innerText = optionData.text;
-    option.appendChild(text);
+  //   if (!reqData.passed) {
+  //     req.classList.add('req-disabled');
+  //   }
   
-    let challengeContainer = document.createElement('div');
-    challengeContainer.classList.add("option-challenge-container");
-    option.appendChild(challengeContainer);
-  
-    let reqsContainer = document.createElement('div');
-    reqsContainer.classList.add("option-reqs-container");
-    option.appendChild(reqsContainer);
-  
-    return option;
-  }
-  
-  createOptionReq(reqData) {
-    const req = document.createElement('div');
-    req.classList.add('option-req');
-  
-    const label = document.createElement('h1');
-    label.innerText = reqData.label;
-    req.appendChild(label);
-  
-    if (!reqData.passed) {
-      req.classList.add('req-disabled');
-    }
-  
-    return req;
-  }
-
+  //   return req;
+  // }
 }
-    
-    
-    
-    
-//     let reqArray = [];
-//     if (option.reqs && option.reqs.qualities.length > 0) {
-//       for (let req of option.reqs.qualities) {
-//         const quality = this.api.getQuality(req.quality);
-//         const playerValue = this.api.getPlayerQuality(req.quality) || 0;
-//         let min = Number(req.min) || -Infinity;
-//         let max = Number(req.max) || Infinity;
-//         reqArray.push((playerValue >= min && playerValue <= max))
-//       }
-//       let disabled = false;
-//       if (reqArray.length > 0 && !reqArray.every(passed => passed)) {
-//         disabled = true;
-//       }
-//     }
-    
-//     const newOption = u.create({tag:"div", classes:["option"]});
-//     const newOptionTitle = u.create({tag:"h1", content: option.title})
-//     newOption.append(newOptionTitle);
-
-//     const newOptionTitle = document.createElement("h1");
-//     newOptionTitle.innerText = option.title;
-    
-    
-//     const newOptionText = document.createElement("p");
-//     newOptionText.innerText = option.text;
-//     newOption.appendChild(newOptionText);
-
-//     if (disabled) { 
-//       newOption.classList.add('option-disabled');
-//     } else {
-//       newOption.setAttribute('tabindex', '0');
-//   }
-
-//     if (activeDomain.actions && activeDomain.actions.length > 0) {
-//       for (let actionId of activeDomain.actions) {
-//         const action = story.actions[actionId];
-        
-        
-  
-        
-          
-//           newAction.addEventListener('click', (event) => {
-//             u.removeChildren(conclusionContainer);
-            
-//             for (let change of action.results.changes) {
-//               switch (change.type) {
-//                 case 'set':
-//                   state.actions.set(change.quality, change.value);
-//                   break;
-//                 case 'adjust':
-//                   state.actions.adjust(change.quality, change.value);
-//                   break;
-//                 default:
-//                   console.error('No valid change type found.');
-//               }
-//               renderQuality(change.quality, state.qualities[change.quality]);
-  
-//               if (action.results.conclusion) {
-//                 u.removeChildren(conclusionContainer);
-//                 const conclusion = action.results.conclusion;
-//                 const newConclusion = document.createElement("div");
-//                 const newConclusionTitle = document.createElement("h1");
-//                 const newConclusionText = document.createElement("p");
-  
-//                 newConclusionTitle.innerText = conclusion.title;
-//                 newConclusionText.innerText = conclusion.text;
-  
-//                 newConclusion.appendChild(newConclusionTitle);
-//                 newConclusion.appendChild(newConclusionText);
-  
-//                 conclusionContainer.appendChild(newConclusion);
-  
-//               }
-//             }
-//             renderDomain();
-            
-//           }) // end click event
-//         } // end if disabled
-//         actionsContainer.append(newAction);
-//   }
-// }
-
 module.exports = OptionsDisplay;
