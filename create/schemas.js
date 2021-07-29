@@ -1,4 +1,10 @@
 const schemas = {
+  world: {
+    qualities: {},
+    categories: {},
+    storylets: {},
+    domains: {},
+  },
   storylet: {
     title: "Storylet Title.",
     text: "Storylet text.",
@@ -50,8 +56,12 @@ const schemas = {
     startvalue: 0,
     descriptions: [],
     labels: [],
-    category: "",
+    category: "uncategorized",
     hidden: false,
+  },
+  category: {
+    title: "New Category",
+    order: 0,
   },
   domain: {
     title: "New Domain",

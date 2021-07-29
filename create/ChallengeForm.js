@@ -4,7 +4,7 @@ class ChallengeForm extends CreateForm {
   constructor(api, challenge) {
     super(api);
     this.id = challenge.id;
-    this.quality = challenge.quality || Object.values(this.getQualities())[0];
+    this.quality = challenge.quality || Object.values(this.api.getQualities())[0];
     this.difficulty = challenge.difficulty || 1;
   }
 
@@ -23,7 +23,7 @@ class ChallengeForm extends CreateForm {
 
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `challenge-${this.id}-quality`;
-    for (const quality of Object.values(this.getQualities())) {
+    for (const quality of Object.values(this.api.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;

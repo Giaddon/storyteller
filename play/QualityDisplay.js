@@ -7,6 +7,13 @@ class QualityDisplay {
   }
 
   render() {
+
+    // Go through qualities, build categories, attach quality.
+    // Order categories
+    // Attach categories to dom
+
+
+
     const playerQualities = this.api.getPlayerQualities();
     
     const qualitiesList = u.create({tag: "div"});
@@ -31,26 +38,31 @@ class QualityDisplay {
     });
     uncategorizedContainer.append(uncategorizedTitle);
 
-    let categories = {}
+    let categories = {};
     for (const [id, value] of Object.entries(playerQualities)) {
       const qualityData = this.api.getQuality(id)
       if (qualityData.hidden) continue;
       const quality = new Quality(qualityData, value)
-      if (!quality.category) {
+      if (quality.category === "uncategorized") {
         uncategorizedContainer.append(quality.render()) 
       } else {
         if (categories[quality.category]) {
-          categories[quality.category].push(quality.render())
+          categories[quality.category].qualities.push(quality.render())
         } else {
-          categories[quality.category] = [quality.render()]
+          const categoryData = this.api.getCategory(quality.category);
+          categories[quality.category] = {
+            qualities: [quality.render()],
+            order: categoryData.order,
+            title: categoryData.title,
+          } 
         }
       }
     }
-    for (const [category, qualities] of Object.entries(categories)) {
+
+    const orderedCategories = Object.values(categories).sort((a, b) => a.order - b.order);
+
+    for (const category of orderedCategories) {
       let renderedCategory = this.renderQualityCategory(category);
-      for (const renderedQuality of qualities) {
-        renderedCategory.append(renderedQuality);
-      }
       qualitiesCategoriesContainer.append(renderedCategory);
     }
 
@@ -58,15 +70,18 @@ class QualityDisplay {
   }
 
   renderQualityCategory(category) {
-    const newCategory = u.create({tag: "div", classes: ["qualities-catagory"], id: `cat-${category}`})
+    const newCategory = u.create({tag: "div", classes: ["qualities-catagory"]})
     
     const newCategoryTitle = u.create({
       tag: "h1", 
       classes:["qualities-category-title"], 
-      content: category
+      content: category.title
     }) 
-
     newCategory.append(newCategoryTitle);
+
+    for (const quality of category.qualities) {
+      newCategory.append(quality);
+    }
 
     return newCategory;
   }

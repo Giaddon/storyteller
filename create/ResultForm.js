@@ -83,7 +83,7 @@ class ResultForm extends CreateForm {
     let storyletGroup = document.createElement("optgroup");
     storyletGroup.label = "Storylets";
     flowSelect.add(storyletGroup);
-    for (const storylet of Object.values(this.getStorylets())) {
+    for (const storylet of Object.values(this.api.getStorylets())) {
       let option = document.createElement("option");
       option.value = storylet.id;
       option.text = storylet.title;
@@ -93,7 +93,7 @@ class ResultForm extends CreateForm {
     let domainGroup = document.createElement("optgroup");
     domainGroup.label = "Domains";
     flowSelect.add(domainGroup);
-    for (const domain of Object.values(this.getDomains())) {
+    for (const domain of Object.values(this.api.getDomains())) {
       let option = document.createElement("option");
       option.value = domain.id;
       option.text = domain.title;

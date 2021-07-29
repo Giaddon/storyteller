@@ -10,7 +10,7 @@ function removeChildren(element) {
 }
 
 function create(elementObject) {
-  const {tag, classes, id, content} = elementObject;
+  const {tag, classes, id, content, value} = elementObject;
   const element = document.createElement(tag)
   if (classes) {
     for (let className of classes) {
@@ -19,6 +19,7 @@ function create(elementObject) {
   }
   if (id) element.id = id;
   if (content) element.innerText = content;
+  if (value) element.value = value;
   return element;
 }
 

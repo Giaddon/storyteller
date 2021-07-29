@@ -9,7 +9,7 @@ class QualityForm extends CreateForm {
     this.startvalue = quality.startvalue || 0;
     this.descriptions = quality.descriptions || [];
     this.labels = quality.labels || [];
-    this.category = quality.category || ""; 
+    this.category = quality.category || "uncategorized"; 
     this.hidden = quality.hidden || false;
   }
 
@@ -113,15 +113,17 @@ class QualityForm extends CreateForm {
     })
     qualityDiv.append(addLabelButton);
 
-    let {label: catLabel, input: catInput} = this.createInput(
-      "text",
-      "quality",
-      "category",
-      this.category
+    let {label: catLabel, select: catSelect} = this.createSelect(
+      "Category",
+      "categories",
+      this.id,
     );
-    catInput.addEventListener("input", this.captureField.bind(this, "category"));
+    const noneOption = u.create({tag:"option", content:"Uncategorized", value:"uncategorized"});
+    catSelect.add(noneOption);
+    catSelect.value = this.category;
+    catSelect.addEventListener("input", this.captureField.bind(this, "category"));
     qualityDiv.append(catLabel);
-    qualityDiv.append(catInput);
+    qualityDiv.append(catSelect);
   
     let {label: hiddenLabel, input: hiddenInput} = this.createInput(
       "checkbox",

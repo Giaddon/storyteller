@@ -62,7 +62,7 @@ class StateAPI {
   enterStorylet(storyletId) {
     this.player.context = this.getStorylet(storyletId);
     this.player.inStorylet = true;
-    return this.player.context;
+    return {...this.player.context};
   }
   exitStorylet() {
     this.player.context = getCurrentDomain();
@@ -99,7 +99,9 @@ class StateAPI {
   getStorylets() {
     return {...this.world.storylets};
    }
-  
+  getCategory(id) {
+    return {...this.world.categories[id]};
+  }
   // getCurrentStorylet() {
   //   if (this.player.storylet) {
   //     return {...this.player.storylet};
@@ -108,7 +110,7 @@ class StateAPI {
   // }
   getDomain(id) {
     if (this.world.domains[id]) {
-      return this.world.domains[id];
+      return {...this.world.domains[id]};
     } else {
       return;
     }  
@@ -118,7 +120,7 @@ class StateAPI {
   getCurrentDecks() {
     if (this.player.context && this.player.context.decks) {
       if (Object.values(this.player.context.decks).length > 0) {
-        return {...this.player.context.decks}
+        return {...this.player.context.decks};
       }
     }
     return {};
@@ -140,10 +142,10 @@ class StateAPI {
     return {...this.player.qualities}
   }
   getQuality(id) {
-    return this.world.qualities[id];
+    return {...this.world.qualities[id]};
   }
   getQualities() {
-    return this.world.qualities;
+    return {...this.world.qualities};
   }
   
   getDomains() {

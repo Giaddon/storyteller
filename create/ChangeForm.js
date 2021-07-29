@@ -29,7 +29,7 @@ class ChangeForm extends CreateForm {
   
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `result-${this.parentId}-change-${this.id}-quality`;
-    for (const quality of Object.values(this.getQualities())) {
+    for (const quality of Object.values(this.api.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;

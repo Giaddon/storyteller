@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const u = require("../utilities");
-const API = require("./StateAPI");
+
 
 class CreateForm {
   constructor(api) {
@@ -63,7 +63,7 @@ class CreateForm {
     return {input, label};
   }
 
-  createSelect(labelText, dataType, parentId, id, value) {
+  createSelect(labelText, dataType, parentId, id) {
     let label = u.create({tag:"label", content: labelText});
     label.htmlFor = `${dataType}-select-${parentId}-${id}`;
     
@@ -74,7 +74,6 @@ class CreateForm {
       option.text = item.name || item.title
       select.add(option);
     }
-
     return {select, label};
   }
 
@@ -91,24 +90,24 @@ class CreateForm {
     }
   }
 
-  saveQuality(id, quality) {
-    this.api.addQuality(id, quality);
-  }
-  deleteStorylet(storyletId) {
-    this.api.deleteStorylet(storyletId);
-  }
-  deleteQuality(qualityId) {
-    this.api.deleteQuality(qualityId);
-  }
-  getQualities() {
-    return this.api.getQualities();
-  }
-  getStorylets() {
-    return this.api.getStorylets();
-  }
-  getDomains() {
-    return this.api.getDomains();
-  }
+  // saveQuality(id, quality) {
+  //   this.api.addQuality(id, quality);
+  // }
+  // deleteStorylet(storyletId) {
+  //   this.api.deleteStorylet(storyletId);
+  // }
+  // deleteQuality(qualityId) {
+  //   this.api.deleteQuality(qualityId);
+  // }
+  // getQualities() {
+  //   return this.api.getQualities();
+  // }
+  // getStorylets() {
+  //   return this.api.getStorylets();
+  // }
+  // getDomains() {
+  //   return this.api.getDomains();
+  // }
 
 }
 

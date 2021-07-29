@@ -30,7 +30,7 @@ class ReqForm extends CreateForm {
   
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `req-quality-${this.parentId}-${this.id}`;
-    for (const quality of Object.values(this.getQualities())) {
+    for (const quality of Object.values(this.api.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;

@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const StoryletForm = require("../create/StoryletForm");
 const QualityForm = require("../create/QualityForm");
 const DomainForm = require("../create/DomainForm");
+const CategoryForm = require("../create/CategoryForm");
 
 class CreateManager {
   constructor(api) {
@@ -44,6 +45,12 @@ class CreateManager {
       this.populateItemList("qualities");
     })
     sectionList.append(qualitiesButton);
+
+    const categoriesButton = u.create({tag:"button", classes:["item-button"], content:"Quality Categories"});
+    categoriesButton.addEventListener("click", event => {
+      this.populateItemList("categories");
+    })
+    sectionList.append(categoriesButton);
 
     let storyletsButton = document.createElement("button");
     storyletsButton.innerText = "Storylets";
@@ -154,6 +161,7 @@ class CreateManager {
     if (type === "storylets") label = "Storylet", schemaKey = "storylet";
     else if (type === "domains") label = "Domain", schemaKey = "domain";
     else if (type === "qualities") label = "Quality", schemaKey = "quality";
+    else if (type === "categories") label = "Quality Category", schemaKey = "category";
 
     let newItemButton = document.createElement("button");
     newItemButton.innerText = `+ New ${label}`;
@@ -175,6 +183,7 @@ class CreateManager {
         if (type === "storylets") newForm = new StoryletForm(this.api, item)
         else if (type === "domains") newForm = new DomainForm(this.api, item);
         else if (type === "qualities") newForm = new QualityForm(this.api, item);
+        else if (type === "categories") newForm = new CategoryForm(this.api, item);
         this.activeForm = newForm;
         let renderedForm = this.activeForm.render();
         u.removeChildren(formContainer)

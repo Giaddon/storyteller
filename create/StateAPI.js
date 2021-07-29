@@ -43,6 +43,12 @@ class StateAPI {
     this.setWorld(world);
     document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "domains"}));
   }
+  deleteCategory(id) {
+    let world = this.getWorld()
+    delete world.categories[id];
+    this.setWorld(world);
+    document.getElementById("item-list").dispatchEvent(new CustomEvent("updatedWorld", {detail: "categories"}));
+  }
   getItem(type, id) {
     let world = this.getWorld();
     return world[type][id];

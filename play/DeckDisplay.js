@@ -21,8 +21,8 @@ class DeckDisplay {
 
   renderDeck(deckData) {
     const deck = u.create({tag:"div", classes:["deck"]});
-    deckData.storylets = this.evaluateCards(deckData.storylets);
-    const cardNum = deckData.storylets.length;
+    deckData.availableStorylets = this.evaluateCards(deckData.storylets);
+    const cardNum = deckData.availableStorylets.length;
     if (cardNum < 1) {
       deck.remove();
       return;
@@ -36,8 +36,8 @@ class DeckDisplay {
   }
 
   selectDeck(deck) {
-    const idx = Math.floor(Math.random() * deck.storylets.length);
-    const drawnCardId = deck.storylets[idx];
+    const idx = Math.floor(Math.random() * deck.availableStorylets.length);
+    const drawnCardId = deck.availableStorylets[idx];
     const drawnCard = this.api.enterStorylet(drawnCardId);
     this.prepareResults(drawnCard);
   }

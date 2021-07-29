@@ -102,13 +102,24 @@ select {
 .option:focus {
   outline: 3px solid gold;
 }
+.deck-list {
+  display: flex;
+  flex-flow: row wrap;
+}
 .deck {
+  flex: 0 1 auto;
   border: 1px solid black;
   border-radius: 4px;
   height: 140px;
   width: 100px;
   text-align: center;
   padding: 10px;
+  cursor: pointer;
+  margin: 5px;
+}
+.deck:hover,
+.deck:focus {
+  border: 1px solid gold;
 }
 .deck-label {
   font-family: "Title", sans-serif;

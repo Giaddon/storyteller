@@ -100,7 +100,7 @@ class PlayManager {
         }
       }
     }
-
+    console.log("Current context: ", this.api.getContext())
     const header = this.headerDisplay.render();
     const conclusion = this.conclusionDisplay.render();
     const decks = this.decksDisplay.render();

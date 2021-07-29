@@ -235,7 +235,7 @@ class StoryletForm extends CreateForm {
       }
     }
     
-    this.api.saveStorylet(storylet);
+    this.api.saveItem(storylet.id, "storylets", storylet);
   }
 
   
