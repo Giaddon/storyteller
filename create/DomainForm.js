@@ -12,7 +12,7 @@ class DomainForm extends CreateForm {
     for (const storylet of domain.storylets) {
       const storyletData = {
         id: this.generateId(),
-        storylet,
+        storylet: storylet,
       }
       storylets.push(storyletData);
     }
@@ -29,10 +29,10 @@ class DomainForm extends CreateForm {
 
     for (const deck of Object.values(domain.decks)) {
       let storylets = [];
-      for (const storylet of deck.storylets) {
+      for (const storyletId of deck.storylets) {
         storylets.push({
           id: this.generateId(),
-          storylet
+          storylet: storyletId,
         });
       }
       deck.storylets = storylets;
@@ -94,13 +94,14 @@ class DomainForm extends CreateForm {
         storylet: null,
       }
       this.storylets.push(storyletData);
-      const renderedStorylet = this.createStorylet(storyletData);
+      const renderedStorylet = this.createStorylet(this, storyletData);
       storyletsContainer.append(renderedStorylet);
     })
     storyletsSection.append(addStoryletButton);
 
     for (const storylet of this.storylets) {
-      const renderedStorylet = this.createStorylet(storylet);
+      const renderedStorylet = this.createStorylet(this, storylet);
+
       storyletsContainer.append(renderedStorylet);
     }
 
@@ -207,7 +208,7 @@ class DomainForm extends CreateForm {
     this.api.saveItem(this.id, "domains", domain);
   }
 
-  createStorylet(data) {
+  createStorylet(parent, data) {
     const storylet = u.create({tag:"div", classes:["form-section", "flex-item"]});
     
     const inputGroup = u.create({tag:"div", classes:["input-group"]});
@@ -234,12 +235,18 @@ class DomainForm extends CreateForm {
     });
     removeChildButton.addEventListener("click", event => {
       event.preventDefault();
-      this.storylets = this.storylets.filter(storylet => storylet.id !== data.id)
+      this.removeStorylet.bind(parent, data.id)();
       storylet.remove();
     });
     storylet.append(removeChildButton);
 
     return storylet;
+  }
+
+  removeStorylet(targetId) {
+    console.log(this.storylets, targetId);
+    const remainingStorylets = this.storylets.filter(storylet => storylet.id !== targetId);
+    this.storylets = remainingStorylets;
   }
 
   createEvent(data) {
@@ -305,13 +312,13 @@ class DomainForm extends CreateForm {
         storylet: null,
       }
       deckData.storylets.push(storyletData);
-      const renderedStorylet = this.createStorylet(storyletData);
+      const renderedStorylet = this.createStorylet(deckData, storyletData);
       storyletsContainer.append(renderedStorylet);
     })
     storyletsSection.append(addStoryletButton);
 
     for (const storylet of deckData.storylets) {
-      const renderedStorylet = this.createStorylet(storylet);
+      const renderedStorylet = this.createStorylet(deckData, storylet);
       storyletsContainer.append(renderedStorylet);
     }
 

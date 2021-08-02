@@ -35,8 +35,9 @@ class ConclusionDisplay {
       }
     }
 
-    if (result.changes.length > 0) {      
-      for (const change of result.changes) {
+    const changes = this.api.getChanges();
+    if (changes.length > 0) {      
+      for (const change of changes) {
         const qualityData = this.api.getQuality(change.quality);
         const quality = new Quality(qualityData, this.api.getPlayerQuality(change.quality));
         if (quality.hidden) continue;
@@ -59,6 +60,7 @@ class ConclusionDisplay {
         outcomes.append(outcome);
       }
     }
+    this.api.clearChanges();
     if (outcomes.children.length > 0) {
       conclusion.append(outcomes);
     } else {

@@ -11,7 +11,16 @@ class OptionsDisplay {
   render() {
     const activeContext = this.api.getContext();
     const contextType = activeContext.actions ? "storylet" : "domain";
-    const options = contextType === "storylet" ? activeContext.actions : activeContext.storylets
+    let options; 
+    if (contextType === "storylet") {
+      options = activeContext.actions;
+    }
+    else if (contextType === "domain") {
+      options = [];
+      for (const storyletId of activeContext.storylets) {
+        options.push(this.api.getStorylet(storyletId));
+      }
+    } 
 
     const optionsList = u.create({tag:"div", class:["options-list"]})
     for (const option of Object.values(options)) {

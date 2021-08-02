@@ -88,6 +88,9 @@ class CreateForm {
     else if (arrayName === "changes") {
       this.changes = this.changes.filter(change => change.id !== itemId);
     }
+    else if (arrayName === "logic") {
+      this.logic = this.logic.filter(l => l.id !== itemId);
+    }
   }
 
   // saveQuality(id, quality) {

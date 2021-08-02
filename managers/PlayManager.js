@@ -185,6 +185,21 @@ class PlayManager {
   }
 
   handleChange(change) {
+    if (change.logic && change.logic.length > 0) {
+      const passingArray = [];
+      for (const {type, quality, min, max} of change.logic) {
+        const playerValue = this.api.getPlayerQuality(quality);
+        if (type === "if") {
+          passingArray.push(min <= playerValue && playerValue <= max);
+        } else if (type === "unless") {
+          passingArray.push(!(min <= playerValue && playerValue <= max));
+        }
+      }
+      if (!passingArray.every(test => test)) {
+        return;
+      } 
+    }
+    this.api.addChange(change);
     switch (change.type) {
       case 'set':
         this.api.setQuality(change.quality, change.value);

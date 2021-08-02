@@ -1,5 +1,6 @@
 const CreateForm = require("./CreateForm");
 const ChangeForm = require("./ChangeForm");
+const schemas = require("./schemas");
 
 class ResultForm extends CreateForm {
   constructor(api, result, parentId, resultType) {
@@ -11,8 +12,7 @@ class ResultForm extends CreateForm {
     for (const change of result.changes) {
       changes.push(new ChangeForm(
         this.api, 
-        change, 
-        this.id, 
+        change,
         this.removeFromArray.bind(this, "changes")
       ))
     }
@@ -118,10 +118,13 @@ class ResultForm extends CreateForm {
     newChangeButton.addEventListener("click", event => {
       event.preventDefault();
       const id = this.generateId();
-      const changeData = {
-        id,
-      }
-      const change = new ChangeForm(this.api, changeData, this.id, this.removeFromArray.bind(this, "changes"));
+      const changeData = {...schemas.change};
+      changeData.id = id;
+      const change = new ChangeForm(
+        this.api, 
+        changeData,
+        this.removeFromArray.bind(this, "changes")
+      );
       this.changes.push(change);
       const renderedChange = change.render();
       changeContainer.append(renderedChange);

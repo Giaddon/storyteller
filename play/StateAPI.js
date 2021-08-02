@@ -33,7 +33,7 @@ class StateAPI {
           qualities[quality.id] = Number(quality.startvalue);
         }
       }
-      return {qualities} 
+      return {qualities, changes: []} 
     }
   }
 
@@ -65,7 +65,7 @@ class StateAPI {
     return {...this.player.context};
   }
   exitStorylet() {
-    this.player.context = getCurrentDomain();
+    this.player.context = this.getCurrentDomain();
     this.player.inStorylet = false;
     return;
   }
@@ -150,6 +150,15 @@ class StateAPI {
   
   getDomains() {
     return {...this.world.domains};
+  }
+  addChange(change) {
+    this.player.changes.push(change);
+  }
+  getChanges() {
+    return [...this.player.changes];
+  }
+  clearChanges() {
+    this.player.changes = [];
   }
   
 }

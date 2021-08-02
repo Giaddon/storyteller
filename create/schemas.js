@@ -51,6 +51,12 @@ const schemas = {
       }
     },
   },
+  change: {
+    quality: "",
+    min: 0,
+    max: 0,
+    logic: [],
+  },
   quality: {
     name: "New Quality",
     startvalue: 0,
@@ -67,8 +73,8 @@ const schemas = {
     title: "New Domain",
     text: "Domain text.",
     locked: false,
-    storylets: [],
-    decks: [],
+    storylets: {},
+    decks: {},
     events: [],
   },
 
