@@ -105,6 +105,7 @@ select {
 .deck-list {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
 }
 .deck {
   flex: 0 1 auto;
@@ -196,6 +197,11 @@ select {
 .section-list-container {
   flex: 0 0 150px;
   background-color:lightsteelblue;
+}
+.edge-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 
@@ -436,4 +442,20 @@ select {
   padding: 5px;
   margin: 5px;
   background-color: white;
+}
+.modal-window {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: white;
+  padding: 40px;
+  box-shadow: 0px 0px 10px 2px grey;
+}
+
+.freeze-window {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
 }

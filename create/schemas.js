@@ -1,5 +1,6 @@
 const schemas = {
   world: {
+    details: {},
     qualities: {},
     categories: {},
     storylets: {},

@@ -5,20 +5,12 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <link rel="stylesheet" href="fonts.css">
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="./styles/animations.css">
+    <link rel="stylesheet" href="./styles/fonts.css">
+    <link rel="stylesheet" href="./styles/create-style.css">
     <title>Storyteller</title>
   </head>
   <body>
-    <div id="main-menu" class="main-menu">
-      <h1>Main Menu</h1>
-      <button id="continue-button">Continue Game</button>
-      <button id="load-button">Load Game File</button>
-      <button id="settings-button">Settings</button>
-      <button id="quit-button">Quit</button>
-    </div>
-    <div id="games-container" class="games-container"></div>
-    <script src="renderer.js"></script>
-    <script src="components.js"></script>
+    <div id="root"></div>
   </body>
 </html>

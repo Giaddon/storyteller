@@ -7,7 +7,6 @@ const CreateStateAPI = require("../create/StateAPI");
 const PlayStateAPI = require("../play/StateAPI");
 
 const configFile = path.join(__dirname, "../", 'config.json');
-const worldsFolder = path.join(__dirname, "../", 'worlds');
 const profilesFolder = path.join(__dirname, "../", 'profiles');
 
 class Storyteller {
