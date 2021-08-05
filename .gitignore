@@ -4,3 +4,6 @@
 # content
 /worlds/*
 /profiles/*
+
+# builds
+out/

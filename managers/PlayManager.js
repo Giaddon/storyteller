@@ -64,6 +64,16 @@ class PlayManager {
     this.optionsDisplay = new OptionsDisplay(this.api, this.prepareResults.bind(this));
     const renderedOptions = this.optionsDisplay.render();
     optionsContainer.append(renderedOptions)
+
+    console.log(this.api.isInStorylet(), this.api.getContext().locked, this.api.getCurrentDomain())
+    if (this.api.isInStorylet() && !this.api.getContext().locked && this.api.getCurrentDomain()) {
+      const backButton = u.create({tag:"button", content:"Back"});
+      backButton.addEventListener("click", event => {
+        event.preventDefault();
+        this.mainCycle({changes:[], flow:"leave"});
+      })
+      document.getElementById("story-container").append(backButton);
+    }
   }
 
   // After the user selects an option, prepareResults packages the data in a result and
@@ -100,6 +110,9 @@ class PlayManager {
         }
       }
     }
+
+    this.api.saveGame();
+
     console.log("Current context: ", this.api.getContext())
     const header = this.headerDisplay.render();
     const conclusion = this.conclusionDisplay.render();
@@ -119,6 +132,15 @@ class PlayManager {
     containers.resultContainer.append(conclusion);
     containers.decksContainer.append(decks);
     containers.optionsContainer.append(options);
+    console.log(this.api.isInStorylet(), this.api.getContext().locked, this.api.getCurrentDomain())
+    if (this.api.isInStorylet() && !this.api.getContext().locked && this.api.getCurrentDomain()) {
+      const backButton = u.create({tag:"button", content:"Back"});
+      backButton.addEventListener("click", event => {
+        event.preventDefault();
+        this.mainCycle({changes:[], flow:"leave"});
+      })
+      document.getElementById("story-container").append(backButton);
+    }
 
     document.getElementById("story-container").scroll(0, 0);
   }

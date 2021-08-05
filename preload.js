@@ -3,5 +3,5 @@ const Storyteller = require("./managers/Storyteller");
 const storyteller = new Storyteller();
 
 window.addEventListener('DOMContentLoaded', () => {
-  storyteller.mainMenuManager.renderMainMenu();
+  storyteller.mainMenuManager.startup();
 });

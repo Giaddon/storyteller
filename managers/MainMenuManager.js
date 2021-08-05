@@ -15,6 +15,25 @@ class MainMenuManager {
     this.passToPlay = passToPlay;
   }
 
+  // Checks the validity of the profile data and renders the main menu.
+  startup() {
+    try {
+      fs.accessSync(path.join(worldsFolder, this.playing), fs.constants.W_OK);
+    } catch (error) {
+      // If we can't write to the location, we empty it.
+      console.error("Cannot write to: " + path.join(worldsFolder, this.playing))
+      this.playing = "";
+    }
+    try {
+      fs.accessSync(path.join(worldsFolder, this.creating), fs.constants.W_OK);
+    } catch (error) {
+      // If we can't write to the location, we empty it.
+      console.error("Cannot write to: " + path.join(worldsFolder, this.creating))
+      this.creating = "";
+    }
+    this.renderMainMenu();
+  }
+
   renderMainMenu() {
     const root = document.getElementById("root");
     u.removeChildren(root);
@@ -147,13 +166,13 @@ class MainMenuManager {
       event.preventDefault();
       const newWorldName = data.input + ".json";
       if (worldNames.includes(newWorldName)){
-        
+        window.alert(`File with name "${data.input}" already in use. Enter new name.`);
       } else {
         const newWorld = JSON.stringify(schemas.world)
         fs.writeFileSync(path.join(worldsFolder, newWorldName), newWorld);
         this.writeToProfileData("creating", newWorldName);
         this.creating = newWorldName;
-        this.renderMainMenu();
+        this.continueEditing(event);
       }
     })
     const canvas = document.getElementById("canvas");
@@ -188,7 +207,8 @@ class MainMenuManager {
   }
 
   readWorldFolder() {
-    return fs.readdirSync(worldsFolder, {withFileTypes: true}).map(file => file.name);
+    const worldArray = fs.readdirSync(worldsFolder, {withFileTypes: true}).map(file => file.name);
+    return worldArray.filter(name => !(name.startsWith(".")));
   }
 
   readProfileData() {

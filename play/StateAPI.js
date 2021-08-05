@@ -11,6 +11,13 @@ class StateAPI {
     this.world = this.loadWorldFromSource()
     this.player = this.loadSavedGame();
   }
+  start() {
+    if (!this.player.context) {
+      // If there is no loaded location
+      const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
+      this.enterStorylet(startingId);
+    }
+  }
 
   loadWorldFromSource() {
     try {
@@ -37,6 +44,14 @@ class StateAPI {
     }
   }
 
+  saveGame() {
+    try {
+      fs.writeFileSync(this.savedDataLocation, JSON.stringify(this.player))
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   adjustQuality(qualityId, value) {
     const newValue = (this.player.qualities[qualityId] || 0) + Number(value);
     if (newValue < 1) {
@@ -54,11 +69,7 @@ class StateAPI {
     }
   }
 
-  start() {
-    // If there is no loaded location
-    const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
-    this.enterStorylet(startingId);
-  }
+  
   enterStorylet(storyletId) {
     this.player.context = this.getStorylet(storyletId);
     this.player.inStorylet = true;
