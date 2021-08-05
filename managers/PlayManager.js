@@ -6,6 +6,7 @@ const DeckDisplay = require("../play/DeckDisplay");
 const HeaderDisplay = require("../play/HeaderDisplay");
 const ConclusionDisplay = require("../play/ConclusionDisplay");
 const Storylet = require("../play/Storylet");
+const BackButton = require("../play/BackButton");
 
 class PlayManager {
   constructor(api) {
@@ -65,14 +66,9 @@ class PlayManager {
     const renderedOptions = this.optionsDisplay.render();
     optionsContainer.append(renderedOptions)
 
-    console.log(this.api.isInStorylet(), this.api.getContext().locked, this.api.getCurrentDomain())
     if (this.api.isInStorylet() && !this.api.getContext().locked && this.api.getCurrentDomain()) {
-      const backButton = u.create({tag:"button", content:"Back"});
-      backButton.addEventListener("click", event => {
-        event.preventDefault();
-        this.mainCycle({changes:[], flow:"leave"});
-      })
-      document.getElementById("story-container").append(backButton);
+      const backButton = new BackButton(this.mainCycle.bind(this));
+      document.getElementById("options-container").append(backButton.render())
     }
   }
 
@@ -132,14 +128,10 @@ class PlayManager {
     containers.resultContainer.append(conclusion);
     containers.decksContainer.append(decks);
     containers.optionsContainer.append(options);
-    console.log(this.api.isInStorylet(), this.api.getContext().locked, this.api.getCurrentDomain())
+    
     if (this.api.isInStorylet() && !this.api.getContext().locked && this.api.getCurrentDomain()) {
-      const backButton = u.create({tag:"button", content:"Back"});
-      backButton.addEventListener("click", event => {
-        event.preventDefault();
-        this.mainCycle({changes:[], flow:"leave"});
-      })
-      document.getElementById("story-container").append(backButton);
+      const backButton = new BackButton(this.mainCycle.bind(this));
+      document.getElementById("options-container").append(backButton.render())
     }
 
     document.getElementById("story-container").scroll(0, 0);
@@ -233,84 +225,6 @@ class PlayManager {
         console.error('No valid change type found.');
     }
   }
-
-  // // Prepares the result data or the action conclusion, returns the completed conclusion element.
-  // prepareWindow(result) {
-  //   let changedQualities = {};
-  //   const changes = result.changes;
-  //   if (changes) {
-  //     for (const change of changes) {
-  //       changedQualities[change.quality] = new Quality(this.api.getQuality(change.quality), this.api.getPlayerQuality(change.quality));
-  //     }
-  //   }
-  //   if (result.challenge) {
-  //     for (const challenge of result.challenge.challenges)
-  //     changedQualities[challenge.quality] = new Quality(this.api.getQuality(challenge.quality), this.api.getPlayerQuality(challenge.quality));
-  //   }
-
-  //   return this.createConclusion(result, changedQualities)
-  // }
-
-  // // creates and returns the conclusion element for display. 
-  // createConclusion(result, qualities = {}) {
-  //   const conclusion = u.create({tag: "div", classes:["conclusion"]})
-  //   const conclusionTitle = u.create({tag:"h1", content: result.title})
-  //   const conclusionText = u.create({tag: "p", content: result.text});
-  //   const outcomes = u.create({tag: "div", classes: ["conclusion-outcomes"]});
-  //   conclusion.append(conclusionTitle);
-  //   conclusion.append(conclusionText);
-
-  //   if (result.challenge) {
-  //     if (result.challenge.passed) {
-  //       outcomes.classList.add("challenge-passed");
-  //     } else {
-  //       outcomes.classList.add("challenge-failed");
-  //     }
-  //     // Not quite right if multiple challenges get added (uses same passed for all qualities).
-  //     for (const challenge of result.challenge.challenges) {
-  //       const outcome = u.create({
-  //         tag:"p", 
-  //         content: `You ${result.challenge.passed ? "passed" : "failed"} a ${qualities[challenge.quality].name} challenge!`
-  //       });
-  //       outcomes.append(outcome);
-  //     }
-  //   }
-
-  //   if (result.changes.length > 0) {      
-  //     for (const change of result.changes) {
-  //       const qualityId = change.quality;
-  //       if (qualities[qualityId].hidden) continue;
-  //       const outcome = u.create({tag:"p"});
-  //       let outcomeText = "";
-  //       if (change.type === "set") {
-  //         outcomeText = `${qualities[qualityId].name} is now ${qualities[qualityId].label || Math.abs(change.value)}.`
-  //       } else {
-  //         let changePhrase = "";
-  //         if (change.value > 0) {
-  //           changePhrase = "increased by"
-  //         } else {
-  //           changePhrase = "decreased by"
-  //         }
-  //         outcomeText = `${qualities[qualityId].name} ${changePhrase} ${Math.abs(change.value)}.`
-  //       }
- 
-  //       // TODO add text for removal / 0 or below.
-  //       outcome.innerText = outcomeText;
-  //       outcomes.append(outcome);
-  //     }
-  //   }
-  //     if (outcomes.children.length > 0) {
-  //       conclusion.append(outcomes);
-  //     } else {
-  //       outcomes.remove();
-  //     }
-    
-
-  //   const seperator = u.create({tag:"div", classes:["conclusion-seperator"]});
-  //   conclusion.append(seperator);
-
-  //   return conclusion;
-  // }
 
 }
 

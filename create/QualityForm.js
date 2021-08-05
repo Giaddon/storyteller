@@ -7,6 +7,7 @@ class QualityForm extends CreateForm {
     this.id = quality.id;
     this.name = quality.name || "New Quality";
     this.startvalue = quality.startvalue || 0;
+    this.max = quality.max || 0;
     this.descriptions = quality.descriptions || [];
     this.labels = quality.labels || [];
     this.category = quality.category || "uncategorized"; 
@@ -61,6 +62,16 @@ class QualityForm extends CreateForm {
     startInput.addEventListener("input", this.captureField.bind(this, "startvalue"));
     qualityDiv.append(startLabel);
     qualityDiv.append(startInput);
+
+    let {label: maxLabel, input: maxInput} = this.createInput(
+      "number",
+      "quality",
+      "max",
+      this.max
+    );
+    maxInput.addEventListener("input", this.captureField.bind(this, "max"));
+    qualityDiv.append(maxLabel);
+    qualityDiv.append(maxInput);
 
     let descriptionsLabel = u.create({tag:"label", content: "Descriptions"});
     qualityDiv.append(descriptionsLabel);    
@@ -153,6 +164,7 @@ class QualityForm extends CreateForm {
       id: this.id,
       name: this.name,
       startvalue: this.startvalue,
+      max: this.max,
       descriptions: this.descriptions.sort((a, b) => a.value - b.value),
       labels: this.labels.sort((a, b) => a.value - b.value),
       category: this.category,

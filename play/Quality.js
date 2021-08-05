@@ -5,6 +5,7 @@ class Quality {
     id,
     name,
     startvalue,
+    max,
     labels,
     descriptions,
     category,
@@ -13,6 +14,7 @@ class Quality {
     this.id = id;
     this.name = name;
     this.startvalue = startvalue;
+    this.max = max;
     this.labels = labels;
     this.descriptions = descriptions;
     this.category = category;
@@ -46,7 +48,7 @@ class Quality {
     const title = u.create({
       tag:"p", 
       classes:["quality-title"], 
-      content:`${this.name} • ${this.label || this.value.toString()}`
+      content:`${this.name} • ${this.label || this.value.toString()}${this.max > 0 ? "/"+this.max : ""}`
     });
     qualityElement.append(title);
     const description = u.create({

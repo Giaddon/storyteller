@@ -24,3 +24,27 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+// myWindow.webContents.on('context-menu', (event, params) => {
+//   const menu = new electron.Menu()
+
+//   // Add each spelling suggestion
+//   for (const suggestion of params.dictionarySuggestions) {
+//     menu.append(new electron.MenuItem({
+//       label: suggestion,
+//       click: () => mainWindow.webContents.replaceMisspelling(suggestion)
+//     }))
+//   }
+
+//   // Allow users to add the misspelled word to the dictionary
+//   if (params.misspelledWord) {
+//     menu.append(
+//       new MenuItem({
+//         label: 'Add to dictionary',
+//         click: () => mainWindow.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+//       })
+//     )
+//   }
+
+//   menu.popup()
+// })

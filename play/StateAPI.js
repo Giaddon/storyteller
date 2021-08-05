@@ -54,22 +54,29 @@ class StateAPI {
 
   adjustQuality(qualityId, value) {
     const newValue = (this.player.qualities[qualityId] || 0) + Number(value);
+    const quality = this.getQuality(qualityId);
+    const max = Number(quality.max);
     if (newValue < 1) {
       delete this.player.qualities[qualityId];
+    } else if (max > 0 && newValue > max) {
+      this.player.qualities[qualityId] = max;
     } else {
       this.player.qualities[qualityId] = newValue;
     }
   }
 
   setQuality(qualityId, value) {
+    const quality = this.getQuality(qualityId);
+    const max = Number(quality.max);
     if (value < 1) {
       delete this.player.qualities[qualityId]
+    } else if (max > 0 && value > max) { 
+      this.player.qualities[qualityId] = max;
     } else {
       this.player.qualities[qualityId] = Number(value);
     }
   }
 
-  
   enterStorylet(storyletId) {
     this.player.context = this.getStorylet(storyletId);
     this.player.inStorylet = true;

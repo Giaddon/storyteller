@@ -12,6 +12,7 @@ class StoryletForm extends CreateForm {
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
     this.start = storylet.start;
+    this.locked = storylet.locked || false;
     this.domain = storylet.domain || "";
 
     let qualities = [];
@@ -85,7 +86,7 @@ class StoryletForm extends CreateForm {
     headerSection.append(textLabel);
     headerSection.append(textInput);
 
-    let {input: startInput, label: startLabel} = this.createInput(
+    const {input: startInput, label: startLabel} = this.createInput(
       "checkbox", 
       "storylet", 
       "start", 
@@ -94,6 +95,16 @@ class StoryletForm extends CreateForm {
     startInput.addEventListener("input", this.captureCheckbox.bind(this, "start"));
     headerSection.append(startLabel);
     headerSection.append(startInput);
+
+    const {input: lockedInput, label: lockedLabel} = this.createInput(
+      "checkbox", 
+      "storylet", 
+      "locked", 
+      this.locked,
+    );
+    lockedInput.addEventListener("input", this.captureCheckbox.bind(this, "locked"));
+    headerSection.append(lockedLabel);
+    headerSection.append(lockedInput);
     
     const {label: domainLabel, select:domainSelect} = this.createSelect(
       "Inside Domain", 
@@ -222,6 +233,7 @@ class StoryletForm extends CreateForm {
       title: this.title,
       text: this.text,
       start: this.start,
+      locked: this.locked,
       domain: this.domain,
       reqs,
       actions,

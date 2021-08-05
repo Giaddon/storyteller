@@ -11,12 +11,12 @@ const schemas = {
     text: "Storylet text.",
     domain: "",
     start: false,
+    locked: false,
     reqs: {
       visibility: "always",
       qualities: [],
     },
     actions: {},
-    locked: false,
     results: {
       neutral: {
         flow: "return"
@@ -61,6 +61,7 @@ const schemas = {
   quality: {
     name: "New Quality",
     startvalue: 0,
+    max: 0,
     descriptions: [],
     labels: [],
     category: "uncategorized",

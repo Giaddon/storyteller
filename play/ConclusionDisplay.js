@@ -44,7 +44,8 @@ class ConclusionDisplay {
         const outcome = u.create({tag:"p"});
         let outcomeText = "";
         if (change.type === "set") {
-          outcomeText = `${quality.name} is now ${quality.label || Math.abs(change.value)}.`
+          const newValue = (quality.max > 0 && change.value > quality.max) ? quality.max : Math.abs(change.value);
+          outcomeText = `${quality.name} is now ${quality.label || newValue}.`
         } else {
           let changePhrase = "";
           if (change.value > 0) {
