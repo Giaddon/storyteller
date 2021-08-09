@@ -6,6 +6,12 @@ const schemas = {
     storylets: {},
     domains: {},
   },
+  details: {
+    name: "Game Name",
+    author: "Author",
+    description: "Description text.",
+    version: "Version"
+  },
   storylet: {
     title: "Storylet Title.",
     text: "Storylet text.",

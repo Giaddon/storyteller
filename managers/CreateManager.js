@@ -5,6 +5,7 @@ const StoryletForm = require("../create/StoryletForm");
 const QualityForm = require("../create/QualityForm");
 const DomainForm = require("../create/DomainForm");
 const CategoryForm = require("../create/CategoryForm");
+const DetailsForm = require("../create/DetailsForm");
 
 class CreateManager {
   constructor(api) {
@@ -32,10 +33,21 @@ class CreateManager {
 
   populateSectionList() {
     const sectionListContainer = document.getElementById("section-list-container");
+    const formContainer = document.getElementById("form-container");
     let sectionList = document.createElement("div");
     sectionList.classList.add("item-list");
     sectionList.id = "section-list";
     sectionListContainer.append(sectionList);
+
+    let detailsButton = u.create({tag:"button", classes:["item-button"], content:"World Details"});
+    detailsButton.addEventListener("click", event => {
+      event.preventDefault();
+      this.activeForm =  new DetailsForm(this.api, this.api.getDetails());
+      let renderedForm = this.activeForm.render();
+      u.removeChildren(formContainer)
+      formContainer.append(renderedForm);
+    })
+    sectionList.append(detailsButton);
 
     let qualitiesButton = document.createElement("button");
     qualitiesButton.innerText = "Qualities";
@@ -69,80 +81,80 @@ class CreateManager {
 
   
 
-  populateQualityList() {
-    const listContainer = document.getElementById("item-list-container");
-    u.removeChildren(listContainer);
-    let list = document.createElement("div");
-    list.classList.add("item-list");
-    list.id = "quality-list";
+  // populateQualityList() {
+  //   const listContainer = document.getElementById("item-list-container");
+  //   u.removeChildren(listContainer);
+  //   let list = document.createElement("div");
+  //   list.classList.add("item-list");
+  //   list.id = "quality-list";
     
-    list.addEventListener("updatedWorld", event => {
-      this.populateQualityList();
-    });
+  //   list.addEventListener("updatedWorld", event => {
+  //     this.populateQualityList();
+  //   });
 
-    let newButton = document.createElement("button");
-    newButton.innerText = "+ New Quality";
-    newButton.classList.add("item-button");
-    newButton.addEventListener("click", event => {
-      event.preventDefault();
-      const id = uuidv4();
-      const newItem = {...schemas.quality};
-      newItem.id = id;
-      this.api.addQuality(id, newItem);
-    })
-    list.append(newButton);
+  //   let newButton = document.createElement("button");
+  //   newButton.innerText = "+ New Quality";
+  //   newButton.classList.add("item-button");
+  //   newButton.addEventListener("click", event => {
+  //     event.preventDefault();
+  //     const id = uuidv4();
+  //     const newItem = {...schemas.quality};
+  //     newItem.id = id;
+  //     this.api.addQuality(id, newItem);
+  //   })
+  //   list.append(newButton);
 
-    for (const quality of Object.values(this.api.getValue("qualities"))) {
-      const button = this.createItemButton(quality);
-      button.addEventListener("click", event => {
-        event.preventDefault();
-        const formContainer = document.getElementById("form-container");
-        this.activeForm = new QualityForm(this.api, quality);
-        let renderedForm = this.activeForm.render();
-        u.removeChildren(formContainer)
-        formContainer.append(renderedForm);
-      });
-      list.append(button);
-    }
-    listContainer.append(list);
+  //   for (const quality of Object.values(this.api.getValue("qualities"))) {
+  //     const button = this.createItemButton(quality);
+  //     button.addEventListener("click", event => {
+  //       event.preventDefault();
+  //       const formContainer = document.getElementById("form-container");
+  //       this.activeForm = new QualityForm(this.api, quality);
+  //       let renderedForm = this.activeForm.render();
+  //       u.removeChildren(formContainer)
+  //       formContainer.append(renderedForm);
+  //     });
+  //     list.append(button);
+  //   }
+  //   listContainer.append(list);
 
-  }
+  // }
 
-  populateStoryletList() {
-    const storyletListContainer = document.getElementById("item-list-container");
-    u.removeChildren(storyletListContainer);
-    let storyletList = document.createElement("div");
-    storyletList.classList.add("item-list");
-    storyletList.id = "storylet-list";
-    storyletList.addEventListener("updatedWorld", event => {
-      this.populateStoryletList();
-    });
-    storyletListContainer.append(storyletList);
+  // populateStoryletList() {
+  //   const storyletListContainer = document.getElementById("item-list-container");
+  //   u.removeChildren(storyletListContainer);
+  //   let storyletList = document.createElement("div");
+  //   storyletList.classList.add("item-list");
+  //   storyletList.id = "storylet-list";
+  //   storyletList.addEventListener("updatedWorld", event => {
+  //     this.populateStoryletList();
+  //   });
+  //   storyletListContainer.append(storyletList);
     
-    let newActionButton = document.createElement("button");
-    newActionButton.innerText = "+ New Storylet";
-    newActionButton.classList.add("item-button");
-    newActionButton.addEventListener("click", event => {
-      event.preventDefault();
-      const id = uuidv4();
-      const newStorylet = {...schemas.storylet};
-      newStorylet.id = id;
-      this.api.addStorylet(id, newStorylet);
-    })
-    storyletList.append(newActionButton);
+  //   let newActionButton = document.createElement("button");
+  //   newActionButton.innerText = "+ New Storylet";
+  //   newActionButton.classList.add("item-button");
+  //   newActionButton.addEventListener("click", event => {
+  //     event.preventDefault();
+  //     const id = uuidv4();
+  //     const newStorylet = {...schemas.storylet};
+  //     newStorylet.id = id;
+  //     this.api.addStorylet(id, newStorylet);
+  //   })
+  //   storyletList.append(newActionButton);
 
-    for (const storylet of Object.values(this.api.getStorylets())) {
-      const button = this.createItemButton(storylet, "story");
-      button.addEventListener("click", event => {
-        event.preventDefault();
-        this.activeForm = new StoryletForm(this.api, storylet);
-        let renderedStoryletForm = this.activeForm.render();
-        u.removeChildren(document.getElementById("form-container"))
-        document.getElementById("form-container").append(renderedStoryletForm);
-      });
-      storyletList.append(button);
-    }
-  }
+  //   for (const storylet of Object.values(this.api.getStorylets())) {
+  //     const button = this.createItemButton(storylet, "story");
+  //     button.addEventListener("click", event => {
+  //       event.preventDefault();
+  //       this.activeForm = new StoryletForm(this.api, storylet);
+  //       let renderedStoryletForm = this.activeForm.render();
+  //       u.removeChildren(document.getElementById("form-container"))
+  //       document.getElementById("form-container").append(renderedStoryletForm);
+  //     });
+  //     storyletList.append(button);
+  //   }
+  // }
 
   populateItemList(type) {
     const items = this.api.getItems(type);

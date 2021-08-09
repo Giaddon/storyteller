@@ -51,12 +51,16 @@ class MainMenuManager {
       let gameNameLabel = u.create({tag: "p", classes: ["main-menu-big"], content: this.playing});
       mainMenuDiv.append(gameNameLabel);
 
-      let continueButton = u.create({tag: "button", classes:["main-menu-button"], content: "Continue Game"});
+      let continueButton = u.create({tag: "button", classes:["main-menu-button"], content: "Play Game"});
       continueButton.addEventListener("click", this.continuePlaying.bind(this));
       mainMenuDiv.append(continueButton);
+
+      const newButton = u.create({tag: "button", classes:["main-menu-button"], content: "Restart Game"});
+      newButton.addEventListener("click", this.restartGame.bind(this));
+      mainMenuDiv.append(newButton);
     }
 
-    let loadButton = u.create({tag: "button", classes:["main-menu-button"], content: "Load Game"});
+    let loadButton = u.create({tag: "button", classes:["main-menu-button"], content: "Select Game"});
     loadButton.addEventListener("click", this.selectPlayWorld.bind(this));
     mainMenuDiv.append(loadButton);
 
@@ -104,6 +108,19 @@ class MainMenuManager {
   continuePlaying(event) {
     event.preventDefault();
     this.passToPlay(this.playing, this.profileName);
+  }
+
+  restartGame(event) {
+    event.preventDefault();
+    const confirmation = window.confirm("This will delete your current save for this world and start from the beginning. If you'd like to keep your save, please create a new profile and start a new game.");
+    if (confirmation) {
+      try {
+        fs.rmSync(path.join(__dirname, "../", "profiles", this.profileName, `${this.playing}-save.json`));
+        this.continuePlaying(event);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
   }
 
   selectPlayWorld(event) {

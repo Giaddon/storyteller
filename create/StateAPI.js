@@ -8,6 +8,15 @@ class StateAPI {
   constructor(worldName) {
     this.source = path.join(__dirname, "../", "worlds", worldName);
   }
+  saveDetails(details) {
+    let world = this.getWorld();
+    world.details = details;
+    this.setWorld(world);
+  }
+  getDetails() {
+    const world = this.getWorld();
+    return {...world.details};
+  }
   saveItem (id, type, item) {
     let world = this.getWorld();
     world[type][id] = item;
