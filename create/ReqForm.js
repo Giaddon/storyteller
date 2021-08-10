@@ -6,7 +6,7 @@ class ReqForm extends CreateForm {
     this.id = req.id;
     this.quality = req.quality || "";
     this.min = req.min || 0;
-    this.max = req.max || 0;
+    this.max = req.max || -1;
     this.parentId = parentId;
     this.removeReq = removeReq;
   }

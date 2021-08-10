@@ -45,10 +45,12 @@ class MainMenuManager {
     canvas.append(mainMenuDiv);
 
     if (this.playing) {
+      const worldRaw = fs.readFileSync(path.join(worldsFolder, this.playing));
+      const worldData = JSON.parse(worldRaw);
       let playingLabel = u.create({tag: "p", classes: ["main-menu-small"], content: "now playing"});
       mainMenuDiv.append(playingLabel);
 
-      let gameNameLabel = u.create({tag: "p", classes: ["main-menu-big"], content: this.playing});
+      let gameNameLabel = u.create({tag: "p", classes: ["main-menu-big"], content: worldData.details.name});
       mainMenuDiv.append(gameNameLabel);
 
       let continueButton = u.create({tag: "button", classes:["main-menu-button"], content: "Play Game"});
@@ -68,13 +70,15 @@ class MainMenuManager {
     mainMenuDiv.append(playSeperator);
 
     if (this.creating) {
+      const worldRaw = fs.readFileSync(path.join(worldsFolder, this.creating));
+      const worldData = JSON.parse(worldRaw);
       let editingLabel = u.create({tag: "p", classes: ["main-menu-small"], content: "now editing"});
       mainMenuDiv.append(editingLabel);
 
-      let editingNameLabel = u.create({tag: "p", classes: ["main-menu-big"], content: this.creating});
+      let editingNameLabel = u.create({tag: "p", classes: ["main-menu-big"], content: worldData.details.name});
       mainMenuDiv.append(editingNameLabel);
    
-      let editButton = u.create({tag: "button", classes:["main-menu-button"], content: "Continue Editing"});
+      let editButton = u.create({tag: "button", classes:["main-menu-button"], content: "Edit"});
       editButton.addEventListener("click", this.continueEditing.bind(this));
       mainMenuDiv.append(editButton);
     }
@@ -125,7 +129,7 @@ class MainMenuManager {
 
   selectPlayWorld(event) {
     event.preventDefault();
-    const worldsList = this.readWorldFolder();
+    const worldsList = this.getWorldNames();
     const {window: worldsWindow, list: buttonList} = this.createListWindow(worldsList);
     for (const button of buttonList) {
       button.addEventListener("click", event => {
@@ -141,7 +145,7 @@ class MainMenuManager {
 
   selectEditWorld(event) {
     event.preventDefault();
-    const worldsList = this.readWorldFolder();
+    const worldsList = this.getWorldNames();
     const {window: worldsWindow, list: buttonList} = this.createListWindow(worldsList);
     for (const button of buttonList) {
       button.addEventListener("click", event => {
@@ -163,8 +167,8 @@ class MainMenuManager {
     listWindow.append(itemContainer);
     const itemList = [];
     for (const item of list) {
-      const itemButton = u.create({tag:"button", content: item, classes:["add-button"]});
-      itemButton.dataset.worldname = item;
+      const itemButton = u.create({tag:"button", content: item.name, classes:["add-button"]});
+      itemButton.dataset.worldname = item.file;
       itemList.push(itemButton);
       itemContainer.append(itemButton);
     }
@@ -178,7 +182,7 @@ class MainMenuManager {
     event.preventDefault();
     const worldNames = this.readWorldFolder();
     console.log(worldNames)
-    const {prompt, data, submit} = this.createPrompt("World Name", "Enter a name for your new world:");
+    const {prompt, data, submit} = this.createPrompt("World Name", "Enter the filename for your new world:");
     submit.addEventListener("click", event => {
       event.preventDefault();
       const newWorldName = data.input + ".json";
@@ -226,6 +230,17 @@ class MainMenuManager {
   readWorldFolder() {
     const worldArray = fs.readdirSync(worldsFolder, {withFileTypes: true}).map(file => file.name);
     return worldArray.filter(name => !(name.startsWith(".")));
+  }
+
+  getWorldNames() {
+    const worldFilenames = this.readWorldFolder();
+    const worldNames = [];
+    for (const filename of worldFilenames) {
+      const worldRaw = fs.readFileSync(path.join(worldsFolder, filename));
+      const worldData = JSON.parse(worldRaw);
+      worldNames.push({name: worldData.details.name, file: filename});
+    }
+    return worldNames;
   }
 
   readProfileData() {

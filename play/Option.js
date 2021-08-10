@@ -36,9 +36,21 @@ class Option {
     }
     let active = false;
     if (reqArray.length > 0 && reqArray.every(passed => passed)) {
-        active = true;
+      active = true;
+    }
+    let visible = false;
+    if (reqs.visibility === "always") {
+      visible = true;
+    } else if (reqs.visibility === "all") {
+      if (reqArray.length > 0 && reqArray.every(passed => passed)) {
+        visible = true;
       }
-    return {active, labels};
+    } else if (reqs.visibility === "any") {
+      if (reqArray.length > 0 && reqArray.some(passed => passed)) {
+        visible = true;
+      }
+    }
+    return {active, labels, visible};
   }
 
   renderOptionReq(reqData) {

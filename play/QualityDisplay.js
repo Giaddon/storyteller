@@ -7,13 +7,6 @@ class QualityDisplay {
   }
 
   render() {
-
-    // Go through qualities, build categories, attach quality.
-    // Order categories
-    // Attach categories to dom
-
-
-
     const playerQualities = this.api.getPlayerQualities();
     
     const qualitiesList = u.create({tag: "div"});
@@ -64,6 +57,10 @@ class QualityDisplay {
     for (const category of orderedCategories) {
       let renderedCategory = this.renderQualityCategory(category);
       qualitiesCategoriesContainer.append(renderedCategory);
+    }
+
+    if (uncategorizedContainer.children.length < 2) {
+      uncategorizedContainer.remove();
     }
 
     return qualitiesList;

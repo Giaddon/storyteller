@@ -47,7 +47,11 @@ class OptionsDisplay {
     optionElement.append(challengeContainer);
     optionElement.append(reqsContainer);
     
-    const {active, labels} = option.evaluateReqs(option.reqs)
+    const {active, labels, visible} = option.evaluateReqs(option.reqs)
+
+    if (visible === false) {
+      return 
+    }
 
     for (const label of labels) {
       optionElement.querySelector(".option-reqs-container").append(label);

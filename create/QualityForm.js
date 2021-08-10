@@ -35,7 +35,7 @@ class QualityForm extends CreateForm {
       event.preventDefault();
       const confirmation = confirm("This will remove this quality from your world. Any requirements, changes, and challenges that rely on it will be removed as well. This can't be undone.")
       if (confirmation) {
-        this.deleteQuality(this.id);
+        this.api.deleteQuality(this.id);
         form.remove();
       } else {
         return;
