@@ -72,6 +72,14 @@ select {
   padding: 10px;
   margin-bottom: 10px;
 }
+.active-quality {
+  outline: 1px dashed black;
+  cursor: pointer;
+}
+.active-quality:focus,
+.active-quality:hover {
+  outline: 1px solid gold;
+}
 .story-container {
   flex: 0 1 650px;
   margin-left: 25px;

@@ -72,6 +72,7 @@ const schemas = {
     labels: [],
     category: "uncategorized",
     hidden: false,
+    storylet: "none",
   },
   category: {
     title: "New Category",
@@ -81,7 +82,7 @@ const schemas = {
     title: "New Domain",
     text: "Domain text.",
     locked: false,
-    storylets: {},
+    storylets: [],
     decks: {},
     events: [],
   },

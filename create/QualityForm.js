@@ -12,6 +12,7 @@ class QualityForm extends CreateForm {
     this.labels = quality.labels || [];
     this.category = quality.category || "uncategorized"; 
     this.hidden = quality.hidden || false;
+    this.storylet = quality.storylet || "none";
   }
 
   render() {  
@@ -129,13 +130,25 @@ class QualityForm extends CreateForm {
       "categories",
       this.id,
     );
-    const noneOption = u.create({tag:"option", content:"Uncategorized", value:"uncategorized"});
-    catSelect.add(noneOption);
+    const catNoneOption = u.create({tag:"option", content:"Uncategorized", value:"uncategorized"});
+    catSelect.add(catNoneOption);
     catSelect.value = this.category;
     catSelect.addEventListener("input", this.captureField.bind(this, "category"));
     qualityDiv.append(catLabel);
     qualityDiv.append(catSelect);
   
+    const {label: storyletLabel, select: storyletSelect} = this.createSelect(
+      "Linked Storylet",
+      "storylets",
+      this.id
+    )
+    const storyletNoneOption = u.create({tag:"option", content:"None", value:"none"});
+    storyletSelect.add(storyletNoneOption);
+    storyletSelect.value = this.storylet;
+    storyletSelect.addEventListener("input", this.captureField.bind(this, "storylet"));
+    qualityDiv.append(storyletLabel);
+    qualityDiv.append(storyletSelect);
+
     let {label: hiddenLabel, input: hiddenInput} = this.createInput(
       "checkbox",
       "quality",
@@ -168,6 +181,7 @@ class QualityForm extends CreateForm {
       descriptions: this.descriptions.sort((a, b) => a.value - b.value),
       labels: this.labels.sort((a, b) => a.value - b.value),
       category: this.category,
+      storylet: this.storylet,
       hidden: this.hidden,
     }
     this.api.saveItem(this.id, "qualities", qualityData);

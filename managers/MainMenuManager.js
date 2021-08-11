@@ -182,7 +182,7 @@ class MainMenuManager {
     event.preventDefault();
     const worldNames = this.readWorldFolder();
     console.log(worldNames)
-    const {prompt, data, submit} = this.createPrompt("World Name", "Enter the filename for your new world:");
+    const {prompt, data, submit, window} = this.createPrompt("World Name", "Enter the filename for your new world:");
     submit.addEventListener("click", event => {
       event.preventDefault();
       const newWorldName = data.input + ".json";
@@ -197,10 +197,12 @@ class MainMenuManager {
       }
     })
     const canvas = document.getElementById("canvas");
-    canvas.append(prompt);  
+    canvas.append(window);
+    window.append(prompt);  
   }
 
   createPrompt(labelText, promptText) {
+    const freeze = u.create({tag:"div", classes:["freeze-window"]});
     const promptBox = u.create({tag:"div", classes:["modal-window"]});
     const promptMessage = u.create({tag: "p", content: promptText})
     const inputLabel = u.create({tag:"label", classes:["prompt-input"], content: labelText});
@@ -221,10 +223,10 @@ class MainMenuManager {
 
     cancelButton.addEventListener("click", event => {
       event.preventDefault();
-      promptBox.remove();
+      freeze.remove();
     })
 
-    return {prompt: promptBox, submit: submitButton, data: promptData};
+    return {prompt: promptBox, submit: submitButton, data: promptData, window: freeze};
   }
 
   readWorldFolder() {

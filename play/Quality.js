@@ -9,8 +9,9 @@ class Quality {
     labels,
     descriptions,
     category,
+    storylet,
     hidden
-  }, value) {
+  }, value, inStorylet, mainCycle) {
     this.id = id;
     this.name = name;
     this.startvalue = startvalue;
@@ -18,10 +19,13 @@ class Quality {
     this.labels = labels;
     this.descriptions = descriptions;
     this.category = category;
+    this.storylet = storylet;
     this.hidden = hidden;
     this.value = value;
     this.label = this.getLabel();
     this.description = this.getDescription();
+    this.inStorylet = inStorylet;
+    this.mainCycle = mainCycle;
   }
 
   getLabel() {
@@ -57,8 +61,18 @@ class Quality {
       content: this.description || "",
     });
     qualityElement.append(description);
+
+    if (this.storylet !== "none" && this.inStorylet !== true) {
+      qualityElement.setAttribute('tabindex', '0');
+      qualityElement.classList.add("active-quality");
+      qualityElement.addEventListener("click", event => {
+        this.mainCycle({changes:[], flow:this.storylet});
+      })
+    }
     return qualityElement;
   }
+
+
 
 
 }

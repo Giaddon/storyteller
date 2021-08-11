@@ -2,8 +2,9 @@ const u = require("../utilities");
 const Quality = require("./Quality");
 
 class QualityDisplay {
-  constructor(api) {
+  constructor(api, mainCycle) {
     this.api = api;
+    this.mainCycle = mainCycle;
   }
 
   render() {
@@ -35,7 +36,7 @@ class QualityDisplay {
     for (const [id, value] of Object.entries(playerQualities)) {
       const qualityData = this.api.getQuality(id)
       if (qualityData.hidden) continue;
-      const quality = new Quality(qualityData, value)
+      const quality = new Quality(qualityData, value, this.api.isInStorylet(), this.mainCycle)
       if (quality.category === "uncategorized") {
         uncategorizedContainer.append(quality.render()) 
       } else {

@@ -31,7 +31,7 @@ class PlayManager {
     const qualitiesContainer = u.create({tag: "div", classes: ["qualities-container"], id: "qualities-container"});
     canvas.append(qualitiesContainer);
     
-    this.qualityDisplay = new QualityDisplay(this.api);
+    this.qualityDisplay = new QualityDisplay(this.api, this.mainCycle.bind(this));
     const renderedQualities = this.qualityDisplay.render();
     qualitiesContainer.append(renderedQualities);
 
