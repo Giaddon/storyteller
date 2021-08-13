@@ -74,6 +74,11 @@ class ChangeForm extends CreateForm {
     adjustOption.text = "Adjust";
     typeSelect.add(adjustOption);
   
+    let randomOption = document.createElement("option");
+    randomOption.value = "random";
+    randomOption.text = "Random";
+    typeSelect.add(randomOption);
+
     typeSelect.value = this.type
     typeSelect.addEventListener("change", this.captureField.bind(this, "type"));
     typeDiv.append(typeLabel);

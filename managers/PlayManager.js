@@ -221,6 +221,9 @@ class PlayManager {
       case 'adjust':
         this.api.adjustQuality(change.quality, change.value);
         break;
+      case 'random':
+        this.api.randomizeQuality(change.quality, change.value);
+        break;
       default:
         console.error('No valid change type found.');
     }

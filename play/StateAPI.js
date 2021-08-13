@@ -77,6 +77,16 @@ class StateAPI {
     }
   }
 
+  randomizeQuality(qualityId, value) {
+    const quality = this.getQuality(qualityId);
+    const max = Number(quality.max) || value
+    if (value < 1) {
+      delete this.player.qualities[qualityId];
+    } else {
+      this.player.qualities[qualityId] = Math.ceil(Math.random() * max);
+    }
+  }
+
   enterStorylet(storyletId) {
     this.player.context = this.getStorylet(storyletId);
     this.player.inStorylet = true;

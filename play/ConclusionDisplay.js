@@ -46,7 +46,7 @@ class ConclusionDisplay {
         if (change.type === "set") {
           const newValue = (quality.max > 0 && change.value > quality.max) ? quality.max : Math.abs(change.value);
           outcomeText = `${quality.name} is now ${quality.label || newValue}.`
-        } else {
+        } else if (change.type === "adjust") {
           let changePhrase = "";
           if (change.value > 0) {
             changePhrase = "increased by"
@@ -54,6 +54,8 @@ class ConclusionDisplay {
             changePhrase = "decreased by"
           }
           outcomeText = `${quality.name} ${changePhrase} ${Math.abs(change.value)}.`
+        } else if (change.type === "random") {
+          outcomeText = `${quality.name} is now ${this.api.getPlayerQuality(change.quality)}.`
         }
 
         // TODO add text for removal / 0 or below.
