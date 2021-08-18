@@ -21,7 +21,7 @@ class PlayManager {
   // Initializes the play module's state, adds the containers to the webpage, and creates the "display"
   // objects that manage the play components.
   startup() {
-    this.state.start();
+    //this.state.start();
     
     const root = document.getElementById("root");
     u.removeChildren(root);
@@ -135,7 +135,11 @@ class PlayManager {
       }
     }
 
-    this.state.setResult(result);
+    this.state.setConclusion({
+      title: result.title,
+      text: result.text,
+      challenge: result.challenge,
+    });
 
     if (!this.state.isInStorylet()) {
       const activeDomain = this.state.getCurrentDomain();
@@ -219,9 +223,6 @@ class PlayManager {
         return;
       } 
     }
-    // Add change to state so it can be used for the conclusionDisplay, which shows the results of changes
-    // to the player.
-    this.state.addChange(change);
 
     switch (change.type) {
       case 'set':
@@ -236,6 +237,10 @@ class PlayManager {
       default:
         console.error('No valid change type found.');
     }
+
+    // Add change to state so it can be used for the conclusionDisplay, 
+    // which shows the results of changes to the player.
+    this.state.addChange(change);
   }
 
 }

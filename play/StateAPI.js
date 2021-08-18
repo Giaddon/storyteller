@@ -1,4 +1,4 @@
-// Class for managing game state.
+// Class for managing the play module state.
 // worldName: (String) filename of the json file.
 
 const path = require("path");
@@ -8,17 +8,20 @@ class StateAPI {
   constructor(worldName, profileName) {
     this.sourceLocation = path.join(__dirname, "../", "worlds", worldName);
     this.savedDataLocation = path.join(__dirname, "../", "profiles", profileName, `${worldName}-save.json`);
+    
+    // World data loaded from the json source file.
     this.world = this.loadWorldFromSource()
+    Object.freeze(this.world);
+
+    // Player data, saved in the save file.
     this.player = this.loadSavedGame();
-  }
-  start() {
-    if (!this.player.context) {
-      // If there is no loaded location
-      const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
-      this.enterStorylet(startingId);
-    }
+
+    // Data relevant for display, not saved.
+    this.display = {};
   }
 
+  // Parses the game json file, returns it. 
+  // Should just be done once when the state is created, and the data stored in the world property.
   loadWorldFromSource() {
     try {
       const rawWorld = fs.readFileSync(this.sourceLocation);
@@ -28,6 +31,8 @@ class StateAPI {
     }
   }
 
+  // Parses the save file and returns the data.
+  // If a save file cannot be found, it starts from scratch.
   loadSavedGame() {
     try {
       const rawSave = fs.readFileSync(this.savedDataLocation);
@@ -40,16 +45,52 @@ class StateAPI {
           qualities[quality.id] = Number(quality.startvalue);
         }
       }
-      return {qualities, changes: []} 
+      const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
+      return {
+        qualities,
+        domain: null,
+        context: {
+          id: startingId,
+          type: "storylet",
+        },
+      };
     }
   }
 
+  // start() {
+  //   if (!this.player.context) {
+  //     // If there is no loaded location
+  //     const startingId = Object.values(this.world.storylets).find(storylet => storylet.start).id
+  //     this.enterStorylet(startingId);
+  //   }
+  // }
+
+  // Saves the player object as a json file in the active profile's folder. 
+  // Run as part of the main cycle.
   saveGame() {
     try {
       fs.writeFileSync(this.savedDataLocation, JSON.stringify(this.player))
     } catch (error) {
       console.error(error.message);
     }
+  }
+
+  /** Quality Operations */
+
+  getPlayerQuality(id) {
+    return this.player.qualities[id] || 0;
+  }
+  getPlayerQualities() {
+    return {...this.player.qualities}
+  }
+  getQuality(id) {
+    return {...this.world.qualities[id]};
+  }
+  getQualities() {
+    return {...this.world.qualities};
+  }
+  getCategory(id) {
+    return {...this.world.categories[id]};
   }
 
   adjustQuality(qualityId, value) {
@@ -87,55 +128,60 @@ class StateAPI {
     }
   }
 
-  enterStorylet(storyletId) {
-    this.player.context = this.getStorylet(storyletId);
-    this.player.inStorylet = true;
-    return {...this.player.context};
-  }
-  exitStorylet() {
-    this.player.context = this.getCurrentDomain();
-    this.player.inStorylet = false;
-    return;
-  }
-  isInStorylet() {
-    return this.player.inStorylet;
-  }
-  enterDomain(id) {
-    this.player.domain = this.getDomain(id);
-    this.player.context = this.getDomain(id);
-    this.player.inStorylet = false;
-    return this.player.context;
-  }
-  exitDomain() {
-    delete this.player.domain;
-    delete this.player.context
-    return
-  }
-  getCurrentDomain() {
-    if (this.player.domain) {
-      return {...this.player.domain};
-    } else {
-      return 
-    }
-  }
-  getContext() {
-    return {...this.player.context};
-  }
+  /** Storylet Operations */
+  
   getStorylet(storyletId) {
     return {...this.world.storylets[storyletId]};
   } 
+  
   getStorylets() {
     return {...this.world.storylets};
    }
-  getCategory(id) {
-    return {...this.world.categories[id]};
-  }
+
   // getCurrentStorylet() {
   //   if (this.player.storylet) {
   //     return {...this.player.storylet};
   //   } else
   //   return;
   // }
+  
+  enterStorylet(storyletId) {
+    const activeStorylet = this.getStorylet(storyletId);
+    if (activeStorylet) {
+      this.player.context.id =  storyletId;
+      this.player.context.type = "storylet";
+      if (activeStorylet.domain) {
+        this.player.domain = activeStorylet.domain;
+      }
+      return {...activeStorylet};
+    } else {
+      throw new Error("Tried to enter storylet that doesn't exist.");
+    }
+  }
+
+  exitStorylet() {
+    const currentDomain = this.getCurrentDomain()
+    if (currentDomain) {
+      this.player.context.id = currentDomain.id;
+      this.player.context.type = "domain";
+    } else {
+      throw new Error("Tried to exit storylet with no active domain.")
+    }
+  }
+
+  /** Domain Operations */
+  
+  enterDomain(id) {
+    const activeDomain = this.getDomain(id);
+    if (activeDomain) {
+      this.player.domain = activeDomain.id;
+      this.player.context.id = activeDomain.id;
+      this.player.context.type = "domain";
+    } else {
+      throw new Error("Tried to enter a domain that doesn't exist.")
+    }
+  }
+  
   getDomain(id) {
     if (this.world.domains[id]) {
       return {...this.world.domains[id]};
@@ -144,49 +190,78 @@ class StateAPI {
     }  
   }
   
- 
-  getCurrentDecks() {
-    if (this.player.context && this.player.context.decks) {
-      if (Object.values(this.player.context.decks).length > 0) {
-        return {...this.player.context.decks};
-      }
+  getDomains() {
+    return {...this.world.domains};
+  }
+
+  getCurrentDomain() {
+    if (this.player.domain) {
+      return {...this.world.domains[this.player.domain]};
+    } else {
+      return 
     }
-    return {};
   }
-  setResult(result) {
-    this.player.result = result
+
+  /** Context Operations */
+
+  getContextId() {
+    return this.player.context.id;
   }
-  getResult() {
-    if (this.player.result) {
-      return {...this.player.result}
+
+  getContext() {
+    if (this.player.context.type === "storylet") {
+      return {...this.world.storylets[this.player.context.id]}
+    } else if (this.player.context.type === "domain") {
+      return {...this.world.domains[this.player.context.id]}
+    }
+  }
+  
+  isInStorylet() {
+    return this.player.context.type === "storylet";
+  }
+
+  /** Deck Operations */
+
+  getCurrentDecks() {
+    if (this.player.context.type === "domain") {
+      const activeDomain = this.getCurrentDomain();
+      return {...activeDomain.decks};
+    } else {
+      return {}
+    }
+  }
+
+
+  /** Display Operations */
+
+  setConclusion(conclusion) {
+    this.display.conclusion = conclusion;
+  }
+
+  getConclusion() {
+    if (this.display.conclusion) {
+      return {...this.display.conclusion}
     } else {
       return;
     }
   }
-  getPlayerQuality(id) {
-    return this.player.qualities[id] || 0;
-  }
-  getPlayerQualities() {
-    return {...this.player.qualities}
-  }
-  getQuality(id) {
-    return {...this.world.qualities[id]};
-  }
-  getQualities() {
-    return {...this.world.qualities};
-  }
   
-  getDomains() {
-    return {...this.world.domains};
-  }
   addChange(change) {
-    this.player.changes.push(change);
+    if (!this.display.changes) { 
+      this.display.changes = [];
+    }
+    this.display.changes.push(change);
   }
+
   getChanges() {
-    return [...this.player.changes];
+    if (this.display.changes) {
+      return [...this.display.changes];
+    }
+    else return [];
   }
+
   clearChanges() {
-    this.player.changes = [];
+    this.display.changes = [];
   }
   
 }

@@ -7,29 +7,29 @@ class ConclusionDisplay {
   }
 
   render() {
-    const result = this.api.getResult();
-    if (!result) {
+    const conclusionData = this.api.getConclusion();
+    if (!conclusionData) {
       return document.createElement("div");
     }
     const conclusion = u.create({tag: "div", classes:["conclusion"]})
-    const title = u.create({tag:"h1", content: result.title})
-    const text = u.create({tag: "p", content: result.text});
+    const title = u.create({tag:"h1", content: conclusionData.title})
+    const text = u.create({tag: "p", content: conclusionData.text});
     const outcomes = u.create({tag: "div", classes: ["conclusion-outcomes"]});
     conclusion.append(title);
     conclusion.append(text);
 
-    if (result.challenge) {
-      if (result.challenge.passed) {
+    if (conclusionData.challenge) {
+      if (conclusionData.challenge.passed) {
         outcomes.classList.add("challenge-passed");
       } else {
         outcomes.classList.add("challenge-failed");
       }
       // Not quite right we make is possible to use multiple challenges (uses same passed for all qualities).
-      for (const challenge of result.challenge.challenges) {
+      for (const challenge of conclusionData.challenge.challenges) {
         const quality = new Quality(this.api.getQuality(challenge.quality), this.api.getPlayerQuality(challenge.quality))
         const outcome = u.create({
           tag:"p", 
-          content: `You ${result.challenge.passed ? "passed" : "failed"} a ${quality.name} challenge!`
+          content: `You ${conclusionData.challenge.passed ? "passed" : "failed"} a ${quality.name} challenge!`
         });
         outcomes.append(outcome);
       }
@@ -71,7 +71,7 @@ class ConclusionDisplay {
     }
   
 
-    if (outcomes.children.length > 0 || result.title) {
+    if (outcomes.children.length > 0 || conclusionData.title) {
       const seperator = u.create({tag:"div", classes:["conclusion-seperator"]});
       conclusion.append(seperator);
     }
