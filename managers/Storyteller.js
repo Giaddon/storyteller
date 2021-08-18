@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const MainMenuManager = require("./MainMenuManager");
 const CreateManager = require('./CreateManager');
-const PlayManager = require('./PlayManager');
+const PlayManager = require('../play/PlayManager');
 const CreateStateAPI = require("../create/StateAPI");
 const PlayStateAPI = require("../play/StateAPI");
 
@@ -72,7 +72,7 @@ class Storyteller {
 
   passToPlay(playWorldName, profileName) {
     this.playManager = new PlayManager(new PlayStateAPI(playWorldName, profileName));
-    this.playManager.startupPlay();
+    this.playManager.startup();
   }
 
 
