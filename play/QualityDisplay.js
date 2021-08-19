@@ -2,13 +2,85 @@ const u = require("../utilities");
 const Quality = require("./Quality");
 
 class QualityDisplay {
-  constructor(api, mainCycle) {
-    this.api = api;
+  constructor(state, mainCycle) {
+    this.state = state;
     this.mainCycle = mainCycle;
   }
 
+  updateQualities() {
+    const qualitiesCategoriesContainer = document.getElementById("qualities-categories-container");
+    const playerQualities = this.state.getPlayerQualities();
+    const changes = this.state.getChanges();
+
+    for (const change of changes) {
+      const qualityData = this.state.getQuality(change.quality);
+      const value = playerQualities[change.quality];
+      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle);
+      const targetQuality = document.getElementById(`q-${change.quality}`);
+      const categoryData = this.state.getCategory(qualityData.category);
+      const targetCategory = document.getElementById(`q-cat-${categoryData.id}`)
+      if (targetQuality) {
+        if (value < 1) {
+          targetQuality.remove();
+          if (targetCategory.children.length < 2) {
+            targetCategory.remove();
+          }
+        } else {
+          const title = targetQuality.querySelector(".quality-title");
+          title.innerText = `${quality.name} • ${quality.label || quality.value.toString()}${quality.max > 0 ? "/"+quality.max : ""}`
+          const description = targetQuality.querySelector(".quality-description");
+          description.innerText = quality.description || ""
+        }
+      } else {
+        if (value < 1) {
+          continue;
+        } else {
+          if (targetCategory) {
+            const renderedQuality = quality.render();
+            targetCategory.append(renderedQuality);
+          } else {
+            const renderedQuality = quality.render();
+            const renderedCategory = this.renderQualityCategory({
+              qualities: [renderedQuality],
+              id: categoryData.id,
+              order: categoryData.order,
+              title: categoryData.title,
+            })
+
+            const categories = qualitiesCategoriesContainer.children;
+
+            let nextCategory;
+            for (const category of categories) {
+              nextCategory = category;
+              if (category.dataset.order > categoryData.order) {
+                break;
+              }
+            }
+            if (nextCategory) {
+              if (nextCategory.dataset.order < categoryData.order) {
+                nextCategory = null;
+              }
+            }
+            qualitiesCategoriesContainer.insertBefore(renderedCategory, nextCategory);
+          }
+        }
+      }
+    }
+
+    for (const [qualityId, value] of Object.entries(playerQualities)) {
+      const qualityData = this.state.getQuality(qualityId);
+      if (qualityData.storylet !== "none") {
+        const targetQuality = document.getElementById(`q-${qualityId}`);
+        const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle);
+        const renderedQuality = quality.render();
+        targetQuality.replaceWith(renderedQuality);
+      }
+    }
+
+  }
+
   render() {
-    const playerQualities = this.api.getPlayerQualities();
+    const playerQualities = this.state.getPlayerQualities();
     
     const qualitiesList = u.create({tag: "div"});
 
@@ -17,12 +89,12 @@ class QualityDisplay {
       
     const qualitiesCategoriesContainer = u.create({
       tag: "div", 
-      classes: ["qualities-catagories-container"], 
-      id: "qualities-catagories-container"
+      classes: ["qualities-categories-container"], 
+      id: "qualities-categories-container"
     });
     qualitiesList.append(qualitiesCategoriesContainer);
 
-    const uncategorizedContainer = u.create({tag: "div", id: "cat-Uncategorized"});
+    const uncategorizedContainer = u.create({tag: "div", id: "q-cat-uncategorized"});
     qualitiesList.append(uncategorizedContainer);
 
     const uncategorizedTitle = u.create({
@@ -34,20 +106,21 @@ class QualityDisplay {
 
     let categories = {};
     for (const [id, value] of Object.entries(playerQualities)) {
-      const qualityData = this.api.getQuality(id)
+      const qualityData = this.state.getQuality(id)
       if (qualityData.hidden) continue;
-      const quality = new Quality(qualityData, value, this.api.isInStorylet(), this.mainCycle)
+      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle)
       if (quality.category === "uncategorized") {
         uncategorizedContainer.append(quality.render()) 
       } else {
         if (categories[quality.category]) {
           categories[quality.category].qualities.push(quality.render())
         } else {
-          const categoryData = this.api.getCategory(quality.category);
+          const categoryData = this.state.getCategory(quality.category);
           categories[quality.category] = {
             qualities: [quality.render()],
             order: categoryData.order,
             title: categoryData.title,
+            id: categoryData.id
           } 
         }
       }
@@ -68,12 +141,17 @@ class QualityDisplay {
   }
 
   renderQualityCategory(category) {
-    const newCategory = u.create({tag: "div", classes: ["qualities-catagory"]})
-    
+    const newCategory = u.create({
+      tag: "div", 
+      classes: ["qualities-category"],
+      id: `q-cat-${category.id}`
+    })
+    newCategory.dataset.order = category.order;
+
     const newCategoryTitle = u.create({
       tag: "h1", 
       classes:["qualities-category-title"], 
-      content: category.title
+      content: category.title,
     }) 
     newCategory.append(newCategoryTitle);
 

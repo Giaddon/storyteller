@@ -48,7 +48,7 @@ class Quality {
   }
 
   render() {
-    const qualityElement = u.create({tag:"div", classes:["quality"]});
+    const qualityElement = u.create({tag:"div", classes:["quality"], id:`q-${this.id}`});
     const title = u.create({
       tag:"p", 
       classes:["quality-title"], 

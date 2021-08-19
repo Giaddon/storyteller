@@ -156,20 +156,22 @@ class PlayManager {
     this.state.saveGame();
 
     console.log("Current context: ", this.state.getContext())
+    this.qualityDisplay.updateQualities();
     const header = this.headerDisplay.render();
     const conclusion = this.conclusionDisplay.render();
     const decks = this.decksDisplay.render();
     const options = this.optionsDisplay.render();
-    const qualities = this.qualityDisplay.render();
+    //const qualities = this.qualityDisplay.render();
     
-    this.renderGame(conclusion, header, decks, options, qualities)
+
+    this.renderGame(conclusion, header, decks, options)
   }
 
   // Clears dom and adds the supplied elements.
-  renderGame(conclusion, header, decks, options, qualities) {
+  renderGame(conclusion, header, decks, options) {
     const containers = this.clearGame();
 
-    containers.qualitiesContainer.append(qualities);
+    //containers.qualitiesContainer.append(qualities);
     containers.headerContainer.append(header);
     containers.resultContainer.append(conclusion);
     containers.decksContainer.append(decks);
@@ -184,14 +186,13 @@ class PlayManager {
   }
 
   clearGame() {
-    const qualitiesContainer = document.getElementById("qualities-container");
+    //const qualitiesContainer = document.getElementById("qualities-container");
     const resultContainer = document.getElementById("result-container");
     const headerContainer = document.getElementById("header-container");
     const decksContainer = document.getElementById("decks-container");
     const optionsContainer = document.getElementById("options-container");
 
     for (const container of [
-      qualitiesContainer, 
       resultContainer, 
       headerContainer, 
       decksContainer,
@@ -200,7 +201,6 @@ class PlayManager {
       u.removeChildren(container);
     }
     return {
-      qualitiesContainer,
       resultContainer,
       headerContainer,
       decksContainer,

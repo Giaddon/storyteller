@@ -90,7 +90,15 @@ class StateAPI {
     return {...this.world.qualities};
   }
   getCategory(id) {
-    return {...this.world.categories[id]};
+    if (this.world.categories[id]) {
+      return {...this.world.categories[id]};
+    } else {
+      return {
+        id: "uncategorized",
+        order: Infinity,
+        title: "Uncategorized",
+      }
+    }
   }
 
   adjustQuality(qualityId, value) {
@@ -230,7 +238,6 @@ class StateAPI {
       return {}
     }
   }
-
 
   /** Display Operations */
 
