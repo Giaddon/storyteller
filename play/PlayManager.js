@@ -64,12 +64,14 @@ class PlayManager {
     const renderedOptions = this.optionsDisplay.render();
     optionsContainer.append(renderedOptions)
 
+    storyContainer.append(resultContainer, headerContainer, decksContainer, optionsContainer);  
+
     if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
       const backButton = new BackButton(this.mainCycle.bind(this));
       document.getElementById("options-container").append(backButton.render())
     }
 
-    storyContainer.append(resultContainer, headerContainer, decksContainer, optionsContainer);
+    
   }
 
   // This method is bound and passed into the options container. 
