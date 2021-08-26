@@ -26,10 +26,8 @@ class QualityDisplay {
             targetCategory.remove();
           }
         } else {
-          const title = targetQuality.querySelector(".quality-title");
-          title.innerText = `${quality.name} • ${quality.label || quality.value.toString()}${quality.max > 0 ? "/"+quality.max : ""}`
-          const description = targetQuality.querySelector(".quality-description");
-          description.innerText = quality.description || ""
+          const renderedQuality = quality.render();
+          targetQuality.replaceWith(renderedQuality);
         }
       } else {
         if (value < 1) {

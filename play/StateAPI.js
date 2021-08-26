@@ -49,6 +49,7 @@ class StateAPI {
       return {
         qualities,
         domain: null,
+        destinations: [],
         context: {
           id: startingId,
           type: "storylet",
@@ -226,6 +227,17 @@ class StateAPI {
   
   isInStorylet() {
     return this.player.context.type === "storylet";
+  }
+
+  /** Destination Operations */
+  
+  getDestinations() {
+    return [...this.player.destinations];
+  }
+  addDestination(domainId) {
+    if (!this.player.destinations.includes(domainId)) {
+      this.player.destinations.push(domainId);
+    }
   }
 
   /** Deck Operations */

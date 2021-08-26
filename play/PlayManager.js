@@ -5,8 +5,10 @@ const Quality = require("./Quality");
 const DeckDisplay = require("./DeckDisplay");
 const HeaderDisplay = require("./HeaderDisplay");
 const ConclusionDisplay = require("./ConclusionDisplay");
+const ToolbarDisplay = require("./ToolbarDisplay");
 const Storylet = require("./Storylet");
 const BackButton = require("./BackButton");
+const OverlayWindowDisplay = require("./OverlayWindowDisplay");
 
 class PlayManager {
   constructor(state) {
@@ -16,6 +18,8 @@ class PlayManager {
     this.conclusionDisplay = null;
     this.optionsDisplay = null;
     this.decksDisplay = null;
+    this.toolbarDisplay = null;
+    this.overlayWindowDisplay = new OverlayWindowDisplay();
   }
 
   // Initializes the play module's state, adds the containers to the webpage, and creates the "display"
@@ -71,6 +75,9 @@ class PlayManager {
       document.getElementById("options-container").append(backButton.render())
     }
 
+    this.toolbarDisplay = new ToolbarDisplay({openTravel:this.openTravel.bind(this)});
+    const renderedToolbar = this.toolbarDisplay.render();
+    canvas.append(renderedToolbar);
     
   }
 
@@ -243,6 +250,11 @@ class PlayManager {
     // Add change to state so it can be used for the conclusionDisplay, 
     // which shows the results of changes to the player.
     this.state.addChange(change);
+  }
+
+  openTravel() {
+    const overlay = this.overlayWindowDisplay.render();
+    document.getElementById("canvas").append(overlay);
   }
 
 }

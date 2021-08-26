@@ -1,0 +1,145 @@
+.canvas {
+  display: flex;
+  flex-flow: row nowrap;
+  max-width: 1080px;
+  margin: 0px auto;
+  background-color: white;
+  height: 100vh;
+}
+
+.option {
+  background-color: inherit;
+  padding: 15px 15px 15px 30px;
+  margin: 0px auto 15px auto;
+  max-width: 550px;
+  cursor: pointer;
+  
+  /* min-height: 100px; */
+  outline: 1px solid black;
+  /* transition: outline ease 0.3s; */
+}
+
+
+.story-container {
+  flex: 0 1 650px;
+  margin-left: 25px;
+  padding: 15px 15px 50px 15px;
+  overflow-y: scroll;
+  height: 100vh;
+}
+.header {
+  /* padding: 15px 20px; */
+  background-color: inherit;
+  margin-bottom: 30px;
+}
+.options-container {
+  margin-top: 15px;
+}
+
+.option:hover,
+.option:focus {
+  outline: 3px solid gold;
+}
+.deck-list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+.deck {
+  flex: 0 1 auto;
+  border: 1px solid black;
+  border-radius: 4px;
+  height: 140px;
+  width: 100px;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  margin: 5px;
+}
+.deck:hover,
+.deck:focus {
+  border: 1px solid gold;
+}
+.deck-label {
+  font-family: "Title", sans-serif;
+  font-size: 14px;
+}
+.card-count {
+  font-family: "standard", serif;
+  font-size: 12px;
+}
+
+
+.option-disabled {
+  background-color: inherit;
+  cursor: default;
+  color: grey;
+  outline: 1px solid tomato;
+}
+.option-disabled:hover {
+  color: grey;
+  outline: 1px solid tomato;
+}
+
+.option-challenge-container {
+  margin-top: 10px;
+}
+
+.option-reqs-container {
+  margin-top: 10px;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.option-req {
+  flex: 0 1 auto;
+  padding: 5px;
+  color: white;
+  background-color: yellowgreen;
+  width: fit-content;
+  height: 30px;
+  margin-right: 5px;
+}
+
+.req-disabled {
+  background-color: tomato;
+}
+
+.conclusion-container, .event-container {
+  margin-bottom: 20px;
+}
+.conclusion-seperator, .event-seperator {
+  border-bottom: 1px solid black;
+  margin: 30px auto;
+  max-width: 550px;
+}
+
+.conclusion-outcomes, .event-outcomes {
+  background-color: teal;
+  padding: 10px;
+  margin: 15px auto 0px auto;
+  max-width: 650px;
+}
+
+.challenge-passed {
+  background-color: yellowgreen;
+}
+.challenge-failed {
+  background-color: tomato;
+}
+
+.toolbar {
+  padding: 20px;
+}
+
+.toolbar button {
+  padding: 5px 15px;
+  background-color: white;
+  outline: 1px solid black;
+  border: none;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  outline: 1px solid gold;
+}
