@@ -139,8 +139,8 @@ class MainMenuManager {
         this.continuePlaying(event);
       })
     }
-    const canvas = document.getElementById("canvas");
-    canvas.append(worldsWindow);
+    const root = document.getElementById("root");
+    root.prepend(worldsWindow);
   }
 
   selectEditWorld(event) {
@@ -155,8 +155,8 @@ class MainMenuManager {
         this.renderMainMenu();
       })
     }
-    const canvas = document.getElementById("canvas");
-    canvas.append(worldsWindow);
+    const root = document.getElementById("root");
+    root.prepend(worldsWindow);
   }
 
   createListWindow(list) {

@@ -19,7 +19,7 @@ class PlayManager {
     this.optionsDisplay = null;
     this.decksDisplay = null;
     this.toolbarDisplay = null;
-    this.overlayWindowDisplay = new OverlayWindowDisplay();
+    this.overlayWindowDisplay = new OverlayWindowDisplay(this.state, this.mainCycle.bind(this));
   }
 
   // Initializes the play module's state, adds the containers to the webpage, and creates the "display"
@@ -75,7 +75,7 @@ class PlayManager {
       document.getElementById("options-container").append(backButton.render())
     }
 
-    this.toolbarDisplay = new ToolbarDisplay({openTravel:this.openTravel.bind(this)});
+    this.toolbarDisplay = new ToolbarDisplay({openTravel:this.openTravel.bind(this), state: this.state});
     const renderedToolbar = this.toolbarDisplay.render();
     canvas.append(renderedToolbar);
     
@@ -253,8 +253,8 @@ class PlayManager {
   }
 
   openTravel() {
-    const overlay = this.overlayWindowDisplay.render();
-    document.getElementById("canvas").append(overlay);
+    const overlay = this.overlayWindowDisplay.renderTravel();
+    document.getElementById("root").prepend(overlay);
   }
 
 }

@@ -335,19 +335,26 @@ select {
   margin: 5px;
   background-color: white;
 }
-.modal-window {
+.modal-window,
+.upright-modal-window {
   position: absolute;
-  top: 40%;
+  padding: 40px;
+  top: 50%;
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
   background-color: white;
-  padding: 40px;
   box-shadow: 0px 0px 10px 2px grey;
 }
 
+.upright-modal-window {
+  height: 400px;
+  width: 250px;
+}
+
 .freeze-window {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
   background-color: rgba(255, 255, 255, 0.8);
+  z-index: 99;
 }

@@ -14,6 +14,9 @@ class QualityDisplay {
 
     for (const change of changes) {
       const qualityData = this.state.getQuality(change.quality);
+      if (qualityData.hidden) {
+        continue;
+      }
       const value = playerQualities[change.quality];
       const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle);
       const targetQuality = document.getElementById(`q-${change.quality}`);

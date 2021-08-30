@@ -186,6 +186,9 @@ class StateAPI {
       this.player.domain = activeDomain.id;
       this.player.context.id = activeDomain.id;
       this.player.context.type = "domain";
+      if (!activeDomain.locked) {
+        this.addDestination(id);
+      }
     } else {
       throw new Error("Tried to enter a domain that doesn't exist.")
     }
@@ -230,7 +233,7 @@ class StateAPI {
   }
 
   /** Destination Operations */
-  
+
   getDestinations() {
     return [...this.player.destinations];
   }

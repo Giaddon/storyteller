@@ -37,7 +37,7 @@ class OptionsDisplay {
     
     const optionElement = u.create({tag: "div", classes:["option"]});
     const titleElement = u.create({tag:"h1", content: option.title});
-    const text = contextType === "domain" ? (option.text.split(".")[0] + "...") : option.text;
+    const text = contextType === "domain" ? (option.text.split(".")[0] + ".") : option.text;
     const textElement = u.create({tag:"p", content:text});
     const challengeContainer = u.create({tag:"div", classes:["option-challenge-container"]});
     const reqsContainer = u.create({tag:"div", classes:["option-reqs-container"]});

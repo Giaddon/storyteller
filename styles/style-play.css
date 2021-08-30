@@ -143,3 +143,17 @@
 .toolbar button:hover {
   outline: 1px solid gold;
 }
+
+.disabled-button,
+.disabled-button:hover {
+  outline: 1px solid gray !important;
+  cursor:default;
+}
+
+.item-list {
+  display: flex;
+  flex-flow: column nowrap;
+  overflow-y: scroll;
+  max-width: 250px;
+  max-height: 400px;
+}
