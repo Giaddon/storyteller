@@ -1,17 +1,21 @@
 const u = require("../utilities");
-const Quality = require("./Quality");
 
 class ConclusionDisplay {
-  constructor(api) {
-    this.api = api;
+  constructor(state) {
+    this.state = state;
   }
 
-  render() {
-    const conclusionData = this.api.getConclusion();
+  render(conclusionData, changes) {
+    const Quality = require("./Quality");
+    //const conclusionData = this.state.getConclusion();
     if (!conclusionData) {
-      return document.createElement("div");
+      return u.create({tag:"div", id: "conclusion",});
     }
-    const conclusion = u.create({tag: "div", classes:["conclusion"]})
+    const conclusion = u.create({
+      tag: "div", 
+      classes:["conclusion"],
+      id: "conclusion",
+    })
     const title = u.create({tag:"h1", content: conclusionData.title})
     const text = u.create({tag: "p", content: conclusionData.text});
     const outcomes = u.create({tag: "div", classes: ["conclusion-outcomes"]});
@@ -26,7 +30,7 @@ class ConclusionDisplay {
       }
       // Not quite right we make is possible to use multiple challenges (uses same passed for all qualities).
       for (const challenge of conclusionData.challenge.challenges) {
-        const quality = new Quality(this.api.getQuality(challenge.quality), this.api.getPlayerQuality(challenge.quality))
+        const quality = new Quality(this.state.getQuality(challenge.quality), this.state.getPlayerQuality(challenge.quality))
         const outcome = u.create({
           tag:"p", 
           content: `You ${conclusionData.challenge.passed ? "passed" : "failed"} a ${quality.name} challenge!`
@@ -35,11 +39,11 @@ class ConclusionDisplay {
       }
     }
 
-    const changes = this.api.getChanges();
+    //const changes = this.state.getChanges();
     if (changes.length > 0) {      
       for (const change of changes) {
-        const qualityData = this.api.getQuality(change.quality);
-        const quality = new Quality(qualityData, this.api.getPlayerQuality(change.quality));
+        const qualityData = this.state.getQuality(change.quality);
+        const quality = new Quality(qualityData, this.state.getPlayerQuality(change.quality));
         if (quality.hidden) continue;
         const outcome = u.create({tag:"p"});
         let outcomeText = "";
@@ -55,7 +59,7 @@ class ConclusionDisplay {
           }
           outcomeText = `${quality.name} ${changePhrase} ${Math.abs(change.value)}.`
         } else if (change.type === "random") {
-          outcomeText = `${quality.name} is now ${this.api.getPlayerQuality(change.quality)}.`
+          outcomeText = `${quality.name} is now ${this.state.getPlayerQuality(change.quality)}.`
         }
 
         // TODO add text for removal / 0 or below.
@@ -63,7 +67,7 @@ class ConclusionDisplay {
         outcomes.append(outcome);
       }
     }
-    this.api.clearChanges();
+    //this.state.clearChanges();
     if (outcomes.children.length > 0) {
       conclusion.append(outcomes);
     } else {

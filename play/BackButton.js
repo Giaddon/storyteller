@@ -1,15 +1,21 @@
 const u = require("../utilities");
+const TurnManager = require("./TurnManager");
 
 class BackButton {
-  constructor(mainCycle) {
-    this.mainCycle = mainCycle;
+  constructor(state) {
+    this.state = state;
   }
 
   render() {
-    const backButton = u.create({tag:"button", content:"Go back", classes:["back-button"]});
+    const backButton = u.create({
+      tag:"button", 
+      content:"Go back", 
+      classes:["back-button"], 
+      id: "back-button"
+    });
     backButton.addEventListener("click", event => {
       event.preventDefault();
-      this.mainCycle({changes:[], flow:"leave"});
+      new TurnManager({state:this.state, result:{changes:[], flow:"leave"}});
     })
     return backButton;
   }

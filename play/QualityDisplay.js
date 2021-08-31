@@ -2,23 +2,22 @@ const u = require("../utilities");
 const Quality = require("./Quality");
 
 class QualityDisplay {
-  constructor(state, mainCycle) {
+  constructor({state}) {
     this.state = state;
-    this.mainCycle = mainCycle;
   }
 
-  updateQualities() {
+  updateQualities(changes) {
     const qualitiesCategoriesContainer = document.getElementById("qualities-categories-container");
     const playerQualities = this.state.getPlayerQualities();
-    const changes = this.state.getChanges();
+    //const changes = this.state.getChanges();
 
     for (const change of changes) {
       const qualityData = this.state.getQuality(change.quality);
       if (qualityData.hidden) {
         continue;
       }
-      const value = playerQualities[change.quality];
-      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle);
+      const value = playerQualities[change.quality] || 0;
+      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.state);
       const targetQuality = document.getElementById(`q-${change.quality}`);
       const categoryData = this.state.getCategory(qualityData.category);
       const targetCategory = document.getElementById(`q-cat-${categoryData.id}`)
@@ -72,7 +71,7 @@ class QualityDisplay {
       const qualityData = this.state.getQuality(qualityId);
       if (qualityData.storylet !== "none") {
         const targetQuality = document.getElementById(`q-${qualityId}`);
-        const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle);
+        const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.state);
         const renderedQuality = quality.render();
         targetQuality.replaceWith(renderedQuality);
       }
@@ -109,7 +108,7 @@ class QualityDisplay {
     for (const [id, value] of Object.entries(playerQualities)) {
       const qualityData = this.state.getQuality(id)
       if (qualityData.hidden) continue;
-      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.mainCycle)
+      const quality = new Quality(qualityData, value, this.state.isInStorylet(), this.state)
       if (quality.category === "uncategorized") {
         uncategorizedContainer.append(quality.render()) 
       } else {

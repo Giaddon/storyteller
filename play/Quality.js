@@ -1,4 +1,5 @@
 const u = require("../utilities");
+const TurnManager = require("./TurnManager");
 
 class Quality {
   constructor({
@@ -11,7 +12,7 @@ class Quality {
     category,
     storylet,
     hidden
-  }, value, inStorylet, mainCycle) {
+  }, value, inStorylet, state) {
     this.id = id;
     this.name = name;
     this.startvalue = startvalue;
@@ -25,7 +26,7 @@ class Quality {
     this.label = this.getLabel();
     this.description = this.getDescription();
     this.inStorylet = inStorylet;
-    this.mainCycle = mainCycle;
+    this.state = state;
   }
 
   getLabel() {
@@ -66,7 +67,7 @@ class Quality {
       qualityElement.setAttribute('tabindex', '0');
       qualityElement.classList.add("active-quality");
       qualityElement.addEventListener("click", event => {
-        this.mainCycle({changes:[], flow:this.storylet});
+        new TurnManager({state:this.state, result:{changes:[], flow:this.storylet}});
       })
     }
     return qualityElement;

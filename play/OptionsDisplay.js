@@ -96,7 +96,6 @@ class OptionsDisplay {
       state: this.state,
       result,
     })
-    nextTurn.mainCycle();
   }
 
   prepareResults(option) {

@@ -1,19 +1,34 @@
 /**  */
 
-
+const u = require("../utilities");
+const ConclusionDisplay = require("./ConclusionDisplay");
+const DeckDisplay = require("./DeckDisplay");
+const HeaderDisplay = require("./HeaderDisplay");
 
 class TurnManager {
   constructor({state, result}) {
     this.state = state;
     this.result = result;
-    this.displayChanges = [];
+    this.appliedChanges = [];
+    this.conclusion = {};
+
+    this.mainCycle();
   }
 
   mainCycle() {
     for (const change of this.result.changes) {
       this.handleChange(change);
     }
+    
     this.handleFlow(this.result.flow);
+
+    this.conclusion = {
+      title: this.result.title,
+      text: this.result.text,
+      challenge: this.result.challenge,
+    }
+
+    this.state.saveGame();
     this.renderGame();
   }
 
@@ -47,11 +62,7 @@ class TurnManager {
         console.error('No valid change type found.');
     }
 
-    this.displayChanges.push(change);
-
-    // Add change to state so it can be used for the conclusionDisplay, 
-    // which shows the results of changes to the player.
-    //this.state.addChange(change);
+    this.appliedChanges.push(change);
   }
 
   handleFlow(flow) {
@@ -72,14 +83,33 @@ class TurnManager {
   }
 
   renderGame() {
-    const HeaderDisplay = require("./HeaderDisplay");
     const OptionsDisplay = require("./OptionsDisplay");
-    
-    const header = new HeaderDisplay({state:this.state}).render();
-    const options = new OptionsDisplay({state:this.state}).render();
+    const QualityDisplay = require("./QualityDisplay");
+    const BackButton = require("./BackButton");
 
-    document.getElementById("header").replaceWith(header);
-    document.getElementById("options-list").replaceWith(options);
+    const conclusion = new ConclusionDisplay(this.state).render(this.conclusion, this.appliedChanges);
+    const header = new HeaderDisplay({state:this.state}).render();
+    const decks = new DeckDisplay(this.state).render();
+    const options = new OptionsDisplay({state:this.state}).render();
+    new QualityDisplay({state:this.state}).updateQualities(this.appliedChanges);
+
+    document.getElementById("conclusion").style.animation = 'fade-out 0.4s forwards';
+    document.getElementById("header").style.animation = 'fade-out 0.4s forwards';
+    document.getElementById("decks").style.animation = 'fade-out 0.4s forwards';
+    document.getElementById("options-list").style.animation = 'fade-out 0.4s forwards';
+
+    setTimeout(() => {
+      document.getElementById("conclusion").replaceWith(conclusion);
+      document.getElementById("header").replaceWith(header);
+      document.getElementById("decks").replaceWith(decks);
+      document.getElementById("options-list").replaceWith(options);
+      u.removeChildren(document.getElementById("button-container"))
+      if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
+        document.getElementById("button-container").append(new BackButton(this.state).render());
+      }
+    }, 400);
+    
+   
   }
 
 

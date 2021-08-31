@@ -2,14 +2,17 @@ const u = require("../utilities");
 const Storylet = require("./Storylet");
 
 class DeckDisplay {
-  constructor(api, prepareResults) {
-    this.api = api;
-    this.prepareResults = prepareResults;
+  constructor(state) {
+    this.state = state;
   }
 
   render() {
-    const deckList = u.create({tag:"div", classes:["deck-list"]})
-    const decks = this.api.getCurrentDecks();
+    const deckList = u.create({
+      tag:"div", 
+      classes:["deck-list"],
+      id: "decks",
+    })
+    const decks = this.state.getCurrentDecks();
     for (const deck of (Object.values(decks))) {
       const renderedDeck = this.renderDeck(deck);
       if (renderedDeck) {
@@ -36,22 +39,21 @@ class DeckDisplay {
   }
 
   selectDeck(deck) {
+    const TurnManager = require("./TurnManager");
     const idx = Math.floor(Math.random() * deck.availableStorylets.length);
     const drawnCardId = deck.availableStorylets[idx];
-    const drawnCard = this.api.enterStorylet(drawnCardId);
-    this.prepareResults(drawnCard);
+    new TurnManager({state:this.state, result: {changes:[], flow:drawnCardId}});
   }
 
   evaluateCards(cards) {
     let passingCards = [];
     for (const cardId of cards) {
-      const storyletData = this.api.getStorylet(cardId);
-      const storylet = new Storylet(storyletData, this.api);
+      const storyletData = this.state.getStorylet(cardId);
+      const storylet = new Storylet(storyletData, this.state);
       if (storylet.active) {
         passingCards.push(cardId);
       }
     }
-    console.log(passingCards);
     return passingCards;
   }
 }

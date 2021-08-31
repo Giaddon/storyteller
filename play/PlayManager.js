@@ -1,12 +1,10 @@
 const u = require("../utilities");
 const QualityDisplay = require("./QualityDisplay");
 const OptionsDisplay = require("./OptionsDisplay");
-const Quality = require("./Quality");
 const DeckDisplay = require("./DeckDisplay");
 const HeaderDisplay = require("./HeaderDisplay");
 const ConclusionDisplay = require("./ConclusionDisplay");
 const ToolbarDisplay = require("./ToolbarDisplay");
-const Storylet = require("./Storylet");
 const BackButton = require("./BackButton");
 const OverlayWindowDisplay = require("./OverlayWindowDisplay");
 
@@ -30,18 +28,16 @@ class PlayManager {
     const qualitiesContainer = u.create({tag: "div", classes: ["qualities-container"], id: "qualities-container"});
     canvas.append(qualitiesContainer);
     
-    // this.qualityDisplay = new QualityDisplay(this.state, this.mainCycle.bind(this));
-    // const renderedQualities = this.qualityDisplay.render();
-    // qualitiesContainer.append(renderedQualities);
+    const qualities = new QualityDisplay({state:this.state}).render();
+    qualitiesContainer.append(qualities);
 
     const storyContainer = u.create({tag: "div", classes:["story-container"], id: "story-container"});
     canvas.append(storyContainer);
 
     const resultContainer = u.create({tag: "div", classes:["result-container"], id: "result-container"});
 
-    // this.conclusionDisplay = new ConclusionDisplay(this.state);
-    // const renderedConclusion = this.conclusionDisplay.render();
-    // resultContainer.append(renderedConclusion);
+    const conclusion = new ConclusionDisplay(this.state).render();
+    resultContainer.append(conclusion);
 
     const headerContainer = u.create({tag: "div", classes:["header-container"], id: "header-container"});
 
@@ -50,21 +46,26 @@ class PlayManager {
 
     const decksContainer = u.create({tag: "div", classes:["decks-container"], id: "decks-container"});
 
-    // this.decksDisplay = new DeckDisplay(this.state, this.prepareResults.bind(this));
-    // const renderedDecks = this.decksDisplay.render();
-    // decksContainer.append(renderedDecks);
+    const decks = new DeckDisplay(this.state).render();
+    decksContainer.append(decks);
 
     const optionsContainer = u.create({tag: "div", classes:["options-container"], id: "options-container"});
     
     const options = new OptionsDisplay({state:this.state}).render();
     optionsContainer.append(options);
 
-    storyContainer.append(resultContainer, headerContainer, decksContainer, optionsContainer);  
+    const buttonContainer = u.create({
+      tag: "div",
+      id: "button-container",
+      classes: ["button-container"],
+    })
 
-    // if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
-    //   const backButton = new BackButton(this.mainCycle.bind(this));
-    //   document.getElementById("options-container").append(backButton.render())
-    // }
+    storyContainer.append(resultContainer, headerContainer, decksContainer, optionsContainer, buttonContainer);  
+
+    if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
+      const backButton = new BackButton(this.state).render();
+      buttonContainer.append(backButton);
+    }
 
     // this.toolbarDisplay = new ToolbarDisplay({openTravel:this.openTravel.bind(this), state: this.state});
     // const renderedToolbar = this.toolbarDisplay.render();

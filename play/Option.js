@@ -15,7 +15,6 @@ class Option {
         const qualityData = this.state.getQuality(req.quality);
         const min = Number(req.min) < 0 ? -Infinity : Number(req.min);
         const max = Number(req.max) < 0 ? Infinity : Number(req.max);
-        console.log("Reqs for: ", this.title, playerValue, min, max);
         const passed = (playerValue >= min && playerValue <= max)
         reqArray.push(passed);
         if (qualityData.hidden !== true) {
