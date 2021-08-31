@@ -1,8 +1,8 @@
 const u = require("../utilities");
 
 class Option {
-  constructor(api) {
-    this.api = api;
+  constructor(state) {
+    this.state = state;
   }
   evaluateReqs(reqs) {
     if (!reqs || reqs.qualities.length < 1) return {active: true, labels: []}
@@ -11,8 +11,8 @@ class Option {
     if (reqs && reqs.qualities.length > 0) {
       for (const req of reqs.qualities) {
        
-        const playerValue = this.api.getPlayerQuality(req.quality);
-        const qualityData = this.api.getQuality(req.quality);
+        const playerValue = this.state.getPlayerQuality(req.quality);
+        const qualityData = this.state.getQuality(req.quality);
         const min = Number(req.min) < 0 ? -Infinity : Number(req.min);
         const max = Number(req.max) < 0 ? Infinity : Number(req.max);
         console.log("Reqs for: ", this.title, playerValue, min, max);

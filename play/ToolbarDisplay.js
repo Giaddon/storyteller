@@ -1,6 +1,6 @@
 const u = require("../utilities");
 
-class OptionsDisplay {
+class ToolbarDisplay {
   constructor({openTravel, state}) {
     this.state = state;
     this.openTravel = openTravel;
@@ -27,4 +27,4 @@ class OptionsDisplay {
   
 }
 
-module.exports = OptionsDisplay;
+module.exports = ToolbarDisplay;

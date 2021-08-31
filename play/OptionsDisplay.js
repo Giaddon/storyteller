@@ -3,13 +3,12 @@ const Action = require("./Action");
 const Storylet = require("./Storylet");
 
 class OptionsDisplay {
-  constructor(api, prepareResults) {
-    this.api = api;
-    this.prepareResults = prepareResults;
+  constructor({state}) {
+    this.state = state;
   }
 
   render() {
-    const activeContext = this.api.getContext();
+    const activeContext = this.state.getContext();
     const contextType = activeContext.actions ? "storylet" : "domain";
     let options; 
     if (contextType === "storylet") {
@@ -18,11 +17,15 @@ class OptionsDisplay {
     else if (contextType === "domain") {
       options = [];
       for (const storyletId of activeContext.storylets) {
-        options.push(this.api.getStorylet(storyletId));
+        options.push(this.state.getStorylet(storyletId));
       }
     } 
 
-    const optionsList = u.create({tag:"div", class:["options-list"]})
+    const optionsList = u.create({
+      tag: "div", 
+      classes: ["options-list"], 
+      id: "options-list",
+    });
     for (const option of Object.values(options)) {
       const renderedOption = this.renderOption(option, contextType);
       if (renderedOption) {
@@ -33,7 +36,7 @@ class OptionsDisplay {
   }
 
   renderOption(optionData, contextType) {
-    const option = contextType === "storylet" ? new Action(optionData, this.api) : new Storylet(optionData, this.api);
+    const option = contextType === "storylet" ? new Action(optionData, this.state) : new Storylet(optionData, this.state);
     
     const optionElement = u.create({tag: "div", classes:["option"]});
     const titleElement = u.create({tag:"h1", content: option.title});
@@ -59,15 +62,15 @@ class OptionsDisplay {
 
     if (active) { 
       optionElement.setAttribute('tabindex', '0');
-      optionElement.addEventListener('click', this.prepareResults.bind(null, option));
+      optionElement.addEventListener('click', this.selectOption.bind(this, option));
     } else {
       optionElement.classList.add('option-disabled');
     }
 
     if (option.challenges) {
       for (const challenge of option.challenges) {
-        let playerValue = this.api.getPlayerQuality(challenge.quality);
-        let qualityLabel = this.api.getQuality(challenge.quality).name;
+        let playerValue = this.state.getPlayerQuality(challenge.quality);
+        let qualityLabel = this.state.getQuality(challenge.quality).name;
         let chance = challenge.difficulty - playerValue;
         if (chance > 6) {
           chance = 0;
@@ -86,6 +89,51 @@ class OptionsDisplay {
     return optionElement;
   }
 
+  selectOption(option) {
+    const TurnManager = require("./TurnManager");
+    const result = this.prepareResults(option)
+    const nextTurn = new TurnManager({
+      state: this.state,
+      result,
+    })
+    nextTurn.mainCycle();
+  }
+
+  prepareResults(option) {
+    if (option.challenges && option.challenges.length > 0) {
+      let passed = [];
+      for (const challenge of option.challenges) {
+        passed.push(this.attemptChallenge(challenge))
+      }
+      if (passed.includes(false)) {
+        return {
+          ...option.results.failure,
+          challenge: {
+            passed: false,
+            challenges: option.challenges  
+          }
+        }
+      } else {
+        return {
+          ...option.results.success,
+          challenge: {
+            passed: true,
+            challenges: option.challenges  
+          }
+        }
+      }
+    } else {
+      return option.results.neutral;
+    }
+  }
+
+  attemptChallenge({quality, difficulty}) {
+    const result = Math.ceil(Math.random() * 6) + this.state.getPlayerQuality(quality);
+    console.log(result >= difficulty, `${result} vs ${difficulty}`)
+    return result >= difficulty;
+  }
+
+
   // evaluateReqs(reqs) {
   //   if (!reqs) return {active: true, labels: []}
   //   if (reqs.qualities.length < 1) return {active: true, labels: []};
@@ -93,8 +141,8 @@ class OptionsDisplay {
   //   let labels = [];
   //   if (reqs && reqs.qualities.length > 0) {
   //     for (const req of reqs.qualities) {
-  //       const playerValue = this.api.getPlayerQuality(req.quality);
-  //       const qualityData = this.api.getQuality(req.quality);
+  //       const playerValue = this.state.getPlayerQuality(req.quality);
+  //       const qualityData = this.state.getQuality(req.quality);
   //       const min = Number(req.min) || -Infinity;
   //       const max = Number(req.max) || Infinity;
   //       const passed = (playerValue >= min && playerValue <= max)
