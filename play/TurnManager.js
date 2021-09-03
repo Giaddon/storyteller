@@ -4,6 +4,7 @@ const u = require("../utilities");
 const ConclusionDisplay = require("./ConclusionDisplay");
 const DeckDisplay = require("./DeckDisplay");
 const HeaderDisplay = require("./HeaderDisplay");
+const ToolbarDisplay = require("./ToolbarDisplay");
 
 class TurnManager {
   constructor({state, result}) {
@@ -92,24 +93,26 @@ class TurnManager {
     const decks = new DeckDisplay(this.state).render();
     const options = new OptionsDisplay({state:this.state}).render();
     new QualityDisplay({state:this.state}).updateQualities(this.appliedChanges);
+    const backButton = new BackButton(this.state).render()
+    const toolbar = new ToolbarDisplay({state:this.state}).render();
+    document.getElementById("toolbar").replaceWith(toolbar);
 
     document.getElementById("conclusion").style.animation = 'fade-out 0.4s forwards';
     document.getElementById("header").style.animation = 'fade-out 0.4s forwards';
     document.getElementById("decks").style.animation = 'fade-out 0.4s forwards';
     document.getElementById("options-list").style.animation = 'fade-out 0.4s forwards';
+    document.getElementById("back-button").style.animation = 'fade-out 0.4s forwards';
 
     setTimeout(() => {
       document.getElementById("conclusion").replaceWith(conclusion);
       document.getElementById("header").replaceWith(header);
       document.getElementById("decks").replaceWith(decks);
       document.getElementById("options-list").replaceWith(options);
-      u.removeChildren(document.getElementById("button-container"))
-      if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
-        document.getElementById("button-container").append(new BackButton(this.state).render());
-      }
+      document.getElementById("back-button").replaceWith(backButton);
     }, 400);
+
     
-   
+
   }
 
 

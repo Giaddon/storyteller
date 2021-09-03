@@ -150,10 +150,34 @@
   cursor:default;
 }
 
-.item-list {
+.play-item-list {
   display: flex;
   flex-flow: column nowrap;
   overflow-y: scroll;
   max-width: 250px;
   max-height: 400px;
+  padding: 10px;
+}
+
+.modal-window,
+.upright-modal-window {
+  position: absolute;
+  padding: 40px;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  background-color: white;
+  box-shadow: 0px 0px 10px 2px grey;
+}
+
+.upright-modal-window {
+  height: 400px;
+  width: 250px;
+}
+
+.freeze-window {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(255, 255, 255, 0.8);
 }

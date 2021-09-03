@@ -62,14 +62,11 @@ class PlayManager {
 
     storyContainer.append(resultContainer, headerContainer, decksContainer, optionsContainer, buttonContainer);  
 
-    if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
-      const backButton = new BackButton(this.state).render();
-      buttonContainer.append(backButton);
-    }
-
-    // this.toolbarDisplay = new ToolbarDisplay({openTravel:this.openTravel.bind(this), state: this.state});
-    // const renderedToolbar = this.toolbarDisplay.render();
-    // canvas.append(renderedToolbar);
+    const backButton = new BackButton(this.state).render();
+    buttonContainer.append(backButton);
+  
+    const toolbar = new ToolbarDisplay({state: this.state}).render();
+    canvas.append(toolbar);
     
   }
 
