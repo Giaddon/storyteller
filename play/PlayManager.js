@@ -6,7 +6,6 @@ const HeaderDisplay = require("./HeaderDisplay");
 const ConclusionDisplay = require("./ConclusionDisplay");
 const ToolbarDisplay = require("./ToolbarDisplay");
 const BackButton = require("./BackButton");
-const OverlayWindowDisplay = require("./OverlayWindowDisplay");
 
 class PlayManager {
   constructor(state) {
@@ -22,16 +21,26 @@ class PlayManager {
     u.removeChildren(root);
     
     //Canvas: parent div of the play module.
-    const canvas = u.create({tag: "div", classes: ["canvas"], id: "canvas"});
+    const canvas = u.create({tag: "div", classes: ["play-canvas"], id: "canvas"});
     root.append(canvas);
 
-    const qualitiesContainer = u.create({tag: "div", classes: ["qualities-container"], id: "qualities-container"});
+    const qualitiesContainer = u.create({tag: "div", classes: ["play-qualities-container"], id: "qualities-container"});
     canvas.append(qualitiesContainer);
     
+    qualitiesContainer.addEventListener("mouseenter", event => {
+      qualitiesContainer.style.animation = 'fade-in 0.5s forwards';
+    })
+
+    qualitiesContainer.addEventListener("mouseleave", event => {
+      setTimeout(() => {
+        qualitiesContainer.style.animation = 'fade-out 0.5s forwards';
+      }, 1000)
+    })
+
     const qualities = new QualityDisplay({state:this.state}).render();
     qualitiesContainer.append(qualities);
 
-    const storyContainer = u.create({tag: "div", classes:["story-container"], id: "story-container"});
+    const storyContainer = u.create({tag: "div", classes:["play-story-container"], id: "story-container"});
     canvas.append(storyContainer);
 
     const resultContainer = u.create({tag: "div", classes:["result-container"], id: "result-container"});
@@ -65,9 +74,27 @@ class PlayManager {
     const backButton = new BackButton(this.state).render();
     buttonContainer.append(backButton);
   
+    const toolbarContainer = u.create({tag: "div", classes:["play-toolbar-container"]});
+    canvas.append(toolbarContainer);
+
+    toolbarContainer.addEventListener("mouseenter", event => {
+      toolbarContainer.style.animation = 'fade-in 0.5s forwards';
+    })
+
+    toolbarContainer.addEventListener("mouseleave", event => {
+      setTimeout(() => {
+        toolbarContainer.style.animation = 'fade-out 0.5s forwards';
+      }, 1000)
+    })
+
     const toolbar = new ToolbarDisplay({state: this.state}).render();
-    canvas.append(toolbar);
+    toolbarContainer.append(toolbar);
     
+    setTimeout(() => {
+      qualitiesContainer.style.animation = 'fade-out 0.5s forwards';
+      toolbarContainer.style.animation = 'fade-out 0.5s forwards';
+    }, 2000);
+
   }
 
   // This method is bound and passed into the options container. 

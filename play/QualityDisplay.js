@@ -84,12 +84,12 @@ class QualityDisplay {
     
     const qualitiesList = u.create({tag: "div"});
 
-    const qualitiesTitle = u.create({tag: "h1", classes: ["qualities-title"], content: "Qualities"});
+    const qualitiesTitle = u.create({tag: "h1", classes: ["play-qualities-title"], content: "Qualities"});
     qualitiesList.append(qualitiesTitle);
       
     const qualitiesCategoriesContainer = u.create({
       tag: "div", 
-      classes: ["qualities-categories-container"], 
+      classes: ["play-qualities-categories-container"], 
       id: "qualities-categories-container"
     });
     qualitiesList.append(qualitiesCategoriesContainer);
@@ -99,7 +99,7 @@ class QualityDisplay {
 
     const uncategorizedTitle = u.create({
       tag: "h1", 
-      classes: ["qualities-category-title"], 
+      classes: ["play-qualities-category-title"], 
       content: "Uncategorized"
     });
     uncategorizedContainer.append(uncategorizedTitle);
@@ -143,14 +143,14 @@ class QualityDisplay {
   renderQualityCategory(category) {
     const newCategory = u.create({
       tag: "div", 
-      classes: ["qualities-category"],
+      classes: ["play-qualities-category"],
       id: `q-cat-${category.id}`
     })
     newCategory.dataset.order = category.order;
 
     const newCategoryTitle = u.create({
       tag: "h1", 
-      classes:["qualities-category-title"], 
+      classes:["play-qualities-category-title"], 
       content: category.title,
     }) 
     newCategory.append(newCategoryTitle);

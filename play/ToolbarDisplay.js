@@ -9,16 +9,20 @@ class ToolbarDisplay {
   render() {
     const activeContext = this.state.getContext();
     const destinations = this.state.getDestinations();
-    const toolbar = u.create({tag:"div", classes:["toolbar"], id: "toolbar"});
+    const toolbar = u.create({tag:"div", classes:["play-toolbar"], id: "toolbar"});
     const travelButton = u.create({tag:"button", content: "Travel"});
     travelButton.addEventListener("click", event => {
       event.preventDefault();
       const overlay = new OverlayWindowDisplay({state: this.state}).renderTravel();
       document.getElementById("root").prepend(overlay);
     });
-    if (activeContext.locked || destinations.length < 1) {
+    if (
+      this.state.isInStorylet() === true ||
+      activeContext.locked === true ||
+      destinations.length < 1
+    ) {
       travelButton.disabled = true;
-      travelButton.classList.add("disabled-button");
+      travelButton.classList.add("play-disabled-button");
     }
     toolbar.append(travelButton);
 

@@ -57,13 +57,13 @@ select {
   height: 1px;
   margin: 20px 0px;
 }
-.qualities-container {
+/* .qualities-container {
   flex: 0 1 250px;
   width: 250px;
   min-width: 200px;
   padding: 10px 20px 50px 10px;
   height: 100vh;
-  /* border-right: 1px solid black; */
+  border-right: 1px solid black;
   outline: 1px solid black;
   overflow-y:scroll;
 }
@@ -79,7 +79,7 @@ select {
 .active-quality:focus,
 .active-quality:hover {
   outline: 1px solid gold;
-}
+} */
 
 .item-list-container {
   flex: 0 0 150px;
@@ -200,7 +200,6 @@ select {
 }
 
 .action-title,
-.quality-category,
 .create-category {
   font-family: "Standard", serif;
   font-size: 18px;

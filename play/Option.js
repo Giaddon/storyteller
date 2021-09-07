@@ -53,7 +53,7 @@ class Option {
   }
 
   renderOptionReq(reqData) {
-    const req = u.create({tag:'div', classes:["option-req"]});
+    const req = u.create({tag:'div', classes:["play-option-req"]});
     const label = u.create({tag:'h1', content: reqData.label});
     req.appendChild(label);
   

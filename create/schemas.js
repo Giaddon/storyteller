@@ -82,6 +82,7 @@ const schemas = {
     title: "New Domain",
     text: "Domain text.",
     locked: false,
+    destination: true,
     storylets: [],
     decks: {},
     events: [],

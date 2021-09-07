@@ -10,8 +10,8 @@ class BackButton {
     if (this.state.isInStorylet() && !this.state.getContext().locked && this.state.getCurrentDomain()) {
       const backButton = u.create({
         tag:"button", 
-        content:"Go back", 
-        classes:["back-button"], 
+        content:"⤺ Go back", 
+        classes:["play-back-button"], 
         id: "back-button"
       });
       backButton.addEventListener("click", event => {

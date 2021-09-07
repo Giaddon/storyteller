@@ -9,7 +9,7 @@ class DeckDisplay {
   render() {
     const deckList = u.create({
       tag:"div", 
-      classes:["deck-list"],
+      classes:["play-deck-list"],
       id: "decks",
     })
     const decks = this.state.getCurrentDecks();
@@ -23,15 +23,15 @@ class DeckDisplay {
   }
 
   renderDeck(deckData) {
-    const deck = u.create({tag:"div", classes:["deck"]});
+    const deck = u.create({tag:"div", classes:["play-deck"]});
     deckData.availableStorylets = this.evaluateCards(deckData.storylets);
     const cardNum = deckData.availableStorylets.length;
     if (cardNum < 1) {
       deck.remove();
       return;
     }
-    const deckLabel = u.create({tag:"h1", classes:["deck-label"], content:deckData.name});
-    const cardsCount = u.create({tag:"h1", classes:["card-count"], content:`${cardNum} ${cardNum > 1 ? "cards" : "card"} available.`});
+    const deckLabel = u.create({tag:"h1", classes:["play-deck-label"], content:deckData.name});
+    const cardsCount = u.create({tag:"h1", classes:["play-card-count"], content:`${cardNum} ${cardNum > 1 ? "cards" : "card"} available.`});
     deck.addEventListener("click", this.selectDeck.bind(this, deckData))
     deck.append(deckLabel);
     deck.append(cardsCount);

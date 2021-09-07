@@ -7,7 +7,7 @@ class HeaderDisplay {
 
   render() {
     const {title, text} = this.state.getContext();
-    const headerElement = u.create({tag:"div", classes:["header"], id: "header"});
+    const headerElement = u.create({tag:"div", classes:["play-header"], id: "header"});
     const titleElement = u.create({tag: "h1", content: title});
     const textElement = u.create({tag:"p", content: text}); 
     headerElement.append(titleElement, textElement);

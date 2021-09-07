@@ -20,66 +20,10 @@
 }
 
 
-
-.header h1, 
-.conclusion h1,
-.event-container h1,
-.qualities-title,
-.qualities-category-title  {
-  font-family: 'Title';
-  font-size: 22px;
-  margin-bottom: 12px;
-}
-
 .qualities-title,
 .qualities-category-title {
   text-align: center;
 }
 
-.header p {
-  font-family: 'Standard';
-  font-size: 15px;
-  line-height: 1.4;
-  margin-bottom: 15px;
-}
 
-.conclusion p, 
-.event p {
-  font-family: 'Standard';
-  font-size: 15px;
-  line-height: 1.4;
-}
 
-.conclusion-outcomes p,
-.event-outcomes p  {
-  color: white;
-  font-family: 'Title', sans-serif;
-  font-size: 12px;
-}
-
-.option h1 {
-  font-family: "Standard", serif;
-  font-size: 18px;
-  margin-bottom: 5px;
-  font-weight: 700;
-}
-
-.option p {
-  font-family: 'Standard', serif;
-  font-size: 15px;
-}
-
-.option-req h1 {
-  font-family: 'Title', sans-serif;
-  font-size: 12px;
-}
-
-.quality-title {
-  font-family: 'Standard', serif;
-  font-size: 16px;
-}
-
-.quality-description {
-  font-family: 'Standard', serif;
-  font-size: 12px;
-}

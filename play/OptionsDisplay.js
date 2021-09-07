@@ -23,7 +23,7 @@ class OptionsDisplay {
 
     const optionsList = u.create({
       tag: "div", 
-      classes: ["options-list"], 
+      classes: ["play-options-list"], 
       id: "options-list",
     });
     for (const option of Object.values(options)) {
@@ -38,12 +38,12 @@ class OptionsDisplay {
   renderOption(optionData, contextType) {
     const option = contextType === "storylet" ? new Action(optionData, this.state) : new Storylet(optionData, this.state);
     
-    const optionElement = u.create({tag: "div", classes:["option"]});
+    const optionElement = u.create({tag: "div", classes:["play-option"]});
     const titleElement = u.create({tag:"h1", content: option.title});
     const text = contextType === "domain" ? (option.text.split(".")[0] + ".") : option.text;
     const textElement = u.create({tag:"p", content:text});
-    const challengeContainer = u.create({tag:"div", classes:["option-challenge-container"]});
-    const reqsContainer = u.create({tag:"div", classes:["option-reqs-container"]});
+    const challengeContainer = u.create({tag:"div", classes:["play-option-challenge-container"]});
+    const reqsContainer = u.create({tag:"div", classes:["play-option-reqs-container"]});
 
     optionElement.append(titleElement);
     optionElement.append(textElement);
@@ -57,14 +57,14 @@ class OptionsDisplay {
     }
 
     for (const label of labels) {
-      optionElement.querySelector(".option-reqs-container").append(label);
+      reqsContainer.append(label);
     }
 
     if (active) { 
       optionElement.setAttribute('tabindex', '0');
       optionElement.addEventListener('click', this.selectOption.bind(this, option));
     } else {
-      optionElement.classList.add('option-disabled');
+      optionElement.classList.add('play-option-disabled');
     }
 
     if (option.challenges) {
@@ -82,7 +82,7 @@ class OptionsDisplay {
         } 
         let challengePhrase = `This is a ${qualityLabel} challenge with difficulty ${challenge.difficulty}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
         let challengeText = u.create({tag:"p", content: challengePhrase});
-        optionElement.querySelector(".option-challenge-container").append(challengeText);
+        challengeContainer.append(challengeText);
       }
     } // end if challenge
 
@@ -92,7 +92,7 @@ class OptionsDisplay {
   selectOption(option) {
     const TurnManager = require("./TurnManager");
     const result = this.prepareResults(option)
-    const nextTurn = new TurnManager({
+    new TurnManager({
       state: this.state,
       result,
     })

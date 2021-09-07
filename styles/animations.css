@@ -8,15 +8,15 @@
   to {opacity: 0;}
 }
 
-.header, 
-.conclusion {
+.play-header, 
+.play-conclusion {
   animation-name: fade-in;
   animation-duration: 0.5s;
 }
 
-.options-list, 
-.deck-list,
-.back-button {
+.play-options-list, 
+.play-deck-list,
+.play-back-button {
   animation-name: fade-in;
   animation-duration: 0.8s;
 }

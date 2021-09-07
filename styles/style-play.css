@@ -1,97 +1,202 @@
-.canvas {
+/** CANVAS COMPONENT */
+
+.play-canvas {
   display: flex;
   flex-flow: row nowrap;
   max-width: 1080px;
   margin: 0px auto;
-  background-color: white;
   height: 100vh;
+  background-color: white;
+  color: black;
 }
 
-.option {
-  background-color: inherit;
-  padding: 15px 15px 15px 30px;
-  margin: 0px auto 15px auto;
-  max-width: 550px;
-  cursor: pointer;
-  
-  /* min-height: 100px; */
+/** QUALITIES CONTAINER COMPONENT */
+
+.play-qualities-container {
+  flex: 0 1 250px;
+  min-width: 200px;
+  padding: 15px 15px 50px 15px;
+  height: 100%;
   outline: 1px solid black;
-  /* transition: outline ease 0.3s; */
+  overflow-y:scroll;
 }
 
+.play-qualities-container::-webkit-scrollbar {
+  width: 3px;
+  background: transparent;
+}
+.play-qualities-container::-webkit-scrollbar-thumb {
+  background: lightgrey;
+  border-radius: 20px;
+}
 
-.story-container {
-  flex: 0 1 650px;
+.play-qualities-title {
+  font-family: 'Title', sans-serif;
+  font-size: 24px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.play-qualities-category-title {
+  font-family: 'Title', sans-serif;
+  font-size: 22px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.play-quality {
+  outline: 1px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.play-quality h1 {
+  font-family: 'Standard', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: inherit;
+}
+
+.play-quality p {
+  font-family: 'Standard', serif;
+  font-size: 12px;
+  color: inherit;
+}
+
+.play-active-quality {
+  outline: 1px dashed black;
+  cursor: pointer;
+}
+
+.play-active-quality:focus,
+.play-active-quality:hover {
+  outline: 1px solid gold;
+}
+
+/** STORY CONTAINER COMPONENT */
+
+.play-story-container {
+  flex: 0 1 620px;
   margin-left: 25px;
   padding: 15px 15px 50px 15px;
   overflow-y: scroll;
   height: 100vh;
 }
-.header {
-  /* padding: 15px 20px; */
-  background-color: inherit;
-  margin-bottom: 30px;
+.play-story-container::-webkit-scrollbar {
+  width: 3px;
+  background: transparent;
 }
-.options-container {
-  margin-top: 15px;
+.play-story-container::-webkit-scrollbar-thumb {
+  background: lightgrey;
+  border-radius: 20px;
 }
 
-.option:hover,
-.option:focus {
-  outline: 3px solid gold;
+/** CONCLUSION COMPONENT */
+
+.play-conclusion h1 {
+  font-family: 'Title', sans-serif;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
-.deck-list {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
+
+.play-conclusion p {
+  font-family: 'Standard', serif;
+  font-size: 15px;
+  line-height: 1.4;
 }
-.deck {
-  flex: 0 1 auto;
-  border: 1px solid black;
-  border-radius: 4px;
-  height: 140px;
-  width: 100px;
-  text-align: center;
+
+.play-conclusion-outcomes {
+  background-color: teal;
   padding: 10px;
-  cursor: pointer;
-  margin: 5px;
+  margin: 15px auto 0px auto;
+  max-width: 650px;
 }
-.deck:hover,
-.deck:focus {
-  border: 1px solid gold;
-}
-.deck-label {
-  font-family: "Title", sans-serif;
-  font-size: 14px;
-}
-.card-count {
-  font-family: "standard", serif;
+
+.play-conclusion-outcomes p {
+  color: white;
+  font-family: 'Title', sans-serif;
   font-size: 12px;
 }
 
+.play-challenge-passed {
+  background-color: limegreen;
+}
+.play-challenge-failed {
+  background-color: tomato;
+}
 
-.option-disabled {
-  background-color: inherit;
+.play-conclusion-seperator {
+  border-bottom: 1px solid black;
+  margin: 20px auto;
+  max-width: 550px;
+}
+
+/** CONTEXT HEADER COMPONENT */
+
+.play-header h1 {
+  font-family: 'Title';
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.play-header p {
+  font-family: 'Standard';
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/** OPTIONS LIST COMPONENT */
+
+.play-options-list {
+  margin-top: 30px;
+}
+
+.play-option {
+  padding: 10px 10px 10px 25px;
+  margin: 0px auto 15px auto;
+  max-width: 500px;
+  cursor: pointer;
+  outline: 1px solid black;
+}
+
+.play-option h1 {
+  font-family: "Standard", serif;
+  font-size: 17px;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.play-option p {
+  font-family: 'Standard', serif;
+  font-size: 14px;
+}
+
+.play-option:hover,
+.play-option:focus {
+  outline: 3px solid gold;
+}
+
+.play-option-disabled {
   cursor: default;
   color: grey;
   outline: 1px solid tomato;
 }
-.option-disabled:hover {
+.play-option-disabled:hover {
   color: grey;
   outline: 1px solid tomato;
 }
 
-.option-challenge-container {
+.play-option-challenge-container {
   margin-top: 10px;
 }
 
-.option-reqs-container {
+.play-option-reqs-container {
   margin-top: 10px;
   display: flex;
   flex-flow: row wrap;
 }
 
-.option-req {
+.play-option-req {
   flex: 0 1 auto;
   padding: 5px;
   color: white;
@@ -105,47 +210,85 @@
   background-color: tomato;
 }
 
-.conclusion-container, .event-container {
-  margin-bottom: 20px;
-}
-.conclusion-seperator, .event-seperator {
-  border-bottom: 1px solid black;
-  margin: 30px auto;
-  max-width: 550px;
+.play-option-req h1 {
+  font-family: 'Title', sans-serif;
+  font-size: 12px;
 }
 
-.conclusion-outcomes, .event-outcomes {
-  background-color: teal;
+/** DECK LIST COMPONENT */
+
+.play-deck-list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.play-deck {
+  flex: 0 1 auto;
+  outline: 1px solid black;
+  height: 140px;
+  width: 100px;
+  text-align: center;
   padding: 10px;
-  margin: 15px auto 0px auto;
-  max-width: 650px;
+  cursor: pointer;
+  margin: 15px 5px 5px 5px;
+}
+.play-deck:hover,
+.play-deck:focus {
+  outline: 2px solid gold;
+}
+.play-deck-label {
+  font-family: "Title", sans-serif;
+  font-size: 14px;
+}
+.play-card-count {
+  font-family: "Standard", serif;
+  font-size: 12px;
 }
 
-.challenge-passed {
-  background-color: yellowgreen;
-}
-.challenge-failed {
-  background-color: tomato;
+/** BACK BUTTON COMPONENT */
+
+.play-back-button {
+  margin-top: 15px;
+  padding: 5px 10px;
+  background-color: inherit;
+  border: none;
+  outline: 1px solid black;
+  font-family: "Standard", serif;
+  font-size: 14px;
 }
 
-.toolbar {
+.play-back-button:hover,
+.play-back-button:active,
+.play-back-button:focus {
+  cursor: pointer;
+  outline: 2px solid gold;
+}
+
+/** TOOLBAR COMPONENT */
+
+.play-toolbar-container {
   padding: 20px;
+  outline: 1px solid black;
+  flex: 0 1 210px;
 }
 
-.toolbar button {
+.play-toolbar button {
   padding: 5px 15px;
   background-color: white;
   outline: 1px solid black;
   border: none;
   cursor: pointer;
+  font-family: "Standard", serif;
+  font-size: 14px;
 }
 
-.toolbar button:hover {
-  outline: 1px solid gold;
+.play-toolbar button:hover {
+  outline: 2px solid gold;
 }
 
-.disabled-button,
-.disabled-button:hover {
+.play-disabled-button,
+.play-disabled-button:hover {
   outline: 1px solid gray !important;
   cursor:default;
 }

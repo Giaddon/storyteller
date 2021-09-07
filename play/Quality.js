@@ -49,23 +49,24 @@ class Quality {
   }
 
   render() {
-    const qualityElement = u.create({tag:"div", classes:["quality"], id:`q-${this.id}`});
+    const qualityElement = u.create({tag:"div", classes:["play-quality"], id:`q-${this.id}`});
     const title = u.create({
-      tag:"p", 
-      classes:["quality-title"], 
+      tag:"h1", 
       content:`${this.name} • ${this.label || this.value.toString()}${this.max > 0 ? "/"+this.max : ""}`
     });
     qualityElement.append(title);
     const description = u.create({
       tag: "p",
-      classes: ["quality-description"],
       content: this.description || "",
     });
     qualityElement.append(description);
 
-    if (this.storylet !== "none" && this.inStorylet !== true) {
+    if (
+      this.storylet !== "none" &&
+      this.state.isInStorylet() === false
+    ) {
       qualityElement.setAttribute('tabindex', '0');
-      qualityElement.classList.add("active-quality");
+      qualityElement.classList.add("play-active-quality");
       qualityElement.addEventListener("click", event => {
         new TurnManager({state:this.state, result:{changes:[], flow:this.storylet}});
       })

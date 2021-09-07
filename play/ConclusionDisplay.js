@@ -7,26 +7,30 @@ class ConclusionDisplay {
 
   render(conclusionData, changes) {
     const Quality = require("./Quality");
-    //const conclusionData = this.state.getConclusion();
+
     if (!conclusionData) {
       return u.create({tag:"div", id: "conclusion",});
     }
+
     const conclusion = u.create({
       tag: "div", 
-      classes:["conclusion"],
+      classes:["play-conclusion"],
       id: "conclusion",
     })
-    const title = u.create({tag:"h1", content: conclusionData.title})
-    const text = u.create({tag: "p", content: conclusionData.text});
-    const outcomes = u.create({tag: "div", classes: ["conclusion-outcomes"]});
-    conclusion.append(title);
-    conclusion.append(text);
+
+    if (conclusionData.title) {
+      const title = u.create({tag:"h1", content: conclusionData.title})
+      const text = u.create({tag: "p", content: conclusionData.text});
+      conclusion.append(title, text);
+    }
+
+    const outcomes = u.create({tag: "div", classes: ["play-conclusion-outcomes"]});
 
     if (conclusionData.challenge) {
       if (conclusionData.challenge.passed) {
-        outcomes.classList.add("challenge-passed");
+        outcomes.classList.add("play-challenge-passed");
       } else {
-        outcomes.classList.add("challenge-failed");
+        outcomes.classList.add("play-challenge-failed");
       }
       // Not quite right we make is possible to use multiple challenges (uses same passed for all qualities).
       for (const challenge of conclusionData.challenge.challenges) {
@@ -76,7 +80,7 @@ class ConclusionDisplay {
   
 
     if (outcomes.children.length > 0 || conclusionData.title) {
-      const seperator = u.create({tag:"div", classes:["conclusion-seperator"]});
+      const seperator = u.create({tag:"div", classes:["play-conclusion-seperator"]});
       conclusion.append(seperator);
     }
     return conclusion;

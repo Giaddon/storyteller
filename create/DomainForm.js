@@ -7,7 +7,8 @@ class DomainForm extends CreateForm {
     this.id = domain.id;
     this.title = domain.title || "New Domain";
     this.text = domain.text || "Domain text.";
-   
+    this.locked = domain.locked || false;
+    this.destination = domain.destination || true;
     let storylets = [];
     for (const storylet of domain.storylets) {
       const storyletData = {
@@ -71,6 +72,11 @@ class DomainForm extends CreateForm {
     textInput.addEventListener("input", this.captureField.bind(this, "text"));
     headerSection.append(textLabel);
     headerSection.append(textInput);
+
+    const {input: destinationInput, label: destinationLabel} = this.createInput("checkbox", "domain", "destination", this.destination)
+    destinationInput.addEventListener("input", this.captureCheckbox.bind(this, "destination"));
+    headerSection.append(destinationLabel);
+    headerSection.append(destinationInput);
 
     const {input: lockedInput, label: lockedLabel} = this.createInput("checkbox", "domain", "locked", this.locked)
     lockedInput.addEventListener("input", this.captureCheckbox.bind(this, "locked"));
@@ -199,6 +205,7 @@ class DomainForm extends CreateForm {
       id: this.id,
       title: this.title,
       text: this.text,
+      destination: this.destination,
       locked: this.locked,
       storylets,
       events,
