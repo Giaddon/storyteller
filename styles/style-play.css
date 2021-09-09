@@ -148,7 +148,7 @@
 /** OPTIONS LIST COMPONENT */
 
 .play-options-list {
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 .play-option {
@@ -221,6 +221,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
+  margin-top: 15px;
 }
 
 .play-deck {
@@ -231,7 +232,7 @@
   text-align: center;
   padding: 10px;
   cursor: pointer;
-  margin: 15px 5px 5px 5px;
+  margin: 5px;
 }
 .play-deck:hover,
 .play-deck:focus {

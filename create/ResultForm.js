@@ -3,15 +3,15 @@ const ChangeForm = require("./ChangeForm");
 const schemas = require("./schemas");
 
 class ResultForm extends CreateForm {
-  constructor(api, result, parentId, resultType) {
-    super(api);
+  constructor(state, result, parentId, resultType) {
+    super(state);
     this.title = result.title;
     this.text = result.text;
     this.flow = result.flow || "return";
     let changes = [];
     for (const change of result.changes) {
       changes.push(new ChangeForm(
-        this.api, 
+        this.state, 
         change,
         this.removeFromArray.bind(this, "changes")
       ))
@@ -83,7 +83,7 @@ class ResultForm extends CreateForm {
     let storyletGroup = document.createElement("optgroup");
     storyletGroup.label = "Storylets";
     flowSelect.add(storyletGroup);
-    for (const storylet of Object.values(this.api.getStorylets())) {
+    for (const storylet of Object.values(this.state.getStorylets())) {
       let option = document.createElement("option");
       option.value = storylet.id;
       option.text = storylet.title;
@@ -93,7 +93,7 @@ class ResultForm extends CreateForm {
     let domainGroup = document.createElement("optgroup");
     domainGroup.label = "Domains";
     flowSelect.add(domainGroup);
-    for (const domain of Object.values(this.api.getDomains())) {
+    for (const domain of Object.values(this.state.getDomains())) {
       let option = document.createElement("option");
       option.value = domain.id;
       option.text = domain.title;
@@ -121,7 +121,7 @@ class ResultForm extends CreateForm {
       const changeData = {...schemas.change};
       changeData.id = id;
       const change = new ChangeForm(
-        this.api, 
+        this.state, 
         changeData,
         this.removeFromArray.bind(this, "changes")
       );

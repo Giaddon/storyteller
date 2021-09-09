@@ -87,6 +87,12 @@ const schemas = {
     decks: {},
     events: [],
   },
+  challenge: {
+    quality: "",
+    modifier: "",
+    target: 1,
+    difficulty: "med",
+  }
 
 }
 

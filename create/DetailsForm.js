@@ -2,8 +2,8 @@ const u = require("../utilities");
 const CreateForm = require("./CreateForm");
 
 class DetailsForm extends CreateForm{
-  constructor(api, {name, author, description, version}) {
-    super(api);
+  constructor(state, {name, author, description, version}) {
+    super(state);
     this.name = name || "Game Name";
     this.author = author || "Author";
     this.description = description || "Description text.";
@@ -62,7 +62,7 @@ class DetailsForm extends CreateForm{
       version: this.version,
     }
     
-    this.api.saveDetails(details);
+    this.state.saveDetails(details);
   }
 }
 

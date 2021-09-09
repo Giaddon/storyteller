@@ -69,19 +69,15 @@ class OptionsDisplay {
 
     if (option.challenges) {
       for (const challenge of option.challenges) {
-        let playerValue = this.state.getPlayerQuality(challenge.quality);
-        let qualityLabel = this.state.getQuality(challenge.quality).name;
-        let chance = challenge.difficulty - playerValue;
-        if (chance > 6) {
-          chance = 0;
-        } else if (chance < 2) {
-          chance = 100;  
-        }
-        else {
-          chance = Math.round((1/6 * (6 - (chance - 1))) * 100);
-        } 
-        let challengePhrase = `This is a ${qualityLabel} challenge with difficulty ${challenge.difficulty}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
-        let challengeText = u.create({tag:"p", content: challengePhrase});
+        const playerValue = this.state.getPlayerQuality(challenge.quality);
+        const finalTarget = Number(challenge.target) + this.state.getPlayerQuality(challenge.modifier);
+        const qualityLabel = this.state.getQuality(challenge.quality).name;
+        const modifierLabel = this.state.getQuality(challenge.modifier).name;
+        const floor = this.setFloor(challenge.difficulty);
+        const step = (challenge.difficulty === "hard" ? 60 : 50) / finalTarget;
+        const chance = Math.round(this.state.getPlayerQuality(challenge.quality) * step) + floor
+        const challengePhrase = `This is a ${qualityLabel} ${modifierLabel ? `and ${modifierLabel}`: ""} challenge with target ${finalTarget}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+        const challengeText = u.create({tag:"p", content: challengePhrase});
         challengeContainer.append(challengeText);
       }
     } // end if challenge
@@ -126,12 +122,26 @@ class OptionsDisplay {
     }
   }
 
-  attemptChallenge({quality, difficulty}) {
-    const result = Math.ceil(Math.random() * 6) + this.state.getPlayerQuality(quality);
-    console.log(result >= difficulty, `${result} vs ${difficulty}`)
-    return result >= difficulty;
+  attemptChallenge({quality, modifier, difficulty, target}) {
+    const finalTarget = Number(target) + this.state.getPlayerQuality(modifier);
+    const floor = this.setFloor(difficulty);
+    const step = (difficulty === "hard" ? 60 : 50) / finalTarget;
+    const playerValue = Math.round(this.state.getPlayerQuality(quality) * step) + floor
+    const result = Math.ceil(Math.random() * 100);
+    console.log(playerValue >= result, `${playerValue} vs ${result}`)
+    return playerValue >= result;
   }
 
+  setFloor(difficulty) {
+    if (difficulty === "easy") {
+      return 50;
+    } else if (difficulty === "med") {
+      return 30;
+    } else if (difficulty === "hard") {
+      return 0;
+    }
+    throw new Error("No valid difficulty provided.")
+  }
 
   // evaluateReqs(reqs) {
   //   if (!reqs) return {active: true, labels: []}

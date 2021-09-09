@@ -3,8 +3,8 @@ const u = require("../utilities");
 
 
 class CreateForm {
-  constructor(api) {
-    this.api = api
+  constructor(state) {
+    this.state = state
   }
 
   generateId() {
@@ -68,7 +68,7 @@ class CreateForm {
     label.htmlFor = `${dataType}-select-${parentId}-${id}`;
     
     let select = u.create({tag: "select", id: `${dataType}-select-${parentId}-${id}`});
-    for (const item of Object.values(this.api.getItems(dataType))) {
+    for (const item of Object.values(this.state.getItems(dataType))) {
       let option = document.createElement("option");
       option.value = item.id;
       option.text = item.name || item.title
@@ -94,7 +94,7 @@ class CreateForm {
   }
 
   // saveQuality(id, quality) {
-  //   this.api.addQuality(id, quality);
+  //   this.state.addQuality(id, quality);
   // }
   // deleteStorylet(storyletId) {
   //   this.api.deleteStorylet(storyletId);

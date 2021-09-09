@@ -2,8 +2,8 @@ const u = require("../utilities");
 const CreateForm = require("./CreateForm");
 
 class CategoryForm extends CreateForm{
-  constructor(api, {id, title, order}) {
-    super(api);
+  constructor(state, {id, title, order}) {
+    super(state);
     this.id = id;
     this.title = title,
     this.order = order;
@@ -23,7 +23,7 @@ class CategoryForm extends CreateForm{
       event.preventDefault();
       const confirmation = confirm("Confirming will remove this catefory from your world. Linked qualities will not be affected. It can't be undone.")
       if (confirmation) {
-        this.api.deleteCategory(this.id);
+        this.state.deleteCategory(this.id);
         form.remove();
       } else {
         return;
@@ -63,7 +63,7 @@ class CategoryForm extends CreateForm{
       order: this.order
     }
     
-    this.api.saveItem(this.id, "categories", category);
+    this.state.saveItem(this.id, "categories", category);
   }
 
 }

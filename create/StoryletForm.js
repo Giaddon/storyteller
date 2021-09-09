@@ -6,8 +6,8 @@ const { v4: uuidv4 } = require('uuid');
 const schemas = require("./schemas");
 
 class StoryletForm extends CreateForm {
-  constructor(api, storylet) {
-    super(api);
+  constructor(state, storylet) {
+    super(state);
     this.id = storylet.id;
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
@@ -17,7 +17,7 @@ class StoryletForm extends CreateForm {
 
     let qualities = [];
     for (const req of storylet.reqs.qualities) {
-      qualities.push(new ReqForm(this.api, req, this.id, this.removeFromArray.bind(this, "reqs")))
+      qualities.push(new ReqForm(this.state, req, this.id, this.removeFromArray.bind(this, "reqs")))
     }
     
     this.reqs = {
@@ -27,7 +27,7 @@ class StoryletForm extends CreateForm {
 
     let actions = {};
     for (const action of (Object.values(storylet.actions))) {
-      actions[action.id] = new ActionForm(this.api, action, this.removeChild.bind(this, "actions"))
+      actions[action.id] = new ActionForm(this.state, action, this.removeChild.bind(this, "actions"))
     }
 
     this.actions = actions; 
@@ -159,7 +159,7 @@ class StoryletForm extends CreateForm {
       const reqData = {
         id
       }
-      const newReq = new ReqForm(this.api, reqData, this.id, this.removeFromArray.bind(this, "reqs"));
+      const newReq = new ReqForm(this.state, reqData, this.id, this.removeFromArray.bind(this, "reqs"));
       this.reqs.qualities.push(newReq);
       const renderedReq = newReq.render();
       reqsContainer.append(renderedReq);
@@ -192,7 +192,7 @@ class StoryletForm extends CreateForm {
       event.preventDefault();
       const id = this.generateId();
       const newActionData = {id, ...schemas.action};
-      const newAction = new ActionForm(this.api, newActionData, this.removeChild.bind(this, "actions"));
+      const newAction = new ActionForm(this.state, newActionData, this.removeChild.bind(this, "actions"));
       this.actions[id] = newAction;
       const newActionElement = newAction.render();
       actionSection.append(newActionElement);
@@ -247,7 +247,7 @@ class StoryletForm extends CreateForm {
       }
     }
     
-    this.api.saveItem(storylet.id, "storylets", storylet);
+    this.state.saveItem(storylet.id, "storylets", storylet);
   }
 
   

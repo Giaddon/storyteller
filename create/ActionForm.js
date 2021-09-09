@@ -5,14 +5,14 @@ const ChallengeForm = require("./ChallengeForm");
 const { v4: uuidv4 } = require('uuid');
 
 class ActionForm extends CreateForm {
-  constructor(api, action, removeAction) {
-    super(api);
+  constructor(state, action, removeAction) {
+    super(state);
     this.id = action.id;
     this.title = action.title || "New Action";
     this.text = action.text ||  "Action text.";
     let qualities = [];
     for (const quality of action.reqs.qualities) {
-      qualities.push(new ReqForm(this.api, quality, action.id, this.removeFromArray.bind(this, "reqs")))
+      qualities.push(new ReqForm(this.state, quality, action.id, this.removeFromArray.bind(this, "reqs")))
     }
     this.reqs = {
       visibility: action.reqs.visibility || "always",
@@ -20,12 +20,12 @@ class ActionForm extends CreateForm {
     };
     let challenges = [];
     for (const challenge of action.challenges) {
-      challenges.push(new ChallengeForm(this.api, challenge));
+      challenges.push(new ChallengeForm(this.state, challenge));
     }
     this.challenges = challenges;
-    let neutral = new ResultForm(this.api, action.results.neutral, this.id, "neutral");
-    let success = new ResultForm(this.api, action.results.success, this.id, "success");
-    let failure = new ResultForm(this.api, action.results.failure, this.id, "failure");
+    let neutral = new ResultForm(this.state, action.results.neutral, this.id, "neutral");
+    let success = new ResultForm(this.state, action.results.success, this.id, "success");
+    let failure = new ResultForm(this.state, action.results.failure, this.id, "failure");
     this.results = {
       neutral,
       success,
@@ -114,7 +114,7 @@ class ActionForm extends CreateForm {
       const reqData = {
         id
       }
-      const newReq = new ReqForm(this.api, reqData, this.id, this.removeFromArray.bind(this, "reqs"));
+      const newReq = new ReqForm(this.state, reqData, this.id, this.removeFromArray.bind(this, "reqs"));
       this.reqs.qualities.push(newReq);
       const renderedReq = newReq.render();
       actionReqsContainer.append(renderedReq);
@@ -211,7 +211,7 @@ class ActionForm extends CreateForm {
     const challengeData = {
       id,
     };
-    let challenge = new ChallengeForm(this.api, challengeData);
+    let challenge = new ChallengeForm(this.state, challengeData);
     this.challenges.push(challenge);
     const renderedChallenge = challenge.render();
     challengeContainer.append(renderedChallenge);

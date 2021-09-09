@@ -1,11 +1,13 @@
 const CreateForm = require("./CreateForm");
 
 class ChallengeForm extends CreateForm {
-  constructor(api, challenge) {
-    super(api);
+  constructor(state, challenge) {
+    super(state);
     this.id = challenge.id;
-    this.quality = challenge.quality || Object.values(this.api.getQualities())[0];
-    this.difficulty = challenge.difficulty || 1;
+    this.quality = challenge.quality || Object.values(this.state.getQualities())[0];
+    this.difficulty = challenge.difficulty || "med";
+    this.target = challenge.target || 1
+    this.modifier = challenge.modifier || "none";
   }
 
   render() {
@@ -16,37 +18,70 @@ class ChallengeForm extends CreateForm {
     qualityDiv.classList.add("input-group");
     challenge.append(qualityDiv);
 
-    let qualityLabel = document.createElement("label");
-    qualityLabel.innerText = "Quality";
-    qualityLabel.htmlFor = `challenge-${this.id}-quality`;
-    qualityDiv.append(qualityLabel);
-
-    let qualitySelect = document.createElement("select");
-    qualitySelect.id = `challenge-${this.id}-quality`;
-    for (const quality of Object.values(this.api.getQualities())) {
-      let option = document.createElement("option");
-      option.value = quality.id;
-      option.text = quality.name;
-      qualitySelect.add(option);
-    }
+    const {select: qualitySelect, label: qualityLabel} = this.createSelect(
+      "Quality",
+      "qualities",
+      "",
+      this.id
+    )
     qualitySelect.value = this.quality;
+    const option = document.createElement("option");
+    option.value = "luck";
+    option.text = "System: Luck";
+    qualitySelect.add(option);
     qualitySelect.addEventListener("change", this.captureField.bind(this, "quality"));
-    qualityDiv.append(qualitySelect);
 
-    let diffDiv = document.createElement("div");
+    qualityDiv.append(qualityLabel, qualitySelect);
+    
+    let modifierDiv = document.createElement("div");
+    modifierDiv.classList.add("input-group");
+    challenge.append(modifierDiv);
+
+    const {select: modifierSelect, label: modifierLabel} = this.createSelect(
+      "Modifier",
+      "qualities",
+      "modifier",
+      this.id
+    )
+    modifierSelect.value = this.modifier;
+    modifierSelect.addEventListener("change", this.captureField.bind(this, "modifier"));
+
+    modifierDiv.append(modifierLabel, modifierSelect);
+
+    const diffDiv = document.createElement("div");
     diffDiv.classList.add("input-group");
     challenge.append(diffDiv);
 
-    let {input: diff, label: diffLabel} = this.createInput(
+    const difficultyLabel = document.createElement("label");
+    difficultyLabel.innerText = "Difficulty";
+    difficultyLabel.htmlFor = `difficulty-select-challenge-${this.id}`;
+
+    const difficultySelect = document.createElement("select");
+    difficultySelect.id = `difficulty-select-challenge-${this.id}`;
+    for (const [label, value] of [["Easy", "easy"],["Medium", "med"],["Hard", "hard"]]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.text = label;
+      difficultySelect.add(option);
+    }
+    difficultySelect.value = this.difficulty;
+    difficultySelect.addEventListener("change", this.captureField.bind(this, "difficulty"));
+    diffDiv.append(difficultyLabel, difficultySelect)
+
+
+    let targetDiv = document.createElement("div");
+    targetDiv.classList.add("input-group");
+    challenge.append(targetDiv);
+
+    let {input: target, label: targetLabel} = this.createInput(
       "number", 
       "challenge", 
-      "difficulty", 
-      this.difficulty, 
+      "target", 
+      this.target, 
       `${this.id}`
     );
-    diff.addEventListener("input", this.captureField.bind(this, "difficulty"));
-    diffDiv.append(diffLabel);
-    diffDiv.append(diff);
+    target.addEventListener("input", this.captureField.bind(this, "target"));
+    targetDiv.append(targetLabel, target);
 
     return challenge;
   }
@@ -55,7 +90,9 @@ class ChallengeForm extends CreateForm {
     return {
       id: this.id,
       quality: this.quality,
+      modifier: this.modifier,
       difficulty: this.difficulty,
+      target: this.target,
     }
   }
 }

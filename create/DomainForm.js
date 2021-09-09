@@ -2,8 +2,8 @@ const CreateForm = require("./CreateForm");
 const u = require("../utilities");
 
 class DomainForm extends CreateForm {
-  constructor(api, domain) {
-    super(api);
+  constructor(state, domain) {
+    super(state);
     this.id = domain.id;
     this.title = domain.title || "New Domain";
     this.text = domain.text || "Domain text.";
@@ -55,7 +55,7 @@ class DomainForm extends CreateForm {
       event.preventDefault();
       const confirmation = confirm("This will remove this domain from your world. Linked storylets will not be affected. It can't be undone.")
       if (confirmation) {
-        this.api.deleteDomain(this.id);
+        this.state.deleteDomain(this.id);
         form.remove();
       } else {
         return;
@@ -212,7 +212,7 @@ class DomainForm extends CreateForm {
       decks: this.decks,
     }
     
-    this.api.saveItem(this.id, "domains", domain);
+    this.state.saveItem(this.id, "domains", domain);
   }
 
   createStorylet(parent, data) {
@@ -224,7 +224,7 @@ class DomainForm extends CreateForm {
     const storyletLabel = u.create({tag: "label", content:"Storylet"});
     storyletLabel.htmlFor = `storylet-select-${data.id}`
     const storyletSelect = u.create({tag:"select", id:`storylet-select-${data.id}`});
-    for (const storylet of Object.values(this.api.getStorylets())) {
+    for (const storylet of Object.values(this.state.getStorylets())) {
       let option = document.createElement("option");
       option.value = storylet.id;
       option.text = storylet.title;
@@ -265,7 +265,7 @@ class DomainForm extends CreateForm {
     const eventLabel = u.create({tag: "label", content:"Event"});
     eventLabel.htmlFor = `event-select-${data.id}`
     const eventSelect = u.create({tag:"select", id:`event-select-${data.id}`});
-    for (const event of Object.values(this.api.getStorylets())) {
+    for (const event of Object.values(this.state.getStorylets())) {
       let option = document.createElement("option");
       option.value = event.id;
       option.text = event.title;

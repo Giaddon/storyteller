@@ -187,7 +187,7 @@ class MainMenuManager {
       event.preventDefault();
       const newWorldName = data.input + ".json";
       if (worldNames.includes(newWorldName)){
-        window.alert(`File with name "${data.input}" already in use. Enter new name.`);
+        alert(`File with name "${data.input}" already in use. Enter new name.`);
       } else {
         const newWorld = JSON.stringify(schemas.world)
         fs.writeFileSync(path.join(worldsFolder, newWorldName), newWorld);

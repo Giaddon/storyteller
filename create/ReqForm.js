@@ -1,8 +1,8 @@
 const CreateForm = require("./CreateForm");
 
 class ReqForm extends CreateForm {
-  constructor(api, req, parentId, removeReq) {
-    super(api);
+  constructor(state, req, parentId, removeReq) {
+    super(state);
     this.id = req.id;
     this.quality = req.quality || "";
     this.min = req.min || 0;
@@ -30,7 +30,7 @@ class ReqForm extends CreateForm {
   
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `req-quality-${this.parentId}-${this.id}`;
-    for (const quality of Object.values(this.api.getQualities())) {
+    for (const quality of Object.values(this.state.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;

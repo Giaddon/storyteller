@@ -2,8 +2,8 @@ const CreateForm = require("./CreateForm");
 const u = require("../utilities");
 
 class QualityForm extends CreateForm {
-  constructor(api, quality) {
-    super(api);
+  constructor(state, quality) {
+    super(state);
     this.id = quality.id;
     this.name = quality.name || "New Quality";
     this.startvalue = quality.startvalue || 0;
@@ -36,7 +36,7 @@ class QualityForm extends CreateForm {
       event.preventDefault();
       const confirmation = confirm("This will remove this quality from your world. Any requirements, changes, and challenges that rely on it will be removed as well. This can't be undone.")
       if (confirmation) {
-        this.api.deleteQuality(this.id);
+        this.state.deleteQuality(this.id);
         form.remove();
       } else {
         return;
@@ -184,7 +184,7 @@ class QualityForm extends CreateForm {
       storylet: this.storylet,
       hidden: this.hidden,
     }
-    this.api.saveItem(this.id, "qualities", qualityData);
+    this.state.saveItem(this.id, "qualities", qualityData);
   }
 
   renderChild(type, data) {

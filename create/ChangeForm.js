@@ -3,8 +3,8 @@ const u = require("../utilities");
 const CreateForm = require("./CreateForm");
 
 class ChangeForm extends CreateForm {
-  constructor(api, change, removeChange) {
-    super(api);
+  constructor(state, change, removeChange) {
+    super(state);
     this.id = change.id;
     this.quality = change.quality || "";
     this.type = change.type || "adjust";
@@ -43,7 +43,7 @@ class ChangeForm extends CreateForm {
   
     let qualitySelect = document.createElement("select");
     qualitySelect.id = `result-change-${this.id}-quality`;
-    for (const quality of Object.values(this.api.getQualities())) {
+    for (const quality of Object.values(this.state.getQualities())) {
       let option = document.createElement("option");
       option.value = quality.id;
       option.text = quality.name;
