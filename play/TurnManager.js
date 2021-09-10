@@ -104,17 +104,14 @@ class TurnManager {
     document.getElementById("back-button").style.animation = 'fade-out 0.4s forwards';
 
     setTimeout(() => {
+      document.getElementById("story-container").scroll(0, 0);
       document.getElementById("conclusion").replaceWith(conclusion);
       document.getElementById("header").replaceWith(header);
       document.getElementById("decks").replaceWith(decks);
       document.getElementById("options-list").replaceWith(options);
       document.getElementById("back-button").replaceWith(backButton);
     }, 400);
-
-    
-
   }
-
 
 }
 

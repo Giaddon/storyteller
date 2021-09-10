@@ -1,15 +1,5 @@
 /** FORM COMPONENT */
 
-
-
-
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 form {
   display: flex;
   flex-flow: column nowrap;

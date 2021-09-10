@@ -45,10 +45,12 @@ class OptionsDisplay {
     const challengeContainer = u.create({tag:"div", classes:["play-option-challenge-container"]});
     const reqsContainer = u.create({tag:"div", classes:["play-option-reqs-container"]});
 
-    optionElement.append(titleElement);
-    optionElement.append(textElement);
-    optionElement.append(challengeContainer);
-    optionElement.append(reqsContainer);
+    optionElement.append(
+      titleElement,
+      textElement,
+      challengeContainer,
+      reqsContainer
+    );
     
     const {active, labels, visible} = option.evaluateReqs(option.reqs)
 
@@ -69,6 +71,9 @@ class OptionsDisplay {
 
     if (option.challenges) {
       for (const challenge of option.challenges) {
+        const challengeIconContainer = u.create({tag:"div"});
+        const challengeIcon = u.create({tag:"p", content:"⚠", classes: ["play-option-challenge-icon"]})
+        const challengePhraseContainer = u.create({tag:"div"});
         const playerValue = this.state.getPlayerQuality(challenge.quality);
         const finalTarget = Number(challenge.target) + this.state.getPlayerQuality(challenge.modifier);
         const qualityLabel = this.state.getQuality(challenge.quality).name;
@@ -78,7 +83,17 @@ class OptionsDisplay {
         const chance = Math.round(this.state.getPlayerQuality(challenge.quality) * step) + floor
         const challengePhrase = `This is a ${qualityLabel} ${modifierLabel ? `and ${modifierLabel}`: ""} challenge with target ${finalTarget}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
         const challengeText = u.create({tag:"p", content: challengePhrase});
-        challengeContainer.append(challengeText);
+        challengeIconContainer.append(challengeIcon);
+        challengePhraseContainer.append(challengeText)
+        challengeContainer.append(challengeIconContainer, challengePhraseContainer);
+
+        if (chance < 51) {
+          challengeIcon.classList.add("play-challenge-hard")
+        } else if (chance < 71) {
+          challengeIcon.classList.add("play-challenge-med")
+        } else {
+          challengeIcon.classList.add("play-challenge-easy")
+        }
       }
     } // end if challenge
 

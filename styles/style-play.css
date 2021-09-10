@@ -1,23 +1,44 @@
+
+
+
 /** CANVAS COMPONENT */
 
 .play-canvas {
   display: flex;
   flex-flow: row nowrap;
-  max-width: 1080px;
-  margin: 0px auto;
   height: 100vh;
   background-color: white;
-  color: black;
+  color: black;  
+  margin: 0 auto;
+  justify-content: center;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .play-canvas {
+    margin: 0 08%;
+  }
+}
+
+@media (min-width: 1920px) {
+  .play-canvas {
+    margin: 0 08%;
+  }
+}
+
+@media (min-width: 2560px) {
+  .play-canvas {
+    margin: 0 15%;
+  }
 }
 
 /** QUALITIES CONTAINER COMPONENT */
 
 .play-qualities-container {
-  flex: 0 1 250px;
-  min-width: 200px;
-  padding: 15px 15px 50px 15px;
+  flex: 1 1 15rem;
+  min-width: 11rem;
+  padding: 2rem 1rem 3.125rem 1rem;
   height: 100%;
-  outline: 1px solid black;
+  outline: 1px solid gainsboro;
   overflow-y:scroll;
 }
 
@@ -32,34 +53,34 @@
 
 .play-qualities-title {
   font-family: 'Title', sans-serif;
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
 .play-qualities-category-title {
   font-family: 'Title', sans-serif;
-  font-size: 22px;
-  margin-bottom: 12px;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
 .play-quality {
   outline: 1px solid black;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 .play-quality h1 {
   font-family: 'Standard', serif;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   color: inherit;
 }
 
 .play-quality p {
   font-family: 'Standard', serif;
-  font-size: 12px;
+  font-size: 0.7rem;
   color: inherit;
 }
 
@@ -76,46 +97,45 @@
 /** STORY CONTAINER COMPONENT */
 
 .play-story-container {
-  flex: 0 1 620px;
-  margin-left: 25px;
-  padding: 15px 15px 50px 15px;
+  flex: 0 1 40rem;
+  padding: 2rem 1rem 3.125rem 2rem;
   overflow-y: scroll;
   height: 100vh;
 }
 .play-story-container::-webkit-scrollbar {
-  width: 3px;
+  width: 0.25rem;
   background: transparent;
 }
 .play-story-container::-webkit-scrollbar-thumb {
   background: lightgrey;
-  border-radius: 20px;
+  border-radius: 1rem;
 }
 
 /** CONCLUSION COMPONENT */
 
 .play-conclusion h1 {
   font-family: 'Title', sans-serif;
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
 }
 
 .play-conclusion p {
   font-family: 'Standard', serif;
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.4rem;
 }
 
 .play-conclusion-outcomes {
   background-color: teal;
-  padding: 10px;
-  margin: 15px auto 0px auto;
-  max-width: 650px;
+  padding: 0.8rem;
+  margin: 1rem auto 0 auto;
 }
 
 .play-conclusion-outcomes p {
   color: white;
   font-family: 'Title', sans-serif;
-  font-size: 12px;
+  font-size: 0.8rem;
+  line-height: 1rem;
 }
 
 .play-challenge-passed {
@@ -127,48 +147,48 @@
 
 .play-conclusion-seperator {
   border-bottom: 1px solid black;
-  margin: 20px auto;
-  max-width: 550px;
+  margin: 2rem auto;
+  max-width: 90%;
 }
 
 /** CONTEXT HEADER COMPONENT */
 
 .play-header h1 {
   font-family: 'Title';
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
 }
 
 .play-header p {
   font-family: 'Standard';
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.4rem;
 }
 
 /** OPTIONS LIST COMPONENT */
 
 .play-options-list {
-  margin-top: 15px;
+  margin-top: 1rem;
 }
 
 .play-option {
-  padding: 10px 10px 10px 25px;
-  margin: 0px auto 15px auto;
-  max-width: 500px;
+  padding: 0.8rem 0.8rem 0.8rem 1.5rem;
+  margin: 0 0 1rem 1rem;
+  max-width: 32rem;
   cursor: pointer;
   outline: 1px solid black;
 }
 
 .play-option h1 {
   font-family: "Standard", serif;
-  font-size: 17px;
-  margin-bottom: 5px;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
 .play-option p {
   font-family: 'Standard', serif;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .play-option:hover,
@@ -187,23 +207,41 @@
 }
 
 .play-option-challenge-container {
-  margin-top: 10px;
+  display: flex;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.play-option-challenge-icon {
+  font-size: 2.5rem !important;
+  margin-right: 1rem;
+}
+
+.play-challenge-hard {
+  color: crimson;
+}
+
+.play-challenge-med {
+  color: tomato
+}
+
+.play-challenge-easy {
+  color: limegreen;
 }
 
 .play-option-reqs-container {
-  margin-top: 10px;
+  margin-top: 0.5rem;
   display: flex;
   flex-flow: row wrap;
 }
 
 .play-option-req {
   flex: 0 1 auto;
-  padding: 5px;
+  padding: 0.5rem 0.5rem 0 0.5rem;
   color: white;
   background-color: yellowgreen;
   width: fit-content;
-  height: 30px;
-  margin-right: 5px;
+  margin-right: 0.5rem;
 }
 
 .req-disabled {
@@ -212,7 +250,7 @@
 
 .play-option-req h1 {
   font-family: 'Title', sans-serif;
-  font-size: 12px;
+  font-size: 0.8rem;
 }
 
 /** DECK LIST COMPONENT */
@@ -221,18 +259,18 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 1rem;
 }
 
 .play-deck {
   flex: 0 1 auto;
   outline: 1px solid black;
-  height: 140px;
-  width: 100px;
+  height: 10rem;
+  width: 7rem;
   text-align: center;
-  padding: 10px;
+  padding: 0.5rem;
   cursor: pointer;
-  margin: 5px;
+  margin: 0.5rem;
 }
 .play-deck:hover,
 .play-deck:focus {
@@ -240,23 +278,23 @@
 }
 .play-deck-label {
   font-family: "Title", sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
 }
 .play-card-count {
   font-family: "Standard", serif;
-  font-size: 12px;
+  font-size: 0.8rem;
 }
 
 /** BACK BUTTON COMPONENT */
 
 .play-back-button {
-  margin-top: 15px;
-  padding: 5px 10px;
+  margin-top: 1rem;
+  padding: 0.25rem 0.8rem;
   background-color: inherit;
   border: none;
   outline: 1px solid black;
   font-family: "Standard", serif;
-  font-size: 14px;
+  font-size: 1rem
 }
 
 .play-back-button:hover,
@@ -269,19 +307,20 @@
 /** TOOLBAR COMPONENT */
 
 .play-toolbar-container {
-  padding: 20px;
-  outline: 1px solid black;
-  flex: 0 1 210px;
+  flex: 1 1 15rem;
+  padding: 1.5rem;
+  outline: 1px solid gainsboro;
+  min-width: 11rem;
 }
 
 .play-toolbar button {
-  padding: 5px 15px;
+  padding: 0.25rem 1rem;
   background-color: white;
   outline: 1px solid black;
   border: none;
   cursor: pointer;
   font-family: "Standard", serif;
-  font-size: 14px;
+  font-size: 1rem;
 }
 
 .play-toolbar button:hover {
@@ -293,6 +332,8 @@
   outline: 1px solid gray !important;
   cursor:default;
 }
+
+
 
 .play-item-list {
   display: flex;
