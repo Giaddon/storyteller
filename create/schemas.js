@@ -32,6 +32,7 @@ const schemas = {
   action: {
     title: "New action",
     text: "Action text.",
+    order: 0,
     reqs: {
       visibility: "always",
       qualities: [],

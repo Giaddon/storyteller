@@ -13,11 +13,11 @@
   justify-content: center;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+/* @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-width: 960px) {
   .play-canvas {
-    margin: 0 08%;
+    margin: 0 05%;
   }
-}
+} */
 
 @media (min-width: 1920px) {
   .play-canvas {

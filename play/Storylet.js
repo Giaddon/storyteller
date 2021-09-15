@@ -5,6 +5,7 @@ class Storylet extends Option {
     id, 
     title, 
     text, 
+    order,
     domain, 
     start,
     reqs,
@@ -16,15 +17,18 @@ class Storylet extends Option {
     this.id = id;
     this.title = title;
     this.text = text;
+    this.buttonText = text.split(".")[0] + "...";
+    this.order = order;
     this.domain = domain;
     this.start = start;
     this.reqs = reqs;
     this.actions = actions;
     this.locked = locked;
     this.results = results;
-    const {active, labels} = this.evaluateReqs(this.reqs)
+    const {active, labels, visible} = this.evaluateReqs(this.reqs)
     this.active = active;
-    this.labels = labels
+    this.labels = labels;
+    this.visible = visible;
   } 
 
 }

@@ -1,3 +1,4 @@
+const u = require("../utilities");
 const CreateForm = require("./CreateForm");
 const ResultForm = require("./ResultForm");
 const ReqForm = require("./ReqForm");
@@ -10,6 +11,7 @@ class ActionForm extends CreateForm {
     this.id = action.id;
     this.title = action.title || "New Action";
     this.text = action.text ||  "Action text.";
+    this.order = action.order || 0;
     let qualities = [];
     for (const quality of action.reqs.qualities) {
       qualities.push(new ReqForm(this.state, quality, action.id, this.removeFromArray.bind(this, "reqs")))
@@ -62,8 +64,6 @@ class ActionForm extends CreateForm {
       this.id
     );
     title.addEventListener("input", this.captureField.bind(this, "title"));
-    actionHeaderContainer.append(titleLabel)
-    actionHeaderContainer.append(title);
 
     let {input: text, label: textLabel} = this.createInput(
       "textarea", 
@@ -73,8 +73,21 @@ class ActionForm extends CreateForm {
       this.id
     );
     text.addEventListener("input", this.captureField.bind(this, "text"));
-    actionHeaderContainer.append(textLabel)
-    actionHeaderContainer.append(text);
+    actionHeaderContainer.append(titleLabel, title, textLabel, text)
+
+    const orderGroup = u.create({tag: "div", classes: ["input-group"]});
+    
+    const {input: orderInput, label: orderLabel} = this.createInput(
+      "number", 
+      "action", 
+      "order", 
+      this.order, 
+      this.id
+    );
+    orderInput.addEventListener("input", this.captureField.bind(this, "order"));
+
+    orderGroup.append(orderLabel, orderInput);
+    actionHeaderContainer.append(orderGroup);
 
     let visLabel = document.createElement("label");
     visLabel.innerText = "Visibility";
@@ -247,6 +260,7 @@ class ActionForm extends CreateForm {
       id: this.id,
       title: this.title,
       text: this.text,
+      order: this.order,
       reqs: {
         visibility: this.reqs.visibility,
         qualities

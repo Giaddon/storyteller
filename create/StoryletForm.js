@@ -11,6 +11,7 @@ class StoryletForm extends CreateForm {
     this.id = storylet.id;
     this.title = storylet.title || "New Storylet";
     this.text = storylet.text || "Storylet text.";
+    this.order = storylet.order || 0;
     this.start = storylet.start;
     this.locked = storylet.locked || false;
     this.domain = storylet.domain || "";
@@ -85,6 +86,20 @@ class StoryletForm extends CreateForm {
     textInput.addEventListener("input", this.captureField.bind(this, "text"));
     headerSection.append(textLabel);
     headerSection.append(textInput);
+
+    const orderGroup = u.create({tag: "div", classes: ["input-group"]});
+    
+    const {input: orderInput, label: orderLabel} = this.createInput(
+      "number", 
+      "storylet",
+      "order", 
+      this.order, 
+      this.id
+    );
+    orderInput.addEventListener("input", this.captureField.bind(this, "order"));
+
+    orderGroup.append(orderLabel, orderInput);
+    headerSection.append(orderGroup);
 
     const {input: startInput, label: startLabel} = this.createInput(
       "checkbox", 
@@ -180,7 +195,7 @@ class StoryletForm extends CreateForm {
     actionLabel.innerText = "Actions"
     actionSection.append(actionLabel);
 
-    for (const action of Object.values(this.actions)) {
+    for (const action of Object.values(this.actions).sort((a, b) => a.order - b.order)) {
       const newActionElement = action.render();
       actionSection.append(newActionElement);
     }
@@ -232,6 +247,7 @@ class StoryletForm extends CreateForm {
       id: this.id,
       title: this.title,
       text: this.text,
+      order: this.order,
       start: this.start,
       locked: this.locked,
       domain: this.domain,

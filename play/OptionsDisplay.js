@@ -5,29 +5,29 @@ const Storylet = require("./Storylet");
 class OptionsDisplay {
   constructor({state}) {
     this.state = state;
+    this.activeContext = this.state.getContext();
+    this.contextType = this.state.isInStorylet() ? "storylet" : "domain";
+    this.options = this.collectOptions();
   }
 
-  render() {
-    const activeContext = this.state.getContext();
-    const contextType = activeContext.actions ? "storylet" : "domain";
-    let options; 
-    if (contextType === "storylet") {
-      options = activeContext.actions;
-    }
-    else if (contextType === "domain") {
-      options = [];
-      for (const storyletId of activeContext.storylets) {
-        options.push(this.state.getStorylet(storyletId));
-      }
-    } 
+  collectOptions() {
+    return this.contextType === "storylet"
+      ? Object.values(this.activeContext.actions)
+        .map(optionData => new Action(optionData, this.state))
+        .sort((a, b) => a.order - b.order)
+      : this.activeContext.storylets
+          .map(storyletId => new Storylet(this.state.getStorylet(storyletId), this.state))
+          .sort((a, b) => a.order - b.order)
+  }
 
+  render() { 
     const optionsList = u.create({
       tag: "div", 
       classes: ["play-options-list"], 
       id: "options-list",
     });
-    for (const option of Object.values(options)) {
-      const renderedOption = this.renderOption(option, contextType);
+    for (const option of this.options) {
+      const renderedOption = option.render();
       if (renderedOption) {
         optionsList.append(renderedOption)
       }
@@ -35,128 +35,128 @@ class OptionsDisplay {
     return optionsList
   }
 
-  renderOption(optionData, contextType) {
-    const option = contextType === "storylet" ? new Action(optionData, this.state) : new Storylet(optionData, this.state);
+  // renderOption(optionData, contextType) {
+  //   const option = contextType === "storylet" ? new Action(optionData, this.state) : new Storylet(optionData, this.state);
     
-    const optionElement = u.create({tag: "div", classes:["play-option"]});
-    const titleElement = u.create({tag:"h1", content: option.title});
-    const text = contextType === "domain" ? (option.text.split(".")[0] + ".") : option.text;
-    const textElement = u.create({tag:"p", content:text});
-    const challengeContainer = u.create({tag:"div", classes:["play-option-challenge-container"]});
-    const reqsContainer = u.create({tag:"div", classes:["play-option-reqs-container"]});
+  //   const optionElement = u.create({tag: "div", classes:["play-option"]});
+  //   const titleElement = u.create({tag:"h1", content: option.title});
+  //   const text = contextType === "domain" ? (option.text.split(".")[0] + "...") : option.text;
+  //   const textElement = u.create({tag:"p", content:text});
+  //   const challengeContainer = u.create({tag:"div", classes:["play-option-challenge-container"]});
+  //   const reqsContainer = u.create({tag:"div", classes:["play-option-reqs-container"]});
 
-    optionElement.append(
-      titleElement,
-      textElement,
-      challengeContainer,
-      reqsContainer
-    );
+  //   optionElement.append(
+  //     titleElement,
+  //     textElement,
+  //     challengeContainer,
+  //     reqsContainer
+  //   );
     
-    const {active, labels, visible} = option.evaluateReqs(option.reqs)
+  //   const {active, labels, visible} = option.evaluateReqs(option.reqs)
 
-    if (visible === false) {
-      return 
-    }
+  //   if (visible === false) {
+  //     return 
+  //   }
 
-    for (const label of labels) {
-      reqsContainer.append(label);
-    }
+  //   for (const label of labels) {
+  //     reqsContainer.append(label);
+  //   }
 
-    if (active) { 
-      optionElement.setAttribute('tabindex', '0');
-      optionElement.addEventListener('click', this.selectOption.bind(this, option));
-    } else {
-      optionElement.classList.add('play-option-disabled');
-    }
+  //   if (active) { 
+  //     optionElement.setAttribute('tabindex', '0');
+  //     optionElement.addEventListener('click', this.selectOption.bind(this, option));
+  //   } else {
+  //     optionElement.classList.add('play-option-disabled');
+  //   }
 
-    if (option.challenges) {
-      for (const challenge of option.challenges) {
-        const challengeIconContainer = u.create({tag:"div"});
-        const challengeIcon = u.create({tag:"p", content:"⚠", classes: ["play-option-challenge-icon"]})
-        const challengePhraseContainer = u.create({tag:"div"});
-        const playerValue = this.state.getPlayerQuality(challenge.quality);
-        const finalTarget = Number(challenge.target) + this.state.getPlayerQuality(challenge.modifier);
-        const qualityLabel = this.state.getQuality(challenge.quality).name;
-        const modifierLabel = this.state.getQuality(challenge.modifier).name;
-        const floor = this.setFloor(challenge.difficulty);
-        const step = (challenge.difficulty === "hard" ? 60 : 50) / finalTarget;
-        const chance = Math.round(this.state.getPlayerQuality(challenge.quality) * step) + floor
-        const challengePhrase = `This is a ${qualityLabel} ${modifierLabel ? `and ${modifierLabel}`: ""} challenge with target ${finalTarget}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
-        const challengeText = u.create({tag:"p", content: challengePhrase});
-        challengeIconContainer.append(challengeIcon);
-        challengePhraseContainer.append(challengeText)
-        challengeContainer.append(challengeIconContainer, challengePhraseContainer);
+  //   if (option.challenges) {
+  //     for (const challenge of option.challenges) {
+  //       const challengeIconContainer = u.create({tag:"div"});
+  //       const challengeIcon = u.create({tag:"p", content:"⚠", classes: ["play-option-challenge-icon"]})
+  //       const challengePhraseContainer = u.create({tag:"div"});
+  //       const playerValue = this.state.getPlayerQuality(challenge.quality);
+  //       const finalTarget = Number(challenge.target) + this.state.getPlayerQuality(challenge.modifier);
+  //       const qualityLabel = this.state.getQuality(challenge.quality).name;
+  //       const modifierLabel = this.state.getQuality(challenge.modifier).name;
+  //       const floor = this.setFloor(challenge.difficulty);
+  //       const step = (challenge.difficulty === "hard" ? 60 : 50) / finalTarget;
+  //       const chance = Math.round(this.state.getPlayerQuality(challenge.quality) * step) + floor
+  //       const challengePhrase = `This is a ${qualityLabel} ${modifierLabel ? `and ${modifierLabel}`: ""} challenge with target ${finalTarget}.\nYour ${qualityLabel} of ${playerValue} gives you a ${chance}% chance of success.`
+  //       const challengeText = u.create({tag:"p", content: challengePhrase});
+  //       challengeIconContainer.append(challengeIcon);
+  //       challengePhraseContainer.append(challengeText)
+  //       challengeContainer.append(challengeIconContainer, challengePhraseContainer);
 
-        if (chance < 51) {
-          challengeIcon.classList.add("play-challenge-hard")
-        } else if (chance < 71) {
-          challengeIcon.classList.add("play-challenge-med")
-        } else {
-          challengeIcon.classList.add("play-challenge-easy")
-        }
-      }
-    } // end if challenge
+  //       if (chance < 51) {
+  //         challengeIcon.classList.add("play-challenge-hard")
+  //       } else if (chance < 71) {
+  //         challengeIcon.classList.add("play-challenge-med")
+  //       } else {
+  //         challengeIcon.classList.add("play-challenge-easy")
+  //       }
+  //     }
+  //   } // end if challenge
 
-    return optionElement;
-  }
+  //   return optionElement;
+  // }
 
-  selectOption(option) {
-    const TurnManager = require("./TurnManager");
-    const result = this.prepareResults(option)
-    new TurnManager({
-      state: this.state,
-      result,
-    })
-  }
+  // selectOption(option) {
+  //   const TurnManager = require("./TurnManager");
+  //   const result = this.prepareResults(option)
+  //   new TurnManager({
+  //     state: this.state,
+  //     result,
+  //   })
+  // }
 
-  prepareResults(option) {
-    if (option.challenges && option.challenges.length > 0) {
-      let passed = [];
-      for (const challenge of option.challenges) {
-        passed.push(this.attemptChallenge(challenge))
-      }
-      if (passed.includes(false)) {
-        return {
-          ...option.results.failure,
-          challenge: {
-            passed: false,
-            challenges: option.challenges  
-          }
-        }
-      } else {
-        return {
-          ...option.results.success,
-          challenge: {
-            passed: true,
-            challenges: option.challenges  
-          }
-        }
-      }
-    } else {
-      return option.results.neutral;
-    }
-  }
+  // prepareResults(option) {
+  //   if (option.challenges && option.challenges.length > 0) {
+  //     let passed = [];
+  //     for (const challenge of option.challenges) {
+  //       passed.push(this.attemptChallenge(challenge))
+  //     }
+  //     if (passed.includes(false)) {
+  //       return {
+  //         ...option.results.failure,
+  //         challenge: {
+  //           passed: false,
+  //           challenges: option.challenges  
+  //         }
+  //       }
+  //     } else {
+  //       return {
+  //         ...option.results.success,
+  //         challenge: {
+  //           passed: true,
+  //           challenges: option.challenges  
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     return option.results.neutral;
+  //   }
+  // }
 
-  attemptChallenge({quality, modifier, difficulty, target}) {
-    const finalTarget = Number(target) + this.state.getPlayerQuality(modifier);
-    const floor = this.setFloor(difficulty);
-    const step = (difficulty === "hard" ? 60 : 50) / finalTarget;
-    const playerValue = Math.round(this.state.getPlayerQuality(quality) * step) + floor
-    const result = Math.ceil(Math.random() * 100);
-    console.log(playerValue >= result, `${playerValue} vs ${result}`)
-    return playerValue >= result;
-  }
+  // attemptChallenge({quality, modifier, difficulty, target}) {
+  //   const finalTarget = Number(target) + this.state.getPlayerQuality(modifier);
+  //   const floor = this.setFloor(difficulty);
+  //   const step = (difficulty === "hard" ? 60 : 50) / finalTarget;
+  //   const playerValue = Math.round(this.state.getPlayerQuality(quality) * step) + floor
+  //   const result = Math.ceil(Math.random() * 100);
+  //   console.log(playerValue >= result, `${playerValue} vs ${result}`)
+  //   return playerValue >= result;
+  // }
 
-  setFloor(difficulty) {
-    if (difficulty === "easy") {
-      return 50;
-    } else if (difficulty === "med") {
-      return 30;
-    } else if (difficulty === "hard") {
-      return 0;
-    }
-    throw new Error("No valid difficulty provided.")
-  }
+  // setFloor(difficulty) {
+  //   if (difficulty === "easy") {
+  //     return 50;
+  //   } else if (difficulty === "med") {
+  //     return 30;
+  //   } else if (difficulty === "hard") {
+  //     return 0;
+  //   }
+  //   throw new Error("No valid difficulty provided.")
+  // }
 
   // evaluateReqs(reqs) {
   //   if (!reqs) return {active: true, labels: []}

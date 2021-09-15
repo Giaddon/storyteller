@@ -1,11 +1,18 @@
 @font-face {
   font-family: 'Title';
-  src: local('Alata'), url(../assets/fonts/Alata.ttf) format('truetype');
+  src: url(../assets/fonts/Alata.ttf);
 }
 
 @font-face {
   font-family: 'Standard';
-  src: local('IBMPlexSerif'), url(../assets/fonts/IBMPlexSerif-Regular.ttf) format('truetype');
+  /* src: url(../assets/fonts/NotoSansJP-Regular.otf); */
+  /* src: url(../assets/fonts/IBMPlexSerif-Regular.ttf); */
+  src: url(../assets/fonts/NotoSerifJP-Regular.otf);
+  /* src: url(../assets/fonts/SortsMillGoudy-Regular.ttf); */
+  /* src: url(../assets/fonts/Ovo-Regular.ttf); */
+  /* src: url(../assets/fonts/Merriweather-Regular.ttf); */
+  /* src: url(../assets/fonts/Mulish-VariableFont_wght.ttf); */
+  /* src: url(../assets/fonts/Assistant-VariableFont_wght.ttf); */
 }
 
 .main-menu-small {
