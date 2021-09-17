@@ -5,6 +5,7 @@ const ConclusionDisplay = require("./ConclusionDisplay");
 const DeckDisplay = require("./DeckDisplay");
 const HeaderDisplay = require("./HeaderDisplay");
 const ToolbarDisplay = require("./ToolbarDisplay");
+const Storylet = require("./Storylet");
 
 class TurnManager {
   constructor({state, result}) {
@@ -28,6 +29,8 @@ class TurnManager {
       text: this.result.text,
       challenge: this.result.challenge,
     }
+
+    this.handleEvents();
 
     this.state.saveGame();
     this.renderGame();
@@ -79,6 +82,20 @@ class TurnManager {
         this.state.enterDomain(flow);
       } else {
         this.state.enterStorylet(flow);
+      }
+    }
+  }
+
+  handleEvents() {
+    const activeDomain = this.state.getCurrentDomain();
+    if (activeDomain) {
+      console.log("Checking events...", activeDomain.events);
+      for (const eventId of activeDomain.events) {
+        const event = new Storylet(this.state.getStorylet(eventId), this.state)
+        if (event.active) {
+          this.state.enterStorylet(eventId);
+          break;
+        }
       }
     }
   }

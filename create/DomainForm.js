@@ -8,37 +8,19 @@ class DomainForm extends CreateForm {
     this.title = domain.title || "New Domain";
     this.text = domain.text || "Domain text.";
     this.locked = domain.locked || false;
-    this.destination = domain.destination || true;
-    let storylets = [];
-    for (const storylet of domain.storylets) {
-      const storyletData = {
-        id: this.generateId(),
-        storylet: storylet,
-      }
-      storylets.push(storyletData);
-    }
-    this.storylets = storylets;
+    this.destination = domain.destination ? true : false;
+    this.storylets = domain.storylets 
+      ? domain.storylets.map(storyletId => ({id: this.generateId(), storylet: storyletId}))
+      : []
+    this.events = domain.events
+      ? domain.events.map(eventId => ({id: this.generateId(), event: eventId}))
+      : []
 
-    let events = [];
-    for (const event of domain.events) {
-      events.push({
-        id: this.generateId(),
-        event,
-      });
+    const processedDecks = domain.decks ? {...domain.decks} : {}
+    for (const deck of Object.values(processedDecks)) {
+      deck.storylets = deck.storylets.map(storyletId => { return ({id: this.generateId(), storylet: storyletId})} )
     }
-    this.events = events;
-
-    for (const deck of Object.values(domain.decks)) {
-      let storylets = [];
-      for (const storyletId of deck.storylets) {
-        storylets.push({
-          id: this.generateId(),
-          storylet: storyletId,
-        });
-      }
-      deck.storylets = storylets;
-    }
-    this.decks = domain.decks || {};
+    this.decks = processedDecks;
   }
 
   render() {
@@ -97,7 +79,7 @@ class DomainForm extends CreateForm {
       event.preventDefault();
       const storyletData = {
         id: this.generateId(),
-        storylet: null,
+        storylet: undefined,
       }
       this.storylets.push(storyletData);
       const renderedStorylet = this.createStorylet(this, storyletData);
@@ -154,7 +136,7 @@ class DomainForm extends CreateForm {
       event.preventDefault();
       const storyletData = {
         id: this.generateId(),
-        storylet: null,
+        storylet: undefined,
       }
       this.events.push(storyletData);
       const renderedEvent = this.createEvent(storyletData);
@@ -179,26 +161,15 @@ class DomainForm extends CreateForm {
     return form;
   }
 
-  saveForm(event) {
-    event.preventDefault();
+  saveForm(evt) {
+    evt.preventDefault();
     console.log(this);
     
-    let storylets = [];
-    for (const storylet of this.storylets) {
-      storylets.push(storylet.storylet);
-    }
-
-    let events = [];
-    for (const event of this.events) {
-      events.push(event.event);
-    }
+    const storylets = this.storylets.map(storylet => storylet.storylet);
+    const events = this.events.map(event => event.event);
 
     for (const deck of Object.values(this.decks)) {
-      let storylets = [];
-      for (const storylet of deck.storylets) {
-        storylets.push(storylet.storylet)
-      }
-      deck.storylets = storylets;
+      deck.storylets = deck.storylets.map(card => card.storylet)
     }
 
     const domain = {
@@ -230,8 +201,16 @@ class DomainForm extends CreateForm {
       option.text = storylet.title;
       storyletSelect.add(option);
     }
-    storyletSelect.value = data.storylet;
-    storyletSelect.addEventListener("input", this.captureField.bind(data, "storylet"));
+
+    if (!data.storylet) {
+      const blankOption = document.createElement("option");
+      blankOption.value = "none"
+      blankOption.text = "None"
+      storyletSelect.add(blankOption);
+    }
+
+    storyletSelect.value = data.storylet || "none";
+    storyletSelect.addEventListener("change", this.captureField.bind(data, "storylet"));
     inputGroup.append(storyletLabel)
     inputGroup.append(storyletSelect);
     
@@ -251,7 +230,6 @@ class DomainForm extends CreateForm {
   }
 
   removeStorylet(targetId) {
-    console.log(this.storylets, targetId);
     const remainingStorylets = this.storylets.filter(storylet => storylet.id !== targetId);
     this.storylets = remainingStorylets;
   }
@@ -281,8 +259,8 @@ class DomainForm extends CreateForm {
       classes:["remove-button"], 
       content: "Remove event."
     });
-    removeChildButton.addEventListener("click", event => {
-      event.preventDefault();
+    removeChildButton.addEventListener("click", evt => {
+      evt.preventDefault();
       this.events = this.events.filter(event => event.id !== data.id)
       event.remove();
     });
@@ -311,12 +289,12 @@ class DomainForm extends CreateForm {
     const storyletsContainer = u.create({tag:"div", classes: ["item-container"]});
     storyletsSection.append(storyletsContainer);
 
-    let addStoryletButton = u.create({tag: "button", classes:["add-button"], content:"+ Add Storylet"});
+    const addStoryletButton = u.create({tag: "button", classes:["add-button"], content:"+ Add Storylet"});
     addStoryletButton.addEventListener("click", event => {
       event.preventDefault();
       const storyletData = {
         id: this.generateId(),
-        storylet: null,
+        storylet: undefined,
       }
       deckData.storylets.push(storyletData);
       const renderedStorylet = this.createStorylet(deckData, storyletData);

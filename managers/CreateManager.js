@@ -192,10 +192,10 @@ class CreateManager {
       button.addEventListener("click", event => {
         event.preventDefault();
         let newForm;
-        if (type === "storylets") newForm = new StoryletForm(this.api, item)
-        else if (type === "domains") newForm = new DomainForm(this.api, item);
-        else if (type === "qualities") newForm = new QualityForm(this.api, item);
-        else if (type === "categories") newForm = new CategoryForm(this.api, item);
+        if (type === "storylets") newForm = new StoryletForm(this.api, this.api.getItem("storylets", item.id))
+        else if (type === "domains") newForm = new DomainForm(this.api, this.api.getItem("domains", item.id));
+        else if (type === "qualities") newForm = new QualityForm(this.api, this.api.getItem("qualities", item.id));
+        else if (type === "categories") newForm = new CategoryForm(this.api, this.api.getItem("categories", item.id));
         this.activeForm = newForm;
         let renderedForm = this.activeForm.render();
         u.removeChildren(formContainer)

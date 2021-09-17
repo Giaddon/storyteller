@@ -67,7 +67,7 @@
 
 .play-quality {
   outline: 1px solid black;
-  padding: 0.8rem;
+  padding: 0.5rem;
   margin-bottom: 0.8rem;
 }
 
@@ -172,7 +172,7 @@
 }
 
 .play-option {
-  padding: 0.8rem 0.8rem 0.8rem 1.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
   margin: 0 0 1rem 1rem;
   max-width: 32rem;
   cursor: pointer;
@@ -181,14 +181,14 @@
 
 .play-option h1 {
   font-family: "Standard", serif;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
   font-weight: 700;
 }
 
 .play-option p {
   font-family: 'Standard', serif;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .play-option:hover,
@@ -250,7 +250,7 @@
 
 .play-option-req h1 {
   font-family: 'Title', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 /** DECK LIST COMPONENT */
@@ -265,8 +265,8 @@
 .play-deck {
   flex: 0 1 auto;
   outline: 1px solid black;
-  height: 10rem;
-  width: 7rem;
+  height: 9rem;
+  width: 6rem;
   text-align: center;
   padding: 0.5rem;
   cursor: pointer;
