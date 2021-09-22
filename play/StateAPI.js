@@ -186,7 +186,7 @@ class StateAPI {
       this.player.domain = activeDomain.id;
       this.player.context.id = activeDomain.id;
       this.player.context.type = "domain";
-      if (!activeDomain.locked) {
+      if (activeDomain.destination) {
         this.addDestination(id);
       }
     } else {

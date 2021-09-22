@@ -22,7 +22,7 @@ select {
 textarea {
   flex: 0 1 auto;
   margin: 5px;
-  height: 80px;
+  height: 8rem;
 }
 input[type="number"] {
   max-width: 60px;

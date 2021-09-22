@@ -168,8 +168,11 @@ class DomainForm extends CreateForm {
     const storylets = this.storylets.map(storylet => storylet.storylet);
     const events = this.events.map(event => event.event);
 
+    const decks = {}
     for (const deck of Object.values(this.decks)) {
-      deck.storylets = deck.storylets.map(card => card.storylet)
+      const cards = deck.storylets.map(card => card.storylet)
+      decks[deck.id] = {...deck};
+      decks[deck.id].storylets = cards;
     }
 
     const domain = {
@@ -180,7 +183,7 @@ class DomainForm extends CreateForm {
       locked: this.locked,
       storylets,
       events,
-      decks: this.decks,
+      decks,
     }
     
     this.state.saveItem(this.id, "domains", domain);
